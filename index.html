@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#F6F5F1">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>日本語 Densha · Aprende japonés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F6F0;
+  --mint:#E2F0E5;
+  --mint-deep:#CFE6D6;
+  --ink:#17181C;
+  --ink-soft:#5A5C66;
+  --card:#FFFFFF;
+  --line:#E3E1DA;
+  --jr-green:#0B7A3E;
+  --good:#0B7A3E;
+  --bad:#D5382E;
+  --gold:#E8A020;
+  --radius:18px;
+  --shadow:0 2px 0 rgba(23,24,28,.08);
+  --font-jp:'M PLUS Rounded 1c',system-ui,sans-serif;
+  --font-px:'DotGothic16',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--font-jp);
+  background:var(--paper);
+  color:var(--ink);
+  display:flex;justify-content:center;
+}
+#app{
+  width:100%;max-width:480px;min-height:100dvh;
+  display:flex;flex-direction:column;position:relative;
+  background:var(--paper);
+}
+/* ---------- Header ---------- */
+header{
+  padding:14px 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--paper);z-index:20;
+  border-bottom:2px solid var(--ink);
+  box-shadow:0 4px 0 var(--jr-green);
+}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--jr-green);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-px);font-size:19px;border:2.5px solid var(--ink);
+}
+.logo h1{font-size:17px;font-weight:800;letter-spacing:.5px}
+.logo h1 span{color:var(--ink-soft);font-weight:500;font-size:12px;display:block;letter-spacing:1px}
+.hud{display:flex;gap:8px;align-items:center}
+.hud-chip{
+  display:flex;align-items:center;gap:5px;
+  background:var(--card);border:2px solid var(--ink);border-radius:99px;
+  padding:4px 11px;font-family:var(--font-px);font-size:14px;
+  box-shadow:var(--shadow);
+}
+.hud-chip .ico{font-size:13px}
+/* ---------- Main ---------- */
+main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:touch}
+.screen{display:none;animation:fadein .25s ease}
+.screen.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.section-label{
+  font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--ink-soft);margin:20px 2px 10px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:2px;background:var(--mint-deep);border-radius:2px}
+/* ---------- Rank board (signature) ---------- */
+.rankboard{
+  background:var(--mint);color:var(--ink);border-radius:var(--radius);
+  padding:16px 18px 14px;margin-top:4px;position:relative;overflow:hidden;
+  border:2.5px solid var(--ink);box-shadow:var(--shadow);
+}
+.rankboard .rb-top{display:flex;justify-content:space-between;align-items:baseline}
+.rankboard .rb-rank{font-size:19px;font-weight:800}
+.rankboard .rb-rank small{font-family:var(--font-px);font-size:12px;color:var(--jr-green);display:block;letter-spacing:1px;margin-top:2px}
+.rankboard .rb-xp{font-family:var(--font-px);font-size:22px;color:#9A6A00;text-align:right}
+.rankboard .rb-xp small{display:block;font-size:10px;color:var(--ink-soft);letter-spacing:1px}
+.rb-track{margin-top:14px;height:10px;background:var(--mint-deep);border-radius:99px;overflow:hidden;border:2px solid var(--ink)}
+.rb-fill{height:100%;background:linear-gradient(90deg,#0B7A3E,#31C871);border-radius:99px;transition:width .5s ease}
+.rb-next{font-size:11px;color:var(--ink-soft);margin-top:7px}
+/* ---------- Line cards ---------- */
+.line-card{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  padding:14px;display:flex;align-items:center;gap:13px;margin-bottom:11px;
+  box-shadow:var(--shadow);cursor:pointer;user-select:none;
+  transition:transform .08s ease;width:100%;text-align:left;font-family:inherit;color:inherit;
+}
+.line-card:active{transform:scale(.98)}
+.line-badge{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  border:3px solid var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-px);font-size:22px;
+}
+.line-info{flex:1;min-width:0}
+.line-info h3{font-size:15.5px;font-weight:800}
+.line-info .jp{font-size:12px;color:var(--ink-soft);font-weight:500}
+.stations{display:flex;align-items:center;gap:0;margin-top:8px}
+.st-dot{width:11px;height:11px;border-radius:50%;border:2.5px solid var(--ink);background:var(--card);flex-shrink:0}
+.st-dot.full{background:var(--dotc,var(--jr-green))}
+.st-seg{height:3px;width:16px;background:var(--ink);flex-shrink:0}
+.line-pct{font-family:var(--font-px);font-size:15px;color:var(--ink-soft);flex-shrink:0}
+/* ---------- Buttons ---------- */
+.btn{
+  display:block;width:100%;padding:15px;border-radius:16px;
+  border:2.5px solid var(--ink);background:var(--jr-green);color:#fff;
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.ghost{background:var(--card);color:var(--ink)}
+.btn.small{padding:11px;font-size:14px;border-radius:13px}
+.btn:disabled{opacity:.45;pointer-events:none}
+.btn-row{display:flex;gap:10px;margin-top:12px}
+.btn-row .btn{flex:1}
+/* ---------- Lesson intro ---------- */
+.lesson-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.back-btn{
+  width:40px;height:40px;border-radius:12px;border:2.5px solid var(--ink);
+  background:var(--card);font-size:18px;cursor:pointer;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
+}
+.lesson-head h2{font-size:19px;font-weight:800}
+.lesson-head .sub{font-size:12px;color:var(--ink-soft)}
+/* ---------- Flashcards ---------- */
+.flash-wrap{perspective:1000px;margin:6px 0 14px}
+.flashcard{
+  position:relative;width:100%;height:240px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .45s ease;
+}
+.flashcard.flip{transform:rotateY(180deg)}
+.f-face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  box-shadow:var(--shadow);padding:18px;text-align:center;
+}
+.f-face.back{transform:rotateY(180deg);background:var(--mint);color:var(--ink)}
+.f-jp{font-size:40px;font-weight:800;line-height:1.2}
+.f-ro{font-size:15px;color:var(--ink-soft)}
+.f-face.back .f-es{font-size:26px;font-weight:800}
+.f-face.back .f-ro{color:var(--jr-green);font-weight:700}
+.f-kd{display:none;font-size:12.5px;line-height:1.6;text-align:center;margin-top:2px}
+.f-kd span{display:inline-block;background:var(--mint-deep);color:#0B5A30;border-radius:8px;padding:2px 9px;margin:2px 3px;font-weight:700;border:1.5px solid var(--ink)}
+.f-kd .kd-ex{color:var(--ink-soft);margin-top:6px}
+.f-hint{position:absolute;bottom:12px;font-size:11px;color:var(--ink-soft);letter-spacing:1px}
+.f-face.back .f-hint{color:var(--ink-soft)}
+.flash-count{text-align:center;font-family:var(--font-px);font-size:14px;color:var(--ink-soft);margin-bottom:8px}
+/* ---------- Quiz ---------- */
+.quiz-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.q-track{flex:1;height:12px;background:var(--line);border-radius:99px;overflow:hidden;border:2px solid var(--ink)}
+.q-fill{height:100%;background:var(--jr-green);transition:width .3s ease}
+.combo{
+  font-family:var(--font-px);font-size:14px;color:var(--gold);min-width:52px;text-align:right;
+}
+.q-prompt-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.q-prompt{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  padding:22px 16px;text-align:center;margin-bottom:16px;box-shadow:var(--shadow);
+}
+.q-prompt .big{font-size:32px;font-weight:800;line-height:1.25}
+.q-prompt .ro{font-size:14px;color:var(--ink-soft);margin-top:4px}
+.opts{display:grid;gap:10px}
+.opt{
+  padding:15px 14px;border-radius:15px;border:2.5px solid var(--ink);
+  background:var(--card);font-family:inherit;font-size:16.5px;font-weight:700;
+  cursor:pointer;box-shadow:0 3px 0 var(--ink);text-align:center;color:var(--ink);
+  transition:transform .07s;
+}
+.opt:active{transform:translateY(2px)}
+.opt.correct{background:var(--good);color:#fff;border-color:var(--ink)}
+.opt.wrong{background:var(--bad);color:#fff}
+.opt.dim{opacity:.4;pointer-events:none}
+.feedback{
+  margin-top:14px;padding:13px 15px;border-radius:14px;border:2.5px solid var(--ink);
+  font-weight:700;font-size:14.5px;display:none;
+}
+.feedback.ok{display:block;background:#DFF3E6;color:#0B5A30}
+.feedback.no{display:block;background:#FBE3E1;color:#8C221B}
+/* ---------- Match game ---------- */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m-tile{
+  padding:16px 8px;border-radius:15px;border:2.5px solid var(--ink);background:var(--card);
+  font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;
+  box-shadow:0 3px 0 var(--ink);text-align:center;color:var(--ink);min-height:64px;
+}
+.m-tile.sel{background:#FFF3D6;border-color:var(--gold)}
+.m-tile.done{opacity:.25;pointer-events:none;background:var(--good);color:#fff}
+.m-tile.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* ---------- Results ---------- */
+.result{
+  text-align:center;padding:30px 16px;
+}
+.result .medal{font-size:64px}
+.result h2{font-size:24px;font-weight:800;margin:10px 0 4px}
+.result .r-xp{font-family:var(--font-px);font-size:30px;color:var(--jr-green);margin:12px 0 4px}
+.result p{color:var(--ink-soft);font-size:14px}
+.r-stats{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.r-stat{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:14px;
+  padding:10px 16px;box-shadow:var(--shadow);min-width:88px;
+}
+.r-stat .n{font-family:var(--font-px);font-size:20px}
+.r-stat .l{font-size:10.5px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase}
+/* ---------- Guide ---------- */
+.acc{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  margin-bottom:11px;box-shadow:var(--shadow);overflow:hidden;
+}
+.acc-head{
+  width:100%;padding:15px 16px;display:flex;align-items:center;gap:12px;
+  background:none;border:none;font-family:inherit;font-size:15.5px;font-weight:800;
+  cursor:pointer;text-align:left;color:var(--ink);
+}
+.acc-head .a-badge{
+  width:34px;height:34px;border-radius:50%;border:2.5px solid var(--ink);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;font-family:var(--font-px);
+}
+.acc-head .chev{margin-left:auto;transition:transform .25s;font-size:13px;color:var(--ink-soft)}
+.acc.open .chev{transform:rotate(180deg)}
+.acc-body{display:none;padding:2px 16px 16px;font-size:14.5px;line-height:1.65}
+.acc.open .acc-body{display:block}
+.acc-body h4{margin:13px 0 5px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft)}
+.phrase{
+  padding:9px 0;border-bottom:1.5px dashed var(--line);
+}
+.phrase:last-child{border-bottom:none}
+.phrase .p-jp{font-weight:800;font-size:15.5px}
+.phrase .p-ro{font-size:12px;color:var(--jr-green);font-weight:600}
+.phrase .p-es{font-size:13px;color:var(--ink-soft)}
+.tip{
+  background:#FFF6E3;border:2px dashed var(--gold);border-radius:12px;
+  padding:10px 12px;font-size:13px;margin-top:10px;
+}
+/* ---------- Profile ---------- */
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:6px}
+.p-card{
+  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  padding:16px 14px;box-shadow:var(--shadow);text-align:center;
+}
+.p-card .n{font-family:var(--font-px);font-size:26px}
+.p-card .l{font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.ranks-list{margin-top:6px}
+.rank-row{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:9px;
+  background:var(--card);border:2.5px solid var(--line);border-radius:14px;
+}
+.rank-row.hit{border-color:var(--ink);box-shadow:var(--shadow)}
+.rank-row .rr-ico{font-size:22px;width:30px;text-align:center}
+.rank-row .rr-name{font-weight:800;font-size:14.5px}
+.rank-row .rr-jp{font-size:11.5px;color:var(--ink-soft)}
+.rank-row .rr-xp{margin-left:auto;font-family:var(--font-px);font-size:13px;color:var(--ink-soft)}
+/* ---------- Bottom nav ---------- */
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;background:var(--card);
+  border-top:2.5px solid var(--ink);display:flex;z-index:30;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-btn{
+  flex:1;padding:9px 4px 10px;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-family:inherit;color:var(--ink-soft);
+}
+.nav-btn .n-ico{
+  font-size:17px;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:800;
+}
+.nav-btn.active{color:var(--ink)}
+.nav-btn.active .n-ico{background:var(--jr-green);color:#fff}
+.nav-btn .n-lbl{font-size:10.5px;font-weight:700;letter-spacing:.5px}
+/* ---------- Sentence builder ---------- */
+.anat{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:13px 15px;font-size:13.5px;line-height:1.6;box-shadow:var(--shadow);margin-bottom:4px}
+.fx{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 10px}
+.fx-piece{padding:10px 13px;border:2.5px solid var(--ink);border-radius:12px;font-weight:800;font-size:17px;box-shadow:0 3px 0 var(--ink);background:var(--card);cursor:pointer;font-family:inherit;color:var(--ink);text-align:center}
+.fx-piece small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--ink-soft);text-transform:uppercase;margin-top:1px}
+.fx-piece.s{background:#FFF3D6;border-style:dashed}
+.fx-piece.p{background:var(--ink);color:var(--paper)}
+.fx-piece.p small{color:#a9abb2}
+.fx-piece.f{background:#E2F1E7}
+.fx-piece.hl{outline:3px solid var(--gold);outline-offset:2px}
+.fx-piece.blank{background:#ECEAE3;border-style:dotted;color:var(--ink-soft);min-width:64px}
+.fx-exp{background:#FFF6E3;border:2px dashed var(--gold);border-radius:12px;padding:10px 13px;font-size:13px;margin-bottom:14px;min-height:44px}
+.mode-tabs{display:flex;gap:8px;margin-bottom:14px}
+.mtab{flex:1;padding:10px 4px;border-radius:12px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
+.mtab.on{background:var(--jr-green);color:#fff}
+.lab-out{background:var(--mint);color:var(--ink);border-radius:var(--radius);border:2.5px solid var(--ink);padding:18px 15px;text-align:center;margin-bottom:12px;box-shadow:var(--shadow)}
+.lab-out .lo-jp{font-size:23px;font-weight:800;line-height:1.4}
+.lab-out .lo-ro{font-size:13px;color:var(--jr-green);margin-top:4px;font-weight:700}
+.lab-out .lo-es{font-size:14px;color:var(--ink-soft);margin-top:6px}
+.sg{margin-bottom:12px}
+.sg-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:0 2px 6px}
+.sg-chips{display:flex;flex-wrap:wrap;gap:7px}
+.wchip{padding:8px 12px;border-radius:99px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.wchip small{font-size:10px;color:var(--ink-soft);font-weight:600;margin-left:4px}
+.wchip.on{background:var(--gold)}
+.wchip.on small{color:#5c4400}
+.tz-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:0 2px 6px}
+.tile-zone{min-height:60px;border:2.5px dashed var(--ink-soft);border-radius:14px;padding:9px;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;background:#EFEEE8}
+.tile{padding:10px 13px;border-radius:12px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
+.tile.used{opacity:.22;pointer-events:none}
+.pt-mini{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.pt-mini span{font-size:11.5px;font-weight:800;border:2px solid var(--ink);border-radius:8px;padding:3px 7px;background:var(--card)}
+.pt-mini span.s{background:#FFF3D6;border-style:dashed}
+.pt-mini span.p{background:var(--ink);color:var(--paper)}
+.pt-mini span.f{background:#E2F1E7}
+/* ---------- Vocab dictionary ---------- */
+.search-box{
+  width:100%;padding:13px 16px;border-radius:15px;border:2.5px solid var(--ink);
+  background:var(--card);font-family:inherit;font-size:15px;font-weight:500;
+  box-shadow:var(--shadow);margin-bottom:11px;color:var(--ink);
+}
+.search-box:focus{outline:3px solid var(--gold);outline-offset:2px}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:7px 13px;border-radius:99px;border:2.5px solid var(--ink);
+  background:var(--card);font-family:inherit;font-size:12.5px;font-weight:800;
+  cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:6px;
+}
+.chip .c-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
+.chip.on{background:var(--ink);color:var(--paper)}
+.v-group{margin-bottom:16px}
+.v-group-head{
+  display:flex;align-items:center;gap:9px;margin:4px 2px 8px;
+  font-size:13.5px;font-weight:800;
+}
+.v-group-head .vg-badge{
+  width:26px;height:26px;border-radius:50%;border:2.5px solid var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-px);font-size:13px;
+}
+.v-group-head .vg-count{margin-left:auto;font-family:var(--font-px);font-size:12px;color:var(--ink-soft)}
+.v-row{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  border:2px solid var(--line);border-left:5px solid var(--vc,var(--ink));
+  border-radius:13px;padding:10px 13px;margin-bottom:7px;
+}
+.v-row .v-l{flex:1;min-width:0}
+.v-row .v-jp{font-size:16.5px;font-weight:800;line-height:1.3}
+.v-row .v-ro{font-size:11.5px;color:var(--jr-green);font-weight:600}
+.v-row .v-es{font-size:13px;color:var(--ink-soft);text-align:right;max-width:45%}
+.v-empty{
+  text-align:center;padding:36px 16px;color:var(--ink-soft);font-size:14px;
+}
+.v-empty .ve-jp{font-size:34px;margin-bottom:8px}
+/* ---------- Práctica diaria + escenarios ---------- */
+.prac-row{display:flex;gap:10px;margin-top:2px}
+.prac-btn{flex:1;background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:13px 8px;box-shadow:var(--shadow);cursor:pointer;font-family:inherit;text-align:center;color:var(--ink)}
+.prac-btn .pb-ico{font-size:26px}
+.prac-btn .pb-t{font-weight:800;font-size:13.5px;margin-top:3px}
+.prac-btn .pb-s{font-size:11px;color:var(--ink-soft);margin-top:1px}
+.scene-grid{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.scene-grid::-webkit-scrollbar{display:none}
+.scene-card{flex:0 0 44%;scroll-snap-align:start;background:var(--mint);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px 8px 10px;cursor:pointer;text-align:center;box-shadow:var(--shadow);font-family:inherit}
+.scene-card canvas{display:block;margin:0 auto}
+.scene-card .sc-name{color:var(--ink);font-weight:800;font-size:13.5px;margin-top:7px}
+.scene-card .sc-best{font-family:var(--font-px);font-size:11px;color:var(--jr-green);margin-top:2px}
+.story-card{border-color:var(--jr-green);border-width:3px;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--mint),#F4FAF5)}
+.story-card canvas{animation:chug 2.4s ease-in-out infinite}
+@keyframes chug{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+.story-card::after{content:'';position:absolute;left:-45%;top:0;bottom:0;width:38%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:sheen 3s ease-in-out infinite;pointer-events:none}
+@keyframes sheen{0%{left:-45%}60%,100%{left:130%}}
+canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
+.sc-art-wrap{display:flex;justify-content:center;background:var(--mint);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px;margin-bottom:12px;box-shadow:var(--shadow)}
+/* ---------- Misiones diarias ---------- */
+.mis-card{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px 15px;box-shadow:var(--shadow)}
+.mis-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1.5px dashed var(--line)}
+.mis-row:last-of-type{border-bottom:none}
+.mis-chk{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--card)}
+.mis-row.done .mis-chk{background:var(--jr-green);color:#fff}
+.mis-txt{flex:1;font-size:13.5px;font-weight:700}
+.mis-row.done .mis-txt{opacity:.55;text-decoration:line-through}
+.mis-prog{font-family:var(--font-px);font-size:12px;color:var(--ink-soft)}
+.mis-bonus{margin-top:9px;font-size:12px;font-weight:800;color:var(--jr-green);text-align:center}
+/* ---------- Modo historia (línea de estaciones) ---------- */
+.story-line{position:relative;padding:6px 0 6px 6px}
+.story-line::before{content:'';position:absolute;left:17px;top:16px;bottom:16px;width:6px;background:var(--jr-green);border-radius:3px}
+.st-row{display:flex;align-items:center;gap:14px;padding:9px 4px;position:relative;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:inherit;color:var(--ink)}
+.st-dot2{width:20px;height:20px;border-radius:50%;border:3px solid var(--ink);background:var(--card);flex-shrink:0;z-index:1;margin-left:1px}
+.st-row.done .st-dot2{background:var(--jr-green)}
+.st-row.cur .st-dot2{background:var(--gold);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,.55)}50%{box-shadow:0 0 0 7px rgba(232,160,32,0)}}
+.st-row.lock{opacity:.42;cursor:default}
+.st-name{font-weight:800;font-size:15px}
+.st-day{font-size:11.5px;color:var(--ink-soft)}
+.st-status{margin-left:auto;font-size:16px}
+/* ---------- Logros ---------- */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ach-card{background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:11px 10px;box-shadow:var(--shadow);text-align:center}
+.ach-card.lock{opacity:.38;border-color:var(--line);box-shadow:none;filter:grayscale(1)}
+.ach-card .a-ico{font-size:26px}
+.ach-card .a-n{font-weight:800;font-size:12.5px;margin-top:3px}
+.ach-card .a-d{font-size:10.5px;color:var(--ink-soft);margin-top:1px}
+.sdots{display:flex;gap:6px;justify-content:center;margin:0 0 14px}
+.sdot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--card)}
+.sdot.on{background:var(--jr-green)}
+.bubble{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:14px 52px 14px 15px;box-shadow:var(--shadow);margin-bottom:14px;position:relative}
+.bubble .bw{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft)}
+.bubble .bj{font-size:19px;font-weight:800;line-height:1.4;margin-top:3px}
+.bubble .br{font-size:12px;color:var(--jr-green);font-weight:600;margin-top:2px}
+.bubble .be{font-size:12.5px;color:var(--ink-soft);margin-top:5px}
+.spk{border:2.5px solid var(--ink);background:var(--card);border-radius:99px;width:38px;height:38px;font-size:15px;cursor:pointer;box-shadow:0 2px 0 var(--ink);flex-shrink:0;font-family:inherit}
+.spk:active{transform:translateY(2px);box-shadow:none}
+.bubble .spk{position:absolute;top:12px;right:11px}
+.price-big{font-family:var(--font-px);font-size:42px;letter-spacing:1px}
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:var(--jr-green);color:#fff;padding:10px 20px;border-radius:99px;border:2px solid var(--ink);
+  font-family:var(--font-px);font-size:14px;opacity:0;pointer-events:none;
+  transition:all .3s ease;z-index:50;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (min-width:481px){
+  #app{border-left:2.5px solid var(--ink);border-right:2.5px solid var(--ink)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">語</div>
+      <h1>Densha<span>にほんご · tu línea al japonés</span></h1>
+    </div>
+    <div class="hud">
+      <div class="hud-chip"><span class="ico">⚡</span><span id="hud-xp">0</span></div>
+      <div class="hud-chip"><span class="ico">🔥</span><span id="hud-streak">0</span></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="screen active" id="scr-home">
+      <div class="rankboard">
+        <div class="rb-top">
+          <div class="rb-rank"><span id="rb-rank-es">Turista</span><small id="rb-rank-jp">りょこうしゃ · LV.1</small></div>
+          <div class="rb-xp"><span id="rb-xp">0</span><small>XP TOTAL</small></div>
+        </div>
+        <div class="rb-track"><div class="rb-fill" id="rb-fill" style="width:0%"></div></div>
+        <div class="rb-next" id="rb-next"></div>
+      </div>
+      <div class="section-label">Misiones de hoy</div>
+      <div class="mis-card" id="mis-card"></div>
+      <div class="section-label">Práctica diaria</div>
+      <div class="prac-row">
+        <button class="prac-btn" onclick="startReview()"><div class="pb-ico">🎯</div><div class="pb-t">Repaso del día</div><div class="pb-s">tus palabras débiles</div></button>
+        <button class="prac-btn" onclick="openPrice()"><div class="pb-ico">💴</div><div class="pb-t">Precios</div><div class="pb-s">lee números como local</div></button>
+      </div>
+      <div class="section-label">Escenarios · desliza →</div>
+      <div class="scene-grid" id="scene-grid"></div>
+      <div class="section-label">Estudio</div>
+      <div id="study-hubs"></div>
+    </section>
+
+    <!-- LINE GROUP (sub-secciones) -->
+    <section class="screen" id="scr-lines">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2 id="ln-title"></h2><div class="sub" id="ln-sub"></div></div>
+      </div>
+      <div id="lines-list"></div>
+    </section>
+
+    <!-- LESSON INTRO / FLASHCARDS -->
+    <section class="screen" id="scr-learn">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go(curGroup?'scr-lines':'scr-home')">←</button>
+        <div><h2 id="learn-title"></h2><div class="sub" id="learn-sub"></div></div>
+      </div>
+      <div class="flash-count" id="flash-count"></div>
+      <div class="flash-wrap">
+        <div class="flashcard" id="flashcard" onclick="this.classList.toggle('flip')">
+          <div class="f-face front">
+            <div class="f-jp" id="fc-jp"></div>
+            <div class="f-ro" id="fc-ro"></div>
+            <div class="f-hint">toca para voltear</div>
+          </div>
+          <div class="f-face back">
+            <div class="f-es" id="fc-es"></div>
+            <div class="f-ro" id="fc-ro2"></div>
+            <div class="f-kd" id="fc-kd"></div>
+            <div class="f-hint">toca para voltear</div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost small" onclick="prevCard()">← Anterior</button>
+        <button class="btn ghost small" onclick="speak(cur.words[cardIdx].j)">🔊 Escuchar</button>
+        <button class="btn ghost small" onclick="nextCard()">Siguiente →</button>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn" onclick="startQuiz()">🚃 Empezar quiz · gana XP</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" id="scr-quiz">
+      <div class="quiz-top">
+        <button class="back-btn" onclick="confirmExit()">✕</button>
+        <div class="q-track"><div class="q-fill" id="q-fill" style="width:0%"></div></div>
+        <div class="combo" id="q-combo"></div>
+      </div>
+      <div id="q-body"></div>
+      <div class="feedback" id="q-feedback"></div>
+      <div id="q-continue" style="display:none;margin-top:14px">
+        <button class="btn" onclick="nextQuestion()">Continuar →</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="screen" id="scr-result">
+      <div class="result">
+        <div class="medal" id="r-medal">🎉</div>
+        <h2 id="r-title"></h2>
+        <p id="r-msg"></p>
+        <div class="r-xp" id="r-xp"></div>
+        <div class="r-stats">
+          <div class="r-stat"><div class="n" id="r-correct">0</div><div class="l">Aciertos</div></div>
+          <div class="r-stat"><div class="n" id="r-combo">0</div><div class="l">Mejor combo</div></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn ghost" onclick="go('scr-home')">Al mapa</button>
+          <button class="btn" onclick="retryLesson()">Repetir</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GUIDE -->
+    <section class="screen" id="scr-guide">
+      <div class="section-label">Guía de bolsillo</div>
+      <div id="guide-list"></div>
+    </section>
+
+    <!-- STORY MODE -->
+    <section class="screen" id="scr-story">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2>🇯🇵 7 días en Japón</h2><div class="sub">completa cada estación (60%+) para avanzar</div></div>
+      </div>
+      <div class="story-line" id="story-line"></div>
+    </section>
+
+    <!-- SCENE SIMULATOR -->
+    <section class="screen" id="scr-scene">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2 id="sc-title"></h2><div class="sub" id="sc-sub"></div></div>
+      </div>
+      <div class="sc-art-wrap" id="sc-art"></div>
+      <div class="sdots" id="sc-dots"></div>
+      <div id="sc-body"></div>
+    </section>
+
+    <!-- PRICE TRAINER -->
+    <section class="screen" id="scr-price">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2>💴 Precios</h2><div class="sub">lee cantidades en yenes como un local</div></div>
+      </div>
+      <div id="pr-body"></div>
+    </section>
+
+    <!-- BUILDER: PATTERN LIST -->
+    <section class="screen" id="scr-build">
+      <div class="section-label">Constructor de oraciones</div>
+      <p style="font-size:13.5px;color:var(--ink-soft);margin:0 2px 12px;line-height:1.55">El japonés se arma con fórmulas fijas: piezas <b>amarillas</b> son huecos donde metes vocabulario, <b>negras</b> son partículas y <b>verdes</b> son bloques fijos. Domina estas 8 fórmulas y generas el 80% del habla diaria.</p>
+      <div id="pattern-list"></div>
+    </section>
+
+    <!-- BUILDER: PATTERN DETAIL -->
+    <section class="screen" id="scr-pattern">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-build')">←</button>
+        <div><h2 id="pt-title"></h2><div class="sub" id="pt-tag"></div></div>
+      </div>
+      <div class="anat" id="pt-anatomy"></div>
+      <div class="section-label">La fórmula · toca cada pieza</div>
+      <div class="fx" id="pt-formula"></div>
+      <div class="fx-exp" id="pt-exp">👆 Toca una pieza de la fórmula para ver qué hace.</div>
+      <div class="mode-tabs">
+        <button class="mtab on" id="mt-lab" onclick="setPMode('lab')">🧪 Lab</button>
+        <button class="mtab" id="mt-gap" onclick="setPMode('gap')">✏️ Huecos</button>
+        <button class="mtab" id="mt-tiles" onclick="setPMode('tiles')">🎴 Fichas</button>
+      </div>
+      <div id="pt-area"></div>
+    </section>
+
+    <!-- VOCAB DICTIONARY -->
+    <section class="screen" id="scr-vocab">
+      <div class="section-label">Diccionario</div>
+      <input class="search-box" id="v-search" type="search" placeholder="Busca en kana, rōmaji o español…" oninput="renderVocab()">
+      <div class="chips" id="v-chips"></div>
+      <div id="v-list"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="screen" id="scr-profile">
+      <div class="section-label">Tu progreso</div>
+      <div class="p-grid">
+        <div class="p-card"><div class="n" id="p-xp">0</div><div class="l">XP total</div></div>
+        <div class="p-card"><div class="n" id="p-streak">0</div><div class="l">Racha (días)</div></div>
+        <div class="p-card"><div class="n" id="p-lessons">0</div><div class="l">Quizzes hechos</div></div>
+        <div class="p-card"><div class="n" id="p-words">0</div><div class="l">Palabras vistas</div></div>
+        <div class="p-card"><div class="n" id="p-sent">0</div><div class="l">Oraciones armadas</div></div>
+        <div class="p-card"><div class="n" id="p-lv">1</div><div class="l">Nivel</div></div>
+      </div>
+      <div class="section-label">Rangos del viajero</div>
+      <div class="ranks-list" id="ranks-list"></div>
+      <div class="section-label">Logros</div>
+      <div class="ach-grid" id="ach-grid"></div>
+      <div class="section-label">Respaldo</div>
+      <div class="btn-row" style="margin-top:2px">
+        <button class="btn ghost small" onclick="exportProgress()">⬇️ Exportar</button>
+        <button class="btn ghost small" onclick="document.getElementById('imp-file').click()">⬆️ Importar</button>
+      </div>
+      <input type="file" id="imp-file" accept=".json,application/json" style="display:none" onchange="importProgress(event)">
+      <div style="margin-top:14px">
+        <button class="btn ghost small" onclick="resetProgress()">Reiniciar progreso</button>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button class="nav-btn active" data-scr="scr-home" onclick="navTo(this)"><span class="n-ico">学</span><span class="n-lbl">Aprender</span></button>
+    <button class="nav-btn" data-scr="scr-vocab" onclick="navTo(this)"><span class="n-ico">単</span><span class="n-lbl">Vocab</span></button>
+    <button class="nav-btn" data-scr="scr-build" onclick="navTo(this)"><span class="n-ico">組</span><span class="n-lbl">Armar</span></button>
+    <button class="nav-btn" data-scr="scr-guide" onclick="navTo(this)"><span class="n-ico">本</span><span class="n-lbl">Guía</span></button>
+    <button class="nav-btn" data-scr="scr-profile" onclick="navTo(this)"><span class="n-ico">私</span><span class="n-lbl">Perfil</span></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =================== DATA =================== */
+/* Cada categoría es una "línea de metro": letra + color oficial-ish */
+const VOCAB = [
+ {id:'sal',letter:'S',color:'#E60012',name:'Saludos',jp:'あいさつ',words:[
+  {j:'おはようございます',r:'ohayō gozaimasu',e:'buenos días'},
+  {j:'こんにちは',r:'konnichiwa',e:'hola / buenas tardes'},
+  {j:'こんばんは',r:'konbanwa',e:'buenas noches (saludo)'},
+  {j:'さようなら',r:'sayōnara',e:'adiós'},
+  {j:'またね',r:'mata ne',e:'nos vemos (casual)'},
+  {j:'ありがとうございます',r:'arigatō gozaimasu',e:'muchas gracias'},
+  {j:'すみません',r:'sumimasen',e:'disculpe / perdón'},
+  {j:'ごめんなさい',r:'gomen nasai',e:'lo siento'},
+  {j:'おねがいします',r:'onegai shimasu',e:'por favor'},
+  {j:'はじめまして',r:'hajimemashite',e:'mucho gusto'},
+  {j:'いただきます',r:'itadakimasu',e:'(antes de comer)'},
+  {j:'ごちそうさまでした',r:'gochisōsama deshita',e:'(después de comer)'},
+  {j:'おげんきですか',r:'o-genki desu ka',e:'¿cómo está?'},
+  {j:'だいじょうぶです',r:'daijōbu desu',e:'está bien / no hay problema'},
+ ]},
+ {id:'com',letter:'C',color:'#F39700',name:'Comida y bebida',jp:'たべもの',words:[
+  {j:'みず',r:'mizu',e:'agua'},
+  {j:'おちゃ',r:'ocha',e:'té verde'},
+  {j:'コーヒー',r:'kōhī',e:'café'},
+  {j:'ビール',r:'bīru',e:'cerveza'},
+  {j:'なまビール',r:'nama bīru',e:'cerveza de barril'},
+  {j:'ワイン',r:'wain',e:'vino'},
+  {j:'ごはん',r:'gohan',e:'arroz / comida'},
+  {j:'にく',r:'niku',e:'carne'},
+  {j:'とりにく',r:'toriniku',e:'pollo'},
+  {j:'さかな',r:'sakana',e:'pescado'},
+  {j:'たまご',r:'tamago',e:'huevo'},
+  {j:'やさい',r:'yasai',e:'verduras'},
+  {j:'ラーメン',r:'rāmen',e:'ramen'},
+  {j:'すし',r:'sushi',e:'sushi'},
+  {j:'ぎょうざ',r:'gyōza',e:'gyoza'},
+  {j:'やきとり',r:'yakitori',e:'brochetas de pollo'},
+  {j:'おにぎり',r:'onigiri',e:'bola de arroz'},
+  {j:'みそしる',r:'misoshiru',e:'sopa de miso'},
+  {j:'デザート',r:'dezāto',e:'postre'},
+  {j:'アイスクリーム',r:'aisukurīmu',e:'helado'},
+ ]},
+ {id:'res',letter:'R',color:'#9C5E31',name:'Restaurante e izakaya',jp:'レストラン',words:[
+  {j:'メニュー',r:'menyū',e:'menú'},
+  {j:'おすすめ',r:'osusume',e:'recomendación'},
+  {j:'ちゅうもん',r:'chūmon',e:'orden / pedido'},
+  {j:'おかいけい',r:'o-kaikei',e:'la cuenta'},
+  {j:'おつり',r:'o-tsuri',e:'cambio (dinero)'},
+  {j:'せき',r:'seki',e:'asiento'},
+  {j:'よやく',r:'yoyaku',e:'reservación'},
+  {j:'はし',r:'hashi',e:'palillos'},
+  {j:'コップ',r:'koppu',e:'vaso'},
+  {j:'おしぼり',r:'oshibori',e:'toallita húmeda'},
+  {j:'おとおし',r:'otōshi',e:'aperitivo de cover'},
+  {j:'のみほうだい',r:'nomihōdai',e:'barra libre'},
+  {j:'もりあわせ',r:'moriawase',e:'surtido / plato mixto'},
+  {j:'おかわり',r:'okawari',e:'repetir / otra ronda'},
+  {j:'もちかえり',r:'mochikaeri',e:'para llevar'},
+  {j:'かんぱい',r:'kanpai',e:'¡salud!'},
+ ]},
+ {id:'tie',letter:'T',color:'#00A7DB',name:'Tiendas y dinero',jp:'かいもの',words:[
+  {j:'コンビニ',r:'konbini',e:'tienda 24h'},
+  {j:'スーパー',r:'sūpā',e:'supermercado'},
+  {j:'みせ',r:'mise',e:'tienda'},
+  {j:'おかね',r:'o-kane',e:'dinero'},
+  {j:'えん',r:'en',e:'yen'},
+  {j:'げんきん',r:'genkin',e:'efectivo'},
+  {j:'カード',r:'kādo',e:'tarjeta'},
+  {j:'ふくろ',r:'fukuro',e:'bolsa'},
+  {j:'ねだん',r:'nedan',e:'precio'},
+  {j:'やすい',r:'yasui',e:'barato'},
+  {j:'たかい',r:'takai',e:'caro'},
+  {j:'わりびき',r:'waribiki',e:'descuento'},
+  {j:'めんぜい',r:'menzei',e:'tax-free'},
+  {j:'ふく',r:'fuku',e:'ropa'},
+  {j:'くつ',r:'kutsu',e:'zapatos'},
+  {j:'おみやげ',r:'omiyage',e:'souvenir'},
+  {j:'レジ',r:'reji',e:'caja (para pagar)'},
+ ]},
+ {id:'lug',letter:'L',color:'#009B4B',name:'Lugares y transporte',jp:'ばしょ',words:[
+  {j:'えき',r:'eki',e:'estación'},
+  {j:'でんしゃ',r:'densha',e:'tren'},
+  {j:'ちかてつ',r:'chikatetsu',e:'metro'},
+  {j:'しんかんせん',r:'shinkansen',e:'tren bala'},
+  {j:'くうこう',r:'kūkō',e:'aeropuerto'},
+  {j:'ホテル',r:'hoteru',e:'hotel'},
+  {j:'トイレ',r:'toire',e:'baño'},
+  {j:'びょういん',r:'byōin',e:'hospital'},
+  {j:'ぎんこう',r:'ginkō',e:'banco'},
+  {j:'こうえん',r:'kōen',e:'parque'},
+  {j:'じんじゃ',r:'jinja',e:'santuario'},
+  {j:'うみ',r:'umi',e:'mar / playa'},
+  {j:'やま',r:'yama',e:'montaña'},
+  {j:'いえ',r:'ie',e:'casa'},
+  {j:'でぐち',r:'deguchi',e:'salida'},
+  {j:'みぎ',r:'migi',e:'derecha'},
+  {j:'ひだり',r:'hidari',e:'izquierda'},
+  {j:'まっすぐ',r:'massugu',e:'derecho / recto'},
+ ]},
+ {id:'tmp',letter:'H',color:'#8F76D6',name:'Tiempo y días',jp:'じかん',words:[
+  {j:'いま',r:'ima',e:'ahora'},
+  {j:'きょう',r:'kyō',e:'hoy'},
+  {j:'あした',r:'ashita',e:'mañana'},
+  {j:'きのう',r:'kinō',e:'ayer'},
+  {j:'あさ',r:'asa',e:'mañana (a.m.)'},
+  {j:'よる',r:'yoru',e:'noche'},
+  {j:'まいにち',r:'mainichi',e:'todos los días'},
+  {j:'ときどき',r:'tokidoki',e:'a veces'},
+  {j:'いつも',r:'itsumo',e:'siempre'},
+  {j:'あとで',r:'atode',e:'después'},
+  {j:'げつようび',r:'getsuyōbi',e:'lunes'},
+  {j:'きんようび',r:'kin\u2019yōbi',e:'viernes'},
+  {j:'どようび',r:'doyōbi',e:'sábado'},
+  {j:'にちようび',r:'nichiyōbi',e:'domingo'},
+  {j:'しゅうまつ',r:'shūmatsu',e:'fin de semana'},
+  {j:'なんじ',r:'nanji',e:'¿qué hora?'},
+ ]},
+ {id:'adj',letter:'A',color:'#E85298',name:'Adjetivos',jp:'けいようし',words:[
+  {j:'いい',r:'ii',e:'bueno'},
+  {j:'おおきい',r:'ōkii',e:'grande'},
+  {j:'ちいさい',r:'chiisai',e:'pequeño'},
+  {j:'あたらしい',r:'atarashii',e:'nuevo'},
+  {j:'おいしい',r:'oishii',e:'delicioso'},
+  {j:'うまい',r:'umai',e:'buenísimo (casual)'},
+  {j:'あまい',r:'amai',e:'dulce'},
+  {j:'からい',r:'karai',e:'picante'},
+  {j:'あつい',r:'atsui',e:'caluroso'},
+  {j:'さむい',r:'samui',e:'frío (clima)'},
+  {j:'つめたい',r:'tsumetai',e:'frío (bebidas)'},
+  {j:'たのしい',r:'tanoshii',e:'divertido'},
+  {j:'おもしろい',r:'omoshiroi',e:'interesante'},
+  {j:'むずかしい',r:'muzukashii',e:'difícil'},
+  {j:'いそがしい',r:'isogashii',e:'ocupado'},
+  {j:'かわいい',r:'kawaii',e:'lindo / tierno'},
+  {j:'すごい',r:'sugoi',e:'increíble'},
+  {j:'きれい',r:'kirei',e:'bonito / limpio'},
+  {j:'ねむい',r:'nemui',e:'con sueño'},
+ ]},
+ {id:'ver',letter:'V',color:'#00BB85',name:'Verbos',jp:'どうし',words:[
+  {j:'たべます',r:'tabemasu',e:'comer'},
+  {j:'のみます',r:'nomimasu',e:'beber'},
+  {j:'いきます',r:'ikimasu',e:'ir'},
+  {j:'きます',r:'kimasu',e:'venir'},
+  {j:'かえります',r:'kaerimasu',e:'regresar'},
+  {j:'みます',r:'mimasu',e:'ver'},
+  {j:'ききます',r:'kikimasu',e:'escuchar / preguntar'},
+  {j:'はなします',r:'hanashimasu',e:'hablar'},
+  {j:'かいます',r:'kaimasu',e:'comprar'},
+  {j:'はらいます',r:'haraimasu',e:'pagar'},
+  {j:'します',r:'shimasu',e:'hacer'},
+  {j:'わかります',r:'wakarimasu',e:'entender'},
+  {j:'おもいます',r:'omoimasu',e:'pensar / creer'},
+  {j:'まちます',r:'machimasu',e:'esperar'},
+  {j:'ねます',r:'nemasu',e:'dormir'},
+  {j:'はたらきます',r:'hatarakimasu',e:'trabajar'},
+  {j:'べんきょうします',r:'benkyō shimasu',e:'estudiar'},
+  {j:'あそびます',r:'asobimasu',e:'divertirse'},
+ ]},
+ {id:'pre',letter:'Q',color:'#BB641D',name:'Preguntas y señaladores',jp:'ぎもんし',words:[
+  {j:'なに',r:'nani',e:'qué'},
+  {j:'だれ',r:'dare',e:'quién'},
+  {j:'どこ',r:'doko',e:'dónde'},
+  {j:'いつ',r:'itsu',e:'cuándo'},
+  {j:'どうして',r:'dōshite',e:'por qué'},
+  {j:'どう',r:'dō',e:'cómo'},
+  {j:'いくら',r:'ikura',e:'cuánto cuesta'},
+  {j:'どんな',r:'donna',e:'qué tipo de'},
+  {j:'これ',r:'kore',e:'esto (cerca de mí)'},
+  {j:'それ',r:'sore',e:'eso (cerca de ti)'},
+  {j:'あれ',r:'are',e:'aquello (lejos)'},
+  {j:'ここ',r:'koko',e:'aquí'},
+  {j:'あそこ',r:'asoko',e:'allá'},
+ ]},
+ {id:'rea',letter:'K',color:'#D7005D',name:'Reacciones casuales',jp:'あいづち',words:[
+  {j:'うん',r:'un',e:'sí (casual)'},
+  {j:'へえ〜',r:'hē',e:'¿en serio? (interés)'},
+  {j:'そうですね',r:'sō desu ne',e:'así es / déjame pensar'},
+  {j:'なるほど',r:'naruhodo',e:'ya entiendo / con razón'},
+  {j:'ほんとうに？',r:'hontō ni?',e:'¿de verdad?'},
+  {j:'まじで？',r:'maji de?',e:'¿neta? (muy casual)'},
+  {j:'やばい',r:'yabai',e:'increíble / terrible'},
+  {j:'いいね',r:'ii ne',e:'qué bien / me gusta'},
+  {j:'ざんねん',r:'zannen',e:'qué lástima'},
+  {j:'たぶん',r:'tabun',e:'quizás'},
+  {j:'もちろん',r:'mochiron',e:'por supuesto'},
+  {j:'ちょっと…',r:'chotto…',e:'mmm, es que… (rechazo suave)'},
+  {j:'よかった',r:'yokatta',e:'qué bueno / menos mal'},
+ ]},
+ {id:'gen',letter:'G',color:'#0079C2',name:'Gente y familia',jp:'ひと',words:[
+  {j:'わたし',r:'watashi',e:'yo'},
+  {j:'ぼく',r:'boku',e:'yo (masculino, casual)'},
+  {j:'ともだち',r:'tomodachi',e:'amigo/a'},
+  {j:'かぞく',r:'kazoku',e:'familia'},
+  {j:'ちち',r:'chichi',e:'mi padre'},
+  {j:'はは',r:'haha',e:'mi madre'},
+  {j:'あに',r:'ani',e:'hermano mayor'},
+  {j:'いもうと',r:'imōto',e:'hermana menor'},
+  {j:'こども',r:'kodomo',e:'niño/a · hijo/a'},
+  {j:'おとこのひと',r:'otoko no hito',e:'hombre'},
+  {j:'おんなのひと',r:'onna no hito',e:'mujer'},
+  {j:'せんせい',r:'sensei',e:'maestro / doctor'},
+  {j:'てんいん',r:'ten\u2019in',e:'empleado de tienda'},
+  {j:'おきゃくさん',r:'o-kyaku-san',e:'cliente'},
+  {j:'かれ',r:'kare',e:'él / novio'},
+  {j:'かのじょ',r:'kanojo',e:'ella / novia'},
+ ]},
+ {id:'cli',letter:'W',color:'#5CB531',name:'Clima y estaciones',jp:'てんき',words:[
+  {j:'てんき',r:'tenki',e:'clima'},
+  {j:'あめ',r:'ame',e:'lluvia'},
+  {j:'ゆき',r:'yuki',e:'nieve'},
+  {j:'かぜ',r:'kaze',e:'viento'},
+  {j:'はれ',r:'hare',e:'despejado'},
+  {j:'くもり',r:'kumori',e:'nublado'},
+  {j:'はる',r:'haru',e:'primavera'},
+  {j:'なつ',r:'natsu',e:'verano'},
+  {j:'あき',r:'aki',e:'otoño'},
+  {j:'ふゆ',r:'fuyu',e:'invierno'},
+  {j:'さくら',r:'sakura',e:'flor de cerezo'},
+  {j:'かさ',r:'kasa',e:'paraguas'},
+  {j:'あたたかい',r:'atatakai',e:'templado / cálido'},
+  {j:'すずしい',r:'suzushii',e:'fresco'},
+ ]},
+ {id:'kat',letter:'X',color:'#EE7B1A',name:'Katakana del día a día',jp:'カタカナ',words:[
+  {j:'スマホ',r:'sumaho',e:'smartphone'},
+  {j:'パソコン',r:'pasokon',e:'computadora'},
+  {j:'ワイファイ',r:'waifai',e:'wifi'},
+  {j:'アプリ',r:'apuri',e:'app'},
+  {j:'ゲーム',r:'gēmu',e:'videojuego'},
+  {j:'アニメ',r:'anime',e:'anime'},
+  {j:'マンガ',r:'manga',e:'manga'},
+  {j:'テレビ',r:'terebi',e:'televisión'},
+  {j:'ドア',r:'doa',e:'puerta'},
+  {j:'エアコン',r:'eakon',e:'aire acondicionado'},
+  {j:'エレベーター',r:'erebētā',e:'elevador'},
+  {j:'コンセント',r:'konsento',e:'enchufe'},
+  {j:'シャワー',r:'shawā',e:'regadera'},
+  {j:'ベッド',r:'beddo',e:'cama'},
+  {j:'バイト',r:'baito',e:'trabajo de medio tiempo'},
+  {j:'チケット',r:'chiketto',e:'boleto (eventos)'},
+  {j:'デート',r:'dēto',e:'cita romántica'},
+ ]},
+];
+
+/* Frases completas: se estudian como bloques */
+const PHRASES = [
+ {id:'fcafe',letter:'F1',color:'#6F4E37',name:'Frases · Café y konbini',jp:'カフェ',words:[
+  {j:'コーヒーをひとつください',r:'kōhī o hitotsu kudasai',e:'un café, por favor'},
+  {j:'アイスでおねがいします',r:'aisu de onegai shimasu',e:'frío, por favor'},
+  {j:'ここでのみます',r:'koko de nomimasu',e:'para tomar aquí'},
+  {j:'もちかえりで',r:'mochikaeri de',e:'para llevar'},
+  {j:'ワイファイはありますか',r:'waifai wa arimasu ka',e:'¿hay wifi?'},
+  {j:'ふくろはいりません',r:'fukuro wa irimasen',e:'no necesito bolsa'},
+  {j:'あたためてください',r:'atatamete kudasai',e:'caliéntelo, por favor'},
+  {j:'カードではらえますか',r:'kādo de haraemasu ka',e:'¿puedo pagar con tarjeta?'},
+ ]},
+ {id:'frest',letter:'F2',color:'#B4001E',name:'Frases · Restaurante',jp:'しょくじ',words:[
+  {j:'ふたりです',r:'futari desu',e:'somos dos personas'},
+  {j:'メニューをおねがいします',r:'menyū o onegai shimasu',e:'el menú, por favor'},
+  {j:'おすすめはなんですか',r:'osusume wa nan desu ka',e:'¿qué recomienda?'},
+  {j:'これとこれをください',r:'kore to kore o kudasai',e:'esto y esto, por favor'},
+  {j:'ラーメンをふたつください',r:'rāmen o futatsu kudasai',e:'dos ramen, por favor'},
+  {j:'わさびぬきでおねがいします',r:'wasabi nuki de onegai shimasu',e:'sin wasabi, por favor'},
+  {j:'おみずをください',r:'o-mizu o kudasai',e:'agua, por favor'},
+  {j:'おかいけいおねがいします',r:'o-kaikei onegai shimasu',e:'la cuenta, por favor'},
+  {j:'べつべつでおねがいします',r:'betsubetsu de onegai shimasu',e:'cuentas separadas, por favor'},
+  {j:'おいしかったです',r:'oishikatta desu',e:'estuvo delicioso'},
+ ]},
+ {id:'fiza',letter:'F3',color:'#C3550E',name:'Frases · Izakaya',jp:'いざかや',words:[
+  {j:'とりあえずビール！',r:'toriaezu bīru!',e:'¡para empezar, cerveza!'},
+  {j:'なまビールをふたつください',r:'nama bīru o futatsu kudasai',e:'dos cervezas de barril'},
+  {j:'かんぱい！',r:'kanpai!',e:'¡salud!'},
+  {j:'やきとりのもりあわせをください',r:'yakitori no moriawase o kudasai',e:'surtido de yakitori, por favor'},
+  {j:'おかわりください',r:'okawari kudasai',e:'otra ronda, por favor'},
+  {j:'これ、うまい！',r:'kore, umai!',e:'¡esto está buenísimo!'},
+  {j:'なにがにんきですか',r:'nani ga ninki desu ka',e:'¿qué es lo popular?'},
+  {j:'よくきますか',r:'yoku kimasu ka',e:'¿viene seguido?'},
+ ]},
+ {id:'fsmall',letter:'F4',color:'#2C6BC6',name:'Frases · Small talk',jp:'かいわ',words:[
+  {j:'メキシコからきました',r:'mekishiko kara kimashita',e:'vengo de México'},
+  {j:'にほんごをべんきょうしています',r:'nihongo o benkyō shite imasu',e:'estoy estudiando japonés'},
+  {j:'いえいえ、まだまだです',r:'ieie, madamada desu',e:'no, no, aún me falta (humildad)'},
+  {j:'きょうはあついですね',r:'kyō wa atsui desu ne',e:'qué calor hace hoy, ¿no?'},
+  {j:'にほんははじめてですか',r:'nihon wa hajimete desu ka',e:'¿primera vez en Japón?'},
+  {j:'もういちどおねがいします',r:'mō ichido onegai shimasu',e:'otra vez, por favor'},
+  {j:'ゆっくりおねがいします',r:'yukkuri onegai shimasu',e:'más despacio, por favor'},
+  {j:'にほんごでなんですか',r:'nihongo de nan desu ka',e:'¿cómo se dice en japonés?'},
+  {j:'ちょっとわかりません',r:'chotto wakarimasen',e:'no entiendo bien'},
+ ]},
+];
+
+const KANJI=[
+ {id:'knum',letter:'数',color:'#0072BC',name:'Kanji · Números',jp:'すうじ',words:[
+  {j:'一',r:'ichi',e:'uno',kun:'ひと(つ)',on:'イチ',ex:'一つ (hitotsu) = uno (objeto)'},
+  {j:'二',r:'ni',e:'dos',kun:'ふた(つ)',on:'ニ',ex:'二人 (futari) = dos personas'},
+  {j:'三',r:'san',e:'tres',kun:'みっ(つ)',on:'サン',ex:'三月 (sangatsu) = marzo'},
+  {j:'四',r:'yon · shi',e:'cuatro',kun:'よん',on:'シ',ex:'四月 (shigatsu) = abril'},
+  {j:'五',r:'go',e:'cinco',kun:'いつ(つ)',on:'ゴ',ex:'五分 (gofun) = cinco minutos'},
+  {j:'六',r:'roku',e:'seis',kun:'むっ(つ)',on:'ロク',ex:'六時 (rokuji) = las seis'},
+  {j:'七',r:'nana · shichi',e:'siete',kun:'なな',on:'シチ',ex:'七月 (shichigatsu) = julio'},
+  {j:'八',r:'hachi',e:'ocho',kun:'やっ(つ)',on:'ハチ',ex:'八百 (happyaku) = ochocientos'},
+  {j:'九',r:'kyū',e:'nueve',kun:'ここの(つ)',on:'キュウ · ク',ex:'九時 (kuji) = las nueve'},
+  {j:'十',r:'jū',e:'diez',kun:'とお',on:'ジュウ',ex:'十分 (juppun) = diez minutos'},
+  {j:'百',r:'hyaku',e:'cien',on:'ヒャク',ex:'三百 (sanbyaku) = trescientos'},
+  {j:'千',r:'sen',e:'mil',kun:'ち',on:'セン',ex:'千円 (sen\u2019en) = mil yenes'},
+  {j:'万',r:'man',e:'diez mil',on:'マン',ex:'一万円 (ichiman\u2019en) = ¥10,000'},
+  {j:'円',r:'en',e:'yen · círculo',kun:'まる(い)',on:'エン',ex:'百円 (hyakuen) = cien yenes'},
+ ]},
+ {id:'ktmp',letter:'日',color:'#8F76D6',name:'Kanji · Tiempo y días',jp:'ようび',words:[
+  {j:'日',r:'hi · nichi',e:'día · sol',kun:'ひ',on:'ニチ · ジツ',ex:'日曜日 (nichiyōbi) = domingo'},
+  {j:'月',r:'tsuki · getsu',e:'luna · mes',kun:'つき',on:'ゲツ · ガツ',ex:'月曜日 (getsuyōbi) = lunes'},
+  {j:'火',r:'hi · ka',e:'fuego',kun:'ひ',on:'カ',ex:'火曜日 (kayōbi) = martes'},
+  {j:'水',r:'mizu · sui',e:'agua',kun:'みず',on:'スイ',ex:'水曜日 (suiyōbi) = miércoles'},
+  {j:'木',r:'ki · moku',e:'árbol · madera',kun:'き',on:'モク',ex:'木曜日 (mokuyōbi) = jueves'},
+  {j:'金',r:'kane · kin',e:'oro · dinero',kun:'かね',on:'キン',ex:'金曜日 (kin\u2019yōbi) = viernes'},
+  {j:'土',r:'tsuchi · do',e:'tierra',kun:'つち',on:'ド',ex:'土曜日 (doyōbi) = sábado'},
+  {j:'曜',r:'yō',e:'día de la semana',on:'ヨウ',ex:'何曜日 (nan\u2019yōbi) = ¿qué día es?'},
+  {j:'年',r:'toshi · nen',e:'año',kun:'とし',on:'ネン',ex:'今年 (kotoshi) = este año'},
+  {j:'時',r:'toki · ji',e:'hora · tiempo',kun:'とき',on:'ジ',ex:'三時 (sanji) = las tres'},
+  {j:'分',r:'fun',e:'minuto · parte',kun:'わ(かる)',on:'フン · ブン',ex:'五分 (gofun) = cinco minutos'},
+  {j:'今',r:'ima · kon',e:'ahora',kun:'いま',on:'コン',ex:'今日 (kyō) = hoy'},
+  {j:'半',r:'han',e:'mitad',kun:'なか(ば)',on:'ハン',ex:'三時半 (sanjihan) = tres y media'},
+ ]},
+ {id:'kcal',letter:'駅',color:'#009B4B',name:'Kanji · Calle y señales',jp:'まちなか',words:[
+  {j:'駅',r:'eki',e:'estación',on:'エキ',ex:'東京駅 (tōkyō-eki) = Estación de Tokio'},
+  {j:'出',r:'de(ru) · shutsu',e:'salir',kun:'で(る)',on:'シュツ',ex:'出口 (deguchi) = salida'},
+  {j:'入',r:'hai(ru) · nyū',e:'entrar',kun:'はい(る)',on:'ニュウ',ex:'入口 (iriguchi) = entrada'},
+  {j:'口',r:'kuchi',e:'boca · entrada',kun:'くち',on:'コウ',ex:'北口 (kitaguchi) = salida norte'},
+  {j:'店',r:'mise · ten',e:'tienda',kun:'みせ',on:'テン',ex:'店員 (ten\u2019in) = empleado'},
+  {j:'人',r:'hito · jin',e:'persona',kun:'ひと',on:'ジン · ニン',ex:'日本人 (nihonjin) = japonés (persona)'},
+  {j:'大',r:'ō(kii) · dai',e:'grande',kun:'おお(きい)',on:'ダイ',ex:'大人 (otona) = adulto'},
+  {j:'小',r:'chii(sai) · shō',e:'pequeño',kun:'ちい(さい)',on:'ショウ',ex:'小学生 (shōgakusei) = niño de primaria'},
+  {j:'中',r:'naka · chū',e:'dentro · medio',kun:'なか',on:'チュウ',ex:'営業中 (eigyōchū) = abierto (en servicio)'},
+  {j:'上',r:'ue · jō',e:'arriba',kun:'うえ',on:'ジョウ',ex:'上手 (jōzu) = hábil'},
+  {j:'下',r:'shita · ka',e:'abajo',kun:'した',on:'カ · ゲ',ex:'地下鉄 (chikatetsu) = metro'},
+  {j:'山',r:'yama · san',e:'montaña',kun:'やま',on:'サン',ex:'富士山 (fujisan) = Monte Fuji'},
+  {j:'川',r:'kawa',e:'río',kun:'かわ',on:'セン',ex:'川 (kawa) = río'},
+  {j:'本',r:'hon',e:'libro · origen',kun:'もと',on:'ホン',ex:'日本 (nihon) = Japón'},
+  {j:'外',r:'soto · gai',e:'fuera · exterior',kun:'そと',on:'ガイ',ex:'外国人 (gaikokujin) = extranjero'},
+ ]},
+ {id:'kmen',letter:'食',color:'#B4001E',name:'Kanji · Menú y comida',jp:'メニュー',words:[
+  {j:'食',r:'ta(beru) · shoku',e:'comer · comida',kun:'た(べる)',on:'ショク',ex:'食べます (tabemasu) = como'},
+  {j:'飲',r:'no(mu) · in',e:'beber',kun:'の(む)',on:'イン',ex:'飲み物 (nomimono) = bebida'},
+  {j:'肉',r:'niku',e:'carne',on:'ニク',ex:'牛肉 (gyūniku) = carne de res'},
+  {j:'魚',r:'sakana',e:'pescado',kun:'さかな',on:'ギョ',ex:'焼き魚 (yakizakana) = pescado asado'},
+  {j:'茶',r:'cha',e:'té',on:'チャ · サ',ex:'お茶 (ocha) = té verde'},
+  {j:'酒',r:'sake',e:'alcohol · sake',kun:'さけ',on:'シュ',ex:'日本酒 (nihonshu) = sake'},
+  {j:'牛',r:'ushi · gyū',e:'vaca · res',kun:'うし',on:'ギュウ',ex:'牛丼 (gyūdon) = bowl de res'},
+  {j:'鳥',r:'tori',e:'ave · pollo',kun:'とり',on:'チョウ',ex:'焼き鳥 (yakitori) = brochetas de pollo'},
+  {j:'米',r:'kome',e:'arroz (grano)',kun:'こめ',on:'ベイ · マイ',ex:'お米 (okome) = arroz'},
+  {j:'卵',r:'tamago',e:'huevo',kun:'たまご',on:'ラン',ex:'ゆで卵 (yudetamago) = huevo cocido'},
+  {j:'野',r:'no · ya',e:'campo',kun:'の',on:'ヤ',ex:'野菜 (yasai) = verduras'},
+  {j:'菜',r:'sai',e:'verdura',kun:'な',on:'サイ',ex:'野菜 (yasai) = verduras'},
+  {j:'定',r:'tei',e:'fijo · establecido',on:'テイ',ex:'定食 (teishoku) = menú del día'},
+  {j:'屋',r:'ya',e:'local · tienda de…',kun:'や',on:'オク',ex:'居酒屋 (izakaya) = izakaya'},
+ ]},
+];
+
+const ALL_LINES = [...VOCAB, ...PHRASES, ...KANJI];
+
+/* Guía de referencia */
+const GUIDE = [
+ {t:'Las 7 partículas',b:'は',c:'#E60012',html:`
+  <div class="phrase"><div class="p-jp">は (wa)</div><div class="p-es">Tema: "hablando de…" → わたしは = en cuanto a mí</div></div>
+  <div class="phrase"><div class="p-jp">を (o)</div><div class="p-es">Objeto directo → すしを たべます = como sushi</div></div>
+  <div class="phrase"><div class="p-jp">に (ni)</div><div class="p-es">Destino / hora → とうきょうに いきます = voy a Tokio</div></div>
+  <div class="phrase"><div class="p-jp">で (de)</div><div class="p-es">Lugar de la acción → レストランで たべます</div></div>
+  <div class="phrase"><div class="p-jp">の (no)</div><div class="p-es">Posesión → わたしの ほん = mi libro</div></div>
+  <div class="phrase"><div class="p-jp">か (ka)</div><div class="p-es">Pregunta → たべますか = ¿comes?</div></div>
+  <div class="phrase"><div class="p-jp">も (mo)</div><div class="p-es">También → わたしも = yo también</div></div>
+  <div class="tip">💡 は se pronuncia <b>wa</b> cuando es partícula. を se pronuncia <b>o</b>.</div>`},
+ {t:'Los 12 patrones maestros',b:'型',c:'#F39700',html:`
+  <div class="phrase"><div class="p-jp">___ は ___ です</div><div class="p-ro">X wa Y desu</div><div class="p-es">X es Y → わたしは メキシコじんです</div></div>
+  <div class="phrase"><div class="p-jp">___ は なんですか</div><div class="p-ro">wa nan desu ka</div><div class="p-es">¿Qué es X? → これは なんですか</div></div>
+  <div class="phrase"><div class="p-jp">___ を ください</div><div class="p-ro">o kudasai</div><div class="p-es">Deme X → みずを ください</div></div>
+  <div class="phrase"><div class="p-jp">___ は どこですか</div><div class="p-ro">wa doko desu ka</div><div class="p-es">¿Dónde está X? → トイレは どこですか</div></div>
+  <div class="phrase"><div class="p-jp">___ は いくらですか</div><div class="p-ro">wa ikura desu ka</div><div class="p-es">¿Cuánto cuesta X?</div></div>
+  <div class="phrase"><div class="p-jp">___ たいです</div><div class="p-ro">-tai desu</div><div class="p-es">Quiero… → きょうとに いきたいです</div></div>
+  <div class="phrase"><div class="p-jp">___ が すきです</div><div class="p-ro">ga suki desu</div><div class="p-es">Me gusta X → アニメが すきです</div></div>
+  <div class="phrase"><div class="p-jp">___ が あります / います</div><div class="p-ro">ga arimasu / imasu</div><div class="p-es">Hay X (cosas / seres vivos)</div></div>
+  <div class="phrase"><div class="p-jp">___ てもいいですか</div><div class="p-ro">-te mo ii desu ka</div><div class="p-es">¿Puedo…? → しゃしんを とってもいいですか</div></div>
+  <div class="phrase"><div class="p-jp">[lugar]で [cosa]を [verbo]</div><div class="p-es">Oración completa → いえで アニメを みます</div></div>
+  <div class="phrase"><div class="p-jp">[lugar]に いきます</div><div class="p-es">Voy a… → あした とうきょうに いきます</div></div>
+  <div class="phrase"><div class="p-jp">___ と おもいます</div><div class="p-ro">to omoimasu</div><div class="p-es">Creo que… → いいと おもいます</div></div>`},
+ {t:'Conjugación ます',b:'活',c:'#009B4B',html:`
+  <div class="phrase"><div class="p-jp">たべ<b>ます</b></div><div class="p-es">como / comeré</div></div>
+  <div class="phrase"><div class="p-jp">たべ<b>ません</b></div><div class="p-es">no como</div></div>
+  <div class="phrase"><div class="p-jp">たべ<b>ました</b></div><div class="p-es">comí</div></div>
+  <div class="phrase"><div class="p-jp">たべ<b>ませんでした</b></div><div class="p-es">no comí</div></div>
+  <div class="tip">💡 No hay conjugación por persona: たべます = como, comes, come, comemos. El sustantivo + します crea verbos: べんきょうします (estudiar), よやくします (reservar).</div>`},
+ {t:'La forma て',b:'て',c:'#00A7DB',html:`
+  <h4>Conversión desde ます</h4>
+  <div class="phrase"><div class="p-jp">します → して · ききます → きいて · のみます → のんで · かいます → かって · たべます → たべて</div></div>
+  <h4>4 usos estrella</h4>
+  <div class="phrase"><div class="p-jp">〜てください</div><div class="p-es">Petición → まってください (espere)</div></div>
+  <div class="phrase"><div class="p-jp">〜てもいいですか</div><div class="p-es">Permiso → すわってもいいですか</div></div>
+  <div class="phrase"><div class="p-jp">〜ています</div><div class="p-es">Acción en curso → べんきょうしています</div></div>
+  <div class="phrase"><div class="p-jp">〜て、〜</div><div class="p-es">Encadenar → のんで、たべます (bebo y como)</div></div>`},
+ {t:'Forma casual',b:'友',c:'#D7005D',html:`
+  <div class="phrase"><div class="p-jp">たべます → たべる</div><div class="p-es">como (casual)</div></div>
+  <div class="phrase"><div class="p-jp">たべません → たべない</div><div class="p-es">no como</div></div>
+  <div class="phrase"><div class="p-jp">たべました → たべた</div><div class="p-es">comí</div></div>
+  <div class="phrase"><div class="p-jp">です → だ (o nada)</div><div class="p-es">おいしいです → おいしい！</div></div>
+  <div class="tip">💡 Estrategia: habla en cortés (ます/です), pero aprende a <b>entender</b> la casual: es la que oirás en izakayas y anime.</div>`},
+ {t:'Adjetivos い',b:'味',c:'#E85298',html:`
+  <div class="phrase"><div class="p-jp">おいしい</div><div class="p-es">es rico</div></div>
+  <div class="phrase"><div class="p-jp">おいし<b>くない</b></div><div class="p-es">no es rico</div></div>
+  <div class="phrase"><div class="p-jp">おいし<b>かった</b></div><div class="p-es">estuvo rico</div></div>
+  <div class="phrase"><div class="p-jp">おいし<b>くなかった</b></div><div class="p-es">no estuvo rico</div></div>
+  <div class="tip">💡 おいしかったです al terminar de comer siempre cae bien. Adjetivos-na (すき, きれい) usan です/じゃない.</div>`},
+ {t:'Números y contadores',b:'百',c:'#8F76D6',html:`
+  <div class="phrase"><div class="p-jp">1-10</div><div class="p-es">いち · に · さん · よん · ご · ろく · なな · はち · きゅう · じゅう</div></div>
+  <div class="phrase"><div class="p-jp">100 ひゃく · 1000 せん · 10,000 まん</div><div class="p-es">¥1,200 = せんにひゃくえん</div></div>
+  <div class="phrase"><div class="p-jp">Cosas: ひとつ・ふたつ・みっつ</div><div class="p-es">ラーメンを ふたつ ください</div></div>
+  <div class="phrase"><div class="p-jp">Personas: ひとり・ふたり・さんにん</div><div class="p-es">te lo preguntan al entrar: なんめいさまですか</div></div>
+  <div class="phrase"><div class="p-jp">Vasos: いっぱい・にはい・さんばい</div><div class="p-es">ビールを にはい ください</div></div>`},
+ {t:'Lo que el staff te dirá',b:'店',c:'#9C5E31',html:`
+  <div class="phrase"><div class="p-jp">いらっしゃいませ</div><div class="p-ro">irasshaimase</div><div class="p-es">¡bienvenido! (no requiere respuesta)</div></div>
+  <div class="phrase"><div class="p-jp">なんめいさまですか</div><div class="p-ro">nanmei-sama desu ka</div><div class="p-es">¿cuántas personas? → ふたりです</div></div>
+  <div class="phrase"><div class="p-jp">ごちゅうもんはおきまりですか</div><div class="p-ro">go-chūmon wa o-kimari desu ka</div><div class="p-es">¿ya decidieron? → まだです / はい</div></div>
+  <div class="phrase"><div class="p-jp">いじょうでよろしいですか</div><div class="p-ro">ijō de yoroshii desu ka</div><div class="p-es">¿sería todo? → はい</div></div>
+  <div class="phrase"><div class="p-jp">ふくろはいりますか</div><div class="p-ro">fukuro wa irimasu ka</div><div class="p-es">¿necesita bolsa? → はい / いりません</div></div>
+  <div class="phrase"><div class="p-jp">あたためますか</div><div class="p-ro">atatamemasu ka</div><div class="p-es">¿se lo caliento? → はい、おねがいします</div></div>
+  <div class="phrase"><div class="p-jp">ポイントカードはおもちですか</div><div class="p-es">¿tiene tarjeta de puntos? → ないです</div></div>
+  <div class="phrase"><div class="p-jp">ラストオーダーです</div><div class="p-es">última orden (izakaya, antes de cerrar)</div></div>`},
+ {t:'Cómo leer kanji',b:'漢',c:'#0072BC',html:`
+  <div class="phrase"><div class="p-es">Casi todo kanji tiene <b>dos lecturas</b>: la <b>くん</b> (kun, japonesa nativa) se usa cuando el kanji va solo o con hiragana pegado; la <b>オン</b> (on, de origen chino) se usa en palabras compuestas de varios kanji.</div></div>
+  <div class="phrase"><div class="p-jp">水 solo → みず (mizu)</div><div class="p-es">lectura くん: "agua" como palabra suelta</div></div>
+  <div class="phrase"><div class="p-jp">水曜日 → すいようび (suiyōbi)</div><div class="p-es">lectura オン: 水 se lee スイ dentro del compuesto "miércoles"</div></div>
+  <div class="phrase"><div class="p-jp">食べます → たべます</div><div class="p-es">くん: kanji + hiragana pegado (okurigana) casi siempre es lectura japonesa</div></div>
+  <div class="phrase"><div class="p-jp">定食 → ていしょく (teishoku)</div><div class="p-es">オン: dos kanji juntos casi siempre es lectura china</div></div>
+  <div class="tip">💡 Regla práctica: kanji <b>solo</b> o con hiragana → lectura くん; kanji <b>en pareja</b> → lectura オン. Tiene excepciones, pero acierta la mayoría de las veces. En las tarjetas de Densha ambas lecturas vienen etiquetadas con su ejemplo.</div>`},
+];
+
+const RANKS = [
+ {xp:0,es:'Turista',jp:'りょこうしゃ',ico:'🎒'},
+ {xp:150,es:'Explorador',jp:'たんけんか',ico:'🗺️'},
+ {xp:400,es:'Cliente habitual',jp:'じょうれん',ico:'🍜'},
+ {xp:800,es:'Conversador',jp:'かたりて',ico:'💬'},
+ {xp:1500,es:'Maestro del izakaya',jp:'いざかやのたつじん',ico:'🏮'},
+ {xp:2500,es:'Casi local',jp:'ほぼじもと',ico:'⛩️'},
+];
+
+/* =================== STATE =================== */
+const KEY='densha-nihongo-v1';
+let S={xp:0,best:{},quizzes:0,seen:{},streak:0,lastDay:null,sentences:0};
+let mem=null; // fallback en memoria
+
+/* Guardado dual: localStorage (teléfono) → window.storage (Claude) → memoria */
+function lsOK(){
+  try{const k='__densha_t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}
+  catch(e){return false}
+}
+async function loadState(){
+  let loaded=false;
+  if(lsOK()){
+    try{
+      const v=localStorage.getItem(KEY);
+      if(v)S={...S,...JSON.parse(v)};
+      loaded=true;
+    }catch(e){/* dato corrupto: usar default */}
+  }
+  if(!loaded){
+    try{
+      if(window.storage){
+        const r=await window.storage.get(KEY);
+        if(r&&r.value)S={...S,...JSON.parse(r.value)};
+      }else if(mem){S=mem}
+    }catch(e){/* clave nueva: usar estado default */}
+  }
+  touchStreak();renderAll();
+}
+async function saveState(){
+  mem=JSON.parse(JSON.stringify(S));
+  if(lsOK()){
+    try{localStorage.setItem(KEY,JSON.stringify(S));return}catch(e){}
+  }
+  try{if(window.storage)await window.storage.set(KEY,JSON.stringify(S));}catch(e){/* seguimos en memoria */}
+}
+function touchStreak(){
+  const today=new Date().toDateString();
+  if(S.lastDay===today)return;
+  const y=new Date(Date.now()-864e5).toDateString();
+  S.streak=(S.lastDay===y)?S.streak+1:1;
+  S.lastDay=today;saveState();
+}
+function resetProgress(){
+  if(!confirm('¿Reiniciar todo tu progreso?'))return;
+  S={xp:0,best:{},quizzes:0,seen:{},streak:1,lastDay:new Date().toDateString(),sentences:0};
+  saveState();renderAll();go('scr-home');toast('Progreso reiniciado');
+}
+
+/* =================== RENDER =================== */
+function rankFor(xp){let r=RANKS[0],i=0;RANKS.forEach((k,idx)=>{if(xp>=k.xp){r=k;i=idx}});return{...r,lv:i+1,next:RANKS[i+1]||null}}
+function renderAll(){
+  document.getElementById('hud-xp').textContent=S.xp;
+  document.getElementById('hud-streak').textContent=S.streak;
+  const rk=rankFor(S.xp);
+  document.getElementById('rb-rank-es').textContent=rk.es;
+  document.getElementById('rb-rank-jp').textContent=rk.jp+' · LV.'+rk.lv;
+  document.getElementById('rb-xp').textContent=S.xp;
+  if(rk.next){
+    const span=rk.next.xp-rk.xp, done=S.xp-rk.xp;
+    document.getElementById('rb-fill').style.width=Math.min(100,done/span*100)+'%';
+    document.getElementById('rb-next').textContent='Faltan '+(rk.next.xp-S.xp)+' XP para '+rk.next.es+' '+rk.next.ico;
+  }else{
+    document.getElementById('rb-fill').style.width='100%';
+    document.getElementById('rb-next').textContent='¡Rango máximo alcanzado! すごい！';
+  }
+  renderHubs();
+  if(curGroup)renderLines('lines-list',GROUPS[curGroup].list);
+  renderScenes();
+  renderMissions();
+  renderAch();
+  checkAch();
+  // perfil
+  document.getElementById('p-xp').textContent=S.xp;
+  document.getElementById('p-streak').textContent=S.streak;
+  document.getElementById('p-lessons').textContent=S.quizzes;
+  document.getElementById('p-words').textContent=Object.keys(S.seen).length;
+  document.getElementById('p-sent').textContent=S.sentences||0;
+  document.getElementById('p-lv').textContent=rk.lv;
+  const rl=document.getElementById('ranks-list');rl.innerHTML='';
+  RANKS.forEach(k=>{
+    const hit=S.xp>=k.xp;
+    rl.insertAdjacentHTML('beforeend',
+     `<div class="rank-row ${hit?'hit':''}">
+        <div class="rr-ico">${hit?k.ico:'🔒'}</div>
+        <div><div class="rr-name">${k.es}</div><div class="rr-jp">${k.jp}</div></div>
+        <div class="rr-xp">${k.xp} XP</div>
+      </div>`);
+  });
+}
+const GROUPS={
+ voc:{name:'Vocabulario',jp:'たんご',badge:'単',color:'#0B7A3E',list:VOCAB,sub:'palabras por tema'},
+ phr:{name:'Frases hechas',jp:'フレーズ',badge:'文',color:'#B4001E',list:PHRASES,sub:'bloques listos para usar'},
+ kan:{name:'Kanji',jp:'かんじ',badge:'漢',color:'#0072BC',list:KANJI,sub:'lecturas くん y オン'},
+};
+let curGroup=null;
+function groupAvg(list){
+  const vals=list.map(c=>S.best[c.id]||0);
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+}
+function renderHubs(){
+  const el=document.getElementById('study-hubs');if(!el)return;el.innerHTML='';
+  Object.keys(GROUPS).forEach(k=>{
+    const g=GROUPS[k];
+    const words=g.list.reduce((a,c)=>a+c.words.length,0);
+    const avg=groupAvg(g.list);
+    el.insertAdjacentHTML('beforeend',
+     `<button class="line-card" onclick="openLines('${k}')">
+        <div class="line-badge" style="background:${g.color}">${g.badge}</div>
+        <div class="line-info">
+          <h3>${g.name}</h3>
+          <div class="jp">${g.list.length} líneas · ${words} tarjetas · ${g.sub}</div>
+        </div>
+        <div class="line-pct">${avg}%</div>
+      </button>`);
+  });
+}
+function openLines(k){
+  curGroup=k;const g=GROUPS[k];
+  document.getElementById('ln-title').textContent=g.badge+' '+g.name;
+  document.getElementById('ln-sub').textContent=g.jp+' · elige una línea';
+  renderLines('lines-list',g.list);
+  go('scr-lines');
+}
+function renderLines(elId,list){
+  const el=document.getElementById(elId);el.innerHTML='';
+  list.forEach(c=>{
+    const best=S.best[c.id]||0;
+    const dots=Math.round(best/100*5);
+    let sts='';
+    for(let i=0;i<5;i++){
+      sts+=`<div class="st-dot ${i<dots?'full':''}" style="--dotc:${c.color}"></div>`;
+      if(i<4)sts+='<div class="st-seg"></div>';
+    }
+    el.insertAdjacentHTML('beforeend',
+     `<button class="line-card" onclick="openLesson('${c.id}')">
+        <div class="line-badge" style="background:${c.color}">${c.letter}</div>
+        <div class="line-info">
+          <h3>${c.name}</h3><div class="jp">${c.jp} · ${c.words.length} tarjetas</div>
+          <div class="stations">${sts}</div>
+        </div>
+        <div class="line-pct">${best}%</div>
+      </button>`);
+  });
+}
+/* Guía */
+(function renderGuide(){
+  const g=document.getElementById('guide-list');
+  GUIDE.forEach((s,i)=>{
+    g.insertAdjacentHTML('beforeend',
+     `<div class="acc" id="acc-${i}">
+        <button class="acc-head" onclick="document.getElementById('acc-${i}').classList.toggle('open')">
+          <span class="a-badge" style="background:${s.c}">${s.b}</span>${s.t}
+          <span class="chev">▼</span>
+        </button>
+        <div class="acc-body">${s.html}</div>
+      </div>`);
+  });
+})();
+
+/* =================== NAV =================== */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector('main').scrollTo(0,0);window.scrollTo(0,0);
+}
+function navTo(btn){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');go(btn.dataset.scr);
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* =================== FLASHCARDS =================== */
+let cur=null,cardIdx=0;
+function openLesson(id){
+  cur=ALL_LINES.find(c=>c.id===id);cardIdx=0;
+  document.getElementById('learn-title').textContent=cur.name;
+  document.getElementById('learn-sub').textContent=cur.jp+' · repasa y luego haz el quiz';
+  showCard();go('scr-learn');
+}
+function showCard(){
+  const w=cur.words[cardIdx];
+  document.getElementById('flashcard').classList.remove('flip');
+  const jpEl=document.getElementById('fc-jp');
+  jpEl.textContent=w.j;
+  jpEl.style.fontSize=w.j.length<=2?'64px':(w.j.length>=10?'28px':'40px');
+  document.getElementById('fc-ro').textContent=w.r;
+  document.getElementById('fc-es').textContent=w.e;
+  document.getElementById('fc-ro2').textContent=w.r;
+  const kd=document.getElementById('fc-kd');
+  if(w.kun||w.on||w.ex){
+    kd.style.display='block';
+    kd.innerHTML=(w.kun?'<span>くん '+w.kun+'</span>':'')+
+                 (w.on?'<span>オン '+w.on+'</span>':'')+
+                 (w.ex?'<div class="kd-ex">例 '+w.ex+'</div>':'');
+  }else{kd.style.display='none';kd.innerHTML='';}
+  document.getElementById('flash-count').textContent=(cardIdx+1)+' / '+cur.words.length;
+  S.seen[cur.id+':'+cardIdx]=1;saveState();
+  document.getElementById('p-words').textContent=Object.keys(S.seen).length;
+}
+function nextCard(){cardIdx=(cardIdx+1)%cur.words.length;showCard()}
+function prevCard(){cardIdx=(cardIdx-1+cur.words.length)%cur.words.length;showCard()}
+
+/* =================== QUIZ =================== */
+let Q=null;
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(){
+  const pool=shuffle(cur.words);
+  const qWords=pool.slice(0,Math.min(7,pool.length));
+  const questions=qWords.map(w=>({type:Math.random()<.5?'j2e':'e2j',w}));
+  // pregunta final: juego de pares
+  questions.push({type:'match',pairs:shuffle(cur.words).slice(0,4)});
+  Q={qs:questions,i:0,correct:0,combo:0,bestCombo:0,xp:0,answered:false};
+  go('scr-quiz');renderQuestion();
+}
+function confirmExit(){if(confirm('¿Salir del quiz? Perderás el progreso de esta ronda.'))go(cur&&cur.id==='review'?'scr-home':'scr-learn')}
+function updateQuizTop(){
+  document.getElementById('q-fill').style.width=(Q.i/Q.qs.length*100)+'%';
+  document.getElementById('q-combo').textContent=Q.combo>=2?'x'+Q.combo+'🔥':'';
+}
+function renderQuestion(){
+  updateQuizTop();
+  const body=document.getElementById('q-body');
+  const fb=document.getElementById('q-feedback');
+  fb.className='feedback';fb.textContent='';
+  document.getElementById('q-continue').style.display='none';
+  const q=Q.qs[Q.i];Q.answered=false;
+  if(q.type==='match'){renderMatch(q,body);return}
+  const isJ2E=q.type==='j2e';
+  // distractores de la misma línea
+  const others=shuffle(cur.words.filter(w=>w!==q.w)).slice(0,3);
+  const opts=shuffle([q.w,...others]);
+  body.innerHTML=`
+    <div class="q-prompt-label">${isJ2E?'¿Qué significa?':'¿Cómo se dice en japonés?'}</div>
+    <div class="q-prompt" style="position:relative">
+      <div class="big">${isJ2E?q.w.j:q.w.e}</div>
+      ${isJ2E?'<div class="ro">'+q.w.r+'</div><button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(Q.qs[Q.i].w.j)">🔊</button>':''}
+    </div>
+    <div class="opts">${opts.map((o,i)=>
+      `<button class="opt" data-ok="${o===q.w?1:0}" onclick="answer(this,'${isJ2E?'e':'j'}')">${isJ2E?o.e:o.j}${!isJ2E?'<div style="font-size:11.5px;font-weight:500;color:inherit;opacity:.75">'+o.r+'</div>':''}</button>`
+    ).join('')}</div>`;
+}
+function answer(btn,mode){
+  if(Q.answered)return;Q.answered=true;
+  const ok=btn.dataset.ok==='1';
+  const q=Q.qs[Q.i];
+  /* registrar estadística por palabra (alimenta el Repaso del día) */
+  if(q.w){
+    const k=q.w._k||cur.id+':'+q.w.j;
+    S.w=S.w||{};const st=S.w[k]||(S.w[k]={ok:0,bad:0});
+    ok?st.ok++:st.bad++;
+  }
+  speak(q.w.j);
+  const fb=document.getElementById('q-feedback');
+  document.querySelectorAll('.opt').forEach(o=>{
+    if(o.dataset.ok==='1')o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  if(ok){
+    Q.correct++;Q.combo++;Q.bestCombo=Math.max(Q.bestCombo,Q.combo);
+    const bonus=Q.combo>=3?4:0;Q.xp+=10+bonus;
+    fb.className='feedback ok';
+    fb.textContent='✅ ¡Correcto! +'+(10+bonus)+' XP'+(bonus?' (combo x'+Q.combo+')':'');
+  }else{
+    Q.combo=0;
+    fb.className='feedback no';
+    fb.textContent='❌ Era: '+q.w.j+' ('+q.w.r+') = '+q.w.e;
+  }
+  updateQuizTop();
+  document.getElementById('q-continue').style.display='block';
+}
+/* --- juego de pares --- */
+let mSel=null,mLeft=0;
+function renderMatch(q,body){
+  mSel=null;mLeft=q.pairs.length;
+  const tiles=shuffle([
+    ...q.pairs.map((p,i)=>({txt:p.j,pair:i,side:'j'})),
+    ...q.pairs.map((p,i)=>({txt:p.e,pair:i,side:'e'})),
+  ]);
+  body.innerHTML=`
+    <div class="q-prompt-label">Une los pares 🎴</div>
+    <div class="match-grid">${tiles.map((t,i)=>
+      `<button class="m-tile" data-pair="${t.pair}" onclick="pickTile(this)">${t.txt}</button>`
+    ).join('')}</div>`;
+}
+function pickTile(el){
+  if(el.classList.contains('done'))return;
+  if(!mSel){mSel=el;el.classList.add('sel');return}
+  if(mSel===el){el.classList.remove('sel');mSel=null;return}
+  if(mSel.dataset.pair===el.dataset.pair){
+    mSel.classList.remove('sel');mSel.classList.add('done');el.classList.add('done');
+    mSel=null;mLeft--;
+    if(mLeft===0){
+      Q.correct++;Q.combo++;Q.bestCombo=Math.max(Q.bestCombo,Q.combo);Q.xp+=15;
+      const fb=document.getElementById('q-feedback');
+      fb.className='feedback ok';fb.textContent='✅ ¡Todos los pares! +15 XP';
+      document.getElementById('q-continue').style.display='block';
+      Q.answered=true;updateQuizTop();
+    }
+  }else{
+    const a=mSel,b=el;
+    a.classList.add('shake');b.classList.add('shake');Q.combo=0;updateQuizTop();
+    setTimeout(()=>{a.classList.remove('shake','sel');b.classList.remove('shake')},320);
+    mSel=null;
+  }
+}
+function nextQuestion(){
+  Q.i++;
+  if(Q.i>=Q.qs.length){finishQuiz();return}
+  renderQuestion();
+}
+function finishQuiz(){
+  const total=Q.qs.length;
+  const pct=Math.round(Q.correct/total*100);
+  const prev=S.best[cur.id]||0;
+  if(pct>prev)S.best[cur.id]=pct;
+  S.xp+=Q.xp;S.quizzes++;bumpMission('quiz');touchStreak();saveState();renderAll();
+  document.getElementById('r-medal').textContent=pct===100?'🏆':pct>=70?'🎉':'🚃';
+  document.getElementById('r-title').textContent=pct===100?'¡Perfecto! かんぺき！':pct>=70?'¡Bien hecho! よくできました！':'Sigue practicando がんばって！';
+  document.getElementById('r-msg').textContent=pct>prev?'Nuevo récord en esta línea: '+pct+'%':'Tu récord en esta línea: '+Math.max(pct,prev)+'%';
+  document.getElementById('r-xp').textContent='+'+Q.xp+' XP';
+  document.getElementById('r-correct').textContent=Q.correct+'/'+total;
+  document.getElementById('r-combo').textContent='x'+Q.bestCombo;
+  go('scr-result');
+}
+function retryLesson(){
+  if(cur&&cur.id==='review'){startReview();return}
+  openLesson(cur.id);startQuiz();
+}
+
+/* =================== AUDIO (TTS japonés del sistema) =================== */
+let jpVoice=null;
+function initVoice(){
+  try{
+    const vs=speechSynthesis.getVoices();
+    jpVoice=vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith('ja'))||null;
+  }catch(e){}
+}
+try{speechSynthesis.onvoiceschanged=initVoice;initVoice();}catch(e){}
+function speak(t){
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='ja-JP';if(jpVoice)u.voice=jpVoice;u.rate=0.88;
+    speechSynthesis.speak(u);
+  }catch(e){/* sin TTS disponible: silencio elegante */}
+}
+
+/* =================== PIXEL ART 16-BITS =================== */
+const ART={
+ cafe:{p:{k:'#17181C',w:'#F6F5F1',b:'#6F4E37',t:'#B4802E',s:'#C9CBD1',g:'#31C871'},g:[
+  '..........................',
+  '.......s.....s............',
+  '......s.....s.............',
+  '.......s.....s............',
+  '......s.....s.............',
+  '..........................',
+  '.....kkkkkkkkkkkk.........',
+  '.....kbbbbbbbbbbk.........',
+  '.....kwwwwwwwwwwkkk.......',
+  '.....kwwwwwwwwwwk.k.......',
+  '.....kwwggwwwwwwk.k.......',
+  '.....kwwwwwwwwwwkkk.......',
+  '......kwwwwwwwwk..........',
+  '.......kkkkkkkk...........',
+  '....tttttttttttttttt......',
+  '....tttttttttttttttt......',
+  '..........................']},
+ ramen:{p:{k:'#17181C',r:'#D5382E',w:'#F6F5F1',n:'#E8C063',g:'#31C871',q:'#FF9EC4',s:'#C9CBD1',h:'#8A5A2B',t:'#B4802E'},g:[
+  '..........................',
+  '.........s....s...........',
+  '........s....s.hhhhhhhh...',
+  '.........s....s.hhhhhhhh..',
+  '..........................',
+  '......kkkkkkkkkkkkkk......',
+  '.....knnnnnnnnnnnnnnk.....',
+  '.....knngnnqqnnngnnnk.....',
+  '......krrrrrrrrrrrrk......',
+  '......krrwwrrrrrrrrk......',
+  '.......krrrrrrrrrrk.......',
+  '........kkkkkkkkkk........',
+  '..........kkkk............',
+  '....tttttttttttttttt......',
+  '....tttttttttttttttt......',
+  '..........................']},
+ lantern:{p:{k:'#17181C',r:'#E5382E',d:'#8C1F17',y:'#FFD37A',n:'#1B2A4A'},g:[
+  '.........kk...............',
+  '.........kk...............',
+  '.......kkkkkk..nnnnnnnnn..',
+  '......krrrrrrk.nnnnnnnnn..',
+  '.....krrrrrrrrk.n.nn.nn.n.',
+  '.....kddddddddk.n.nn.nn.n.',
+  '.....krryyrrrrk.n.nn.nn.n.',
+  '.....krryyrrrrk.n.nn.nn.n.',
+  '.....kddddddddk.n.nn.nn.n.',
+  '.....krrrrrrrrk.n.nn.nn.n.',
+  '......krrrrrrk............',
+  '.......kkkkkk.............',
+  '.........kk...............',
+  '..........................']},
+ konbini:{p:{k:'#17181C',B:'#0072BC',w:'#F6F5F1',r:'#D5382E',g:'#BEE7F2',d:'#5A5C66',t:'#B4802E'},g:[
+  '..........................',
+  '...BBBBBBBBBBBBBBBBBB.....',
+  '...BBBBBBBBBBBBBBBBBB.....',
+  '...wwrrwwBBwwrrwwBBww.....',
+  '...wwrrwwBBwwrrwwBBww.....',
+  '...kkkkkkkkkkkkkkkkkk.....',
+  '...kggggggggk..kggggk.....',
+  '...kggggggggk..kggggk.....',
+  '...kggggggggk..kggdgk.....',
+  '...kggggggggk..kggggk.....',
+  '...kkkkkkkkkkkkkkkkkk.....',
+  '...tttttttttttttttttt.....',
+  '..........................']},
+ train:{p:{k:'#17181C',g:'#0B7A3E',w:'#BEE7F2',W:'#F6F5F1',y:'#FFD37A',d:'#5A5C66'},g:[
+  '..........................',
+  '........kkkkkkkkkk........',
+  '.......kggggggggggk.......',
+  '......kggggggggggggk......',
+  '......kgwwwwkkwwwwgk......',
+  '......kgwwwwkkwwwwgk......',
+  '......kgwwwwkkwwwwgk......',
+  '......kggggggggggggk......',
+  '......kWWWWWWWWWWWWk......',
+  '......kggggggggggggk......',
+  '......kgyygggggggyygk.....',
+  '......kkkkkkkkkkkkkk......',
+  '.......dk..dd..dd.kd......',
+  '.....kkkkkkkkkkkkkkkk.....',
+  '..........................']},
+ books:{p:{k:'#17181C',t:'#B4802E',r:'#D5382E',b:'#0072BC',g:'#0B7A3E',y:'#FFD37A',p:'#8F76D6',o:'#EE7B1A'},g:[
+  '..........................',
+  '....kkkkkkkkkkkkkkkkkk....',
+  '....k.rrbbggyy.ppoorr.k...',
+  '....k.rrbbggyy.ppoorr.k...',
+  '....k.rrbbggyy.ppoorr.k...',
+  '....k.rrbbggyy.ppoorr.k...',
+  '....kttttttttttttttttk....',
+  '....k.ggppoorr.yybbgg.k...',
+  '....k.ggppoorr.yybbgg.k...',
+  '....k.ggppoorr.yybbgg.k...',
+  '....k.ggppoorr.yybbgg.k...',
+  '....kttttttttttttttttk....',
+  '....kkkkkkkkkkkkkkkkkk....',
+  '..........................']},
+ taxi:{p:{k:'#17181C',y:'#FFD37A',w:'#BEE7F2',d:'#5A5C66',o:'#E8A020'},g:[
+  '..........................',
+  '..........kkkk............',
+  '.........kooook...........',
+  '.......kkkkkkkkkk.........',
+  '......kyywwkwwyyyk........',
+  '.....kyyywwkwwyyyyk.......',
+  '...kkyyyyyyyyyyyyyykk.....',
+  '...kyyyyyyyyyyyyyyyyk.....',
+  '...kyyyyyyyyyyyyyyyyk.....',
+  '...kkkkkkkkkkkkkkkkkk.....',
+  '.....kddk......kddk.......',
+  '......kk........kk........',
+  '..........................']},
+ plane:{p:{k:'#17181C',w:'#F6F5F1',b:'#0072BC',g:'#BEE7F2'},g:[
+  '..........................',
+  '....kk....................',
+  '....kbk...................',
+  '....kbbk..................',
+  '....kbbbkkkkkkkkkkk.......',
+  '...kwwwwwwwwwwwwwwwkk.....',
+  '..kwgwgwgwgwgwgwwwwwwk....',
+  '...kwwwwwwwwwwwwwwwkk.....',
+  '.......kkwwwkk............',
+  '.........kwwwk............',
+  '..........kkkk............',
+  '..........................']},
+ hotel:{p:{k:'#17181C',w:'#F6F5F1',p:'#FFD37A',g:'#0B7A3E'},g:[
+  '..........................',
+  '....kk....................',
+  '....kwk...................',
+  '....kwkkkkkkkkkkkkkkk.....',
+  '....kwppppwwwwwwwwwwk.....',
+  '....kwppppwwwwwwwwwwk.....',
+  '....kggggggggggggggkk.....',
+  '....kggggggggggggggk......',
+  '....kggggggggggggggk......',
+  '....kkkkkkkkkkkkkkkk......',
+  '.....kk...........kk......',
+  '.....kk...........kk......',
+  '..........................']},
+ pharma:{p:{k:'#17181C',w:'#F6F5F1',g:'#0B7A3E'},g:[
+  '..........................',
+  '.....kkkkkkkkkkkkkk.......',
+  '.....kwwwwwwwwwwwwk.......',
+  '.....kwwwwwggwwwwwk.......',
+  '.....kwwwwwggwwwwwk.......',
+  '.....kwwgggggggwwwk.......',
+  '.....kwwgggggggwwwk.......',
+  '.....kwwwwwggwwwwwk.......',
+  '.....kwwwwwggwwwwwk.......',
+  '.....kwwwwwwwwwwwwk.......',
+  '.....kkkkkkkkkkkkkk.......',
+  '..........kk..............',
+  '..........kk..............',
+  '..........................']},
+ koban:{p:{k:'#17181C',w:'#F6F5F1',B:'#0072BC',g:'#BEE7F2',r:'#E5382E',d:'#5A5C66'},g:[
+  '...........rr............',
+  '...........rr............',
+  '.....kkkkkkkkkkkkkk.......',
+  '.....kBBBBBBBBBBBBk.......',
+  '.....kBBBBBBBBBBBBk.......',
+  '.....kwwwwwwwwwwwwk.......',
+  '.....kwggwwwwwwggwk.......',
+  '.....kwggwwwwwwggwk.......',
+  '.....kwwwwwkddkwwwk.......',
+  '.....kwwwwwkddkwwwk.......',
+  '.....kwwwwwkddkwwwk.......',
+  '.....kkkkkkkkkkkkkk.......',
+  '..........................']},
+ shirt:{p:{k:'#17181C',r:'#D5382E',w:'#F6F5F1',d:'#8C1F17'},g:[
+  '............kk............',
+  '............kk............',
+  '.....kkkkkkkkkkkkkk.......',
+  '....krrrrrkkkkrrrrrk......',
+  '...krrrrrrrrrrrrrrrrk.....',
+  '...krrrrrrrrrrrrrrrrk.....',
+  '...kkkkrrrrrrrrrrkkkk.....',
+  '......krrrrrrrrrrk........',
+  '......krrrrrrrrrrk........',
+  '......krrwwwwrrrrk........',
+  '......krrwwwwrrrrk........',
+  '......krrrrrrrrrrk........',
+  '......krrrrrrrrrrk........',
+  '......kkkkkkkkkkkk........',
+  '..........................']},
+};
+function pixCanvas(name,scale){
+  const art=ART[name];
+  const rows=art.g;
+  const c=document.createElement('canvas');
+  c.width=Math.max(...rows.map(r=>r.length));c.height=rows.length;
+  const x=c.getContext('2d');
+  rows.forEach((row,y)=>{[...row].forEach((ch,xi)=>{
+    const col=art.p[ch];if(col){x.fillStyle=col;x.fillRect(xi,y,1,1)}
+  })});
+  c.className='pix';
+  c.style.width=(c.width*scale)+'px';c.style.height=(c.height*scale)+'px';
+  return c;
+}
+
+/* =================== SIMULADOR DE ESCENARIOS =================== */
+const SCENES=[
+ {id:'cafe',name:'Café',art:'cafe',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ！ごちゅうもんは？',r:'irasshaimase! go-chūmon wa?',e:'¡Bienvenido! ¿Su orden?'},opts:[
+   {j:'アイスコーヒーをひとつください',e:'un café frío, por favor',ok:1},
+   {j:'トイレです',e:'soy el baño'},
+   {j:'さようなら',e:'adiós'}]},
+  {s:{who:'店員 · staff',j:'サイズは？',r:'saizu wa?',e:'¿De qué tamaño?'},opts:[
+   {j:'エムサイズでおねがいします',e:'tamaño M, por favor',ok:1},
+   {j:'ふたりです',e:'somos dos personas'},
+   {j:'わたしはメキシコじんです',e:'soy mexicano'}]},
+  {s:{who:'店員 · staff',j:'こちらでおめしあがりですか。',r:'kochira de o-meshiagari desu ka.',e:'¿Para tomar aquí?'},opts:[
+   {j:'はい、ここでのみます',e:'sí, lo tomo aquí',ok:1},
+   {j:'ふくろをください',e:'una bolsa, por favor'},
+   {j:'ラーメンをください',e:'un ramen, por favor'}]},
+  {s:{who:'店員 · staff',j:'よんひゃくえんです。',r:'yonhyaku-en desu.',e:'Son ¥400.'},opts:[
+   {j:'カードでおねがいします',e:'con tarjeta, por favor',ok:1},
+   {j:'えきはどこですか',e:'¿dónde está la estación?'},
+   {j:'おかわりください',e:'otra ronda, por favor'}]},
+  {s:{who:'店員 · staff',j:'ありがとうございました！',r:'arigatō gozaimashita!',e:'¡Muchas gracias!'},opts:[
+   {j:'ごちそうさまでした',e:'gracias por la comida',ok:1},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'},
+   {j:'なんめいさまですか',e:'¿cuántas personas?'}]},
+ ]},
+ {id:'rest',name:'Restaurante',art:'ramen',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ！なんめいさまですか。',r:'irasshaimase! nanmei-sama desu ka.',e:'¡Bienvenidos! ¿Cuántas personas?'},opts:[
+   {j:'ふたりです',e:'somos dos',ok:1},
+   {j:'ふたつください',e:'deme dos (cosas)'},
+   {j:'にひゃくえんです',e:'son ¥200'}]},
+  {s:{who:'店員 · staff',j:'こちらへどうぞ。',r:'kochira e dōzo.',e:'Por aquí, por favor.'},opts:[
+   {j:'すみません、おすすめはなんですか',e:'disculpe, ¿qué recomienda?',ok:1},
+   {j:'おかいけいおねがいします',e:'la cuenta, por favor'},
+   {j:'トイレです',e:'soy el baño'}]},
+  {s:{who:'店員 · staff',j:'ほんじつのおすすめは、やきざかなていしょくです。',r:'honjitsu no osusume wa, yakizakana teishoku desu.',e:'Lo de hoy es el menú de pescado asado.'},opts:[
+   {j:'じゃあ、それをふたつください',e:'entonces, dos de eso, por favor',ok:1},
+   {j:'さかながきらいです',e:'odio el pescado (grosero así de golpe)'},
+   {j:'あしたきます',e:'vengo mañana'}]},
+  {s:{who:'店員 · staff',j:'おのみものはいかがですか。',r:'o-nomimono wa ikaga desu ka.',e:'¿Algo de tomar?'},opts:[
+   {j:'おみずをください',e:'agua, por favor',ok:1},
+   {j:'おかねをください',e:'dinero, por favor'},
+   {j:'ここでのみます',e:'lo tomo aquí (fuera de contexto)'}]},
+  {s:{who:'店員 · staff',j:'いじょうでよろしいですか。',r:'ijō de yoroshii desu ka.',e:'¿Sería todo?'},opts:[
+   {j:'はい、おねがいします',e:'sí, por favor',ok:1},
+   {j:'いいえ、さようなら',e:'no, adiós'},
+   {j:'ワイファイです',e:'es wifi'}]},
+  {s:{who:'店員 · staff',j:'（al terminar）おさげしてもよろしいですか。',r:'o-sage shite mo yoroshii desu ka.',e:'¿Puedo retirar los platos?'},opts:[
+   {j:'はい。おかいけいおねがいします',e:'sí. la cuenta, por favor',ok:1},
+   {j:'メニューをください',e:'el menú, por favor'},
+   {j:'なんじですか',e:'¿qué hora es?'}]},
+  {s:{who:'店員 · staff',j:'ありがとうございました！',r:'arigatō gozaimashita!',e:'¡Muchas gracias!'},opts:[
+   {j:'ごちそうさまでした。おいしかったです！',e:'gracias por la comida. ¡estuvo delicioso!',ok:1},
+   {j:'まずかったです',e:'estuvo horrible'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+ ]},
+ {id:'iza',name:'Izakaya',art:'lantern',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ！おのみものは？',r:'irasshaimase! o-nomimono wa?',e:'¡Bienvenidos! ¿Qué toman?'},opts:[
+   {j:'とりあえずビール！ふたつください',e:'¡para empezar, cerveza! dos, por favor',ok:1},
+   {j:'トイレはどこですか',e:'¿dónde está el baño? (aún no ordenas)'},
+   {j:'おかいけいおねがいします',e:'la cuenta, por favor'}]},
+  {s:{who:'店員 · staff',j:'はい！こちら、おとおしです。',r:'hai! kochira, otōshi desu.',e:'¡Va! Aquí tienen el otōshi (aperitivo de cover).'},opts:[
+   {j:'ありがとうございます。これはなんですか',e:'gracias. ¿qué es esto?',ok:1},
+   {j:'ちゅうもんしていません！',e:'¡yo no ordené esto! (es cover, tranqui)'},
+   {j:'いくらですか',e:'¿cuánto cuesta? (va incluido)'}]},
+  {s:{who:'店員 · staff',j:'えだまめです。どうぞ！',r:'edamame desu. dōzo!',e:'Es edamame. ¡Provecho!'},opts:[
+   {j:'いいですね。やきとりのもりあわせをください',e:'qué bien. un surtido de yakitori, por favor',ok:1},
+   {j:'さようなら',e:'adiós'},
+   {j:'えきはどこですか',e:'¿dónde está la estación?'}]},
+  {s:{who:'ともだち · tu amigo',j:'ビールがきたよ！かんぱい！',r:'bīru ga kita yo! kanpai!',e:'¡Llegó la cerveza! ¡Salud!'},opts:[
+   {j:'かんぱい！',e:'¡salud!',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida (aún no comes)'},
+   {j:'おやすみなさい',e:'buenas noches (te vas a dormir)'}]},
+  {s:{who:'店員 · staff',j:'おあじはいかがですか。',r:'o-aji wa ikaga desu ka.',e:'¿Qué tal está todo?'},opts:[
+   {j:'うまいです！',e:'¡está buenísimo!',ok:1},
+   {j:'たかいです',e:'está caro'},
+   {j:'ひだりです',e:'está a la izquierda'}]},
+  {s:{who:'店員 · staff',j:'ラストオーダーです。',r:'rasuto ōdā desu.',e:'Última orden.'},opts:[
+   {j:'だいじょうぶです。おかいけいおねがいします',e:'estamos bien. la cuenta, por favor',ok:1},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'},
+   {j:'はじめまして',e:'mucho gusto'}]},
+ ]},
+ {id:'kon',name:'Konbini',art:'konbini',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ。おべんとうをあたためますか。',r:'irasshaimase. o-bentō o atatamemasu ka.',e:'Bienvenido. ¿Le caliento el bentō?'},opts:[
+   {j:'はい、おねがいします',e:'sí, por favor',ok:1},
+   {j:'つめたいです',e:'está frío (no responde la pregunta)'},
+   {j:'ふたりです',e:'somos dos'}]},
+  {s:{who:'店員 · staff',j:'ふくろはいりますか。',r:'fukuro wa irimasu ka.',e:'¿Necesita bolsa?'},opts:[
+   {j:'いりません、だいじょうぶです',e:'no necesito, está bien',ok:1},
+   {j:'ふくろがすきです',e:'me gustan las bolsas'},
+   {j:'ふくろはどこですか',e:'¿dónde está la bolsa?'}]},
+  {s:{who:'店員 · staff',j:'ポイントカードはおもちですか。',r:'pointo kādo wa o-mochi desu ka.',e:'¿Tiene tarjeta de puntos?'},opts:[
+   {j:'ないです',e:'no tengo',ok:1},
+   {j:'カードでおねがいします',e:'con tarjeta, por favor (aún no pagas)'},
+   {j:'たかいです',e:'es caro'}]},
+  {s:{who:'店員 · staff',j:'ごうけいで ろっぴゃくえんです。',r:'gōkei de roppyaku-en desu.',e:'Son ¥600 en total.'},opts:[
+   {j:'カードでおねがいします',e:'con tarjeta, por favor',ok:1},
+   {j:'ろっぴゃくえんです',e:'son ¥600 (le repites el precio)'},
+   {j:'やすいですね！まけてください',e:'¡qué barato! hágame descuento (no se regatea)'}]},
+  {s:{who:'店員 · staff',j:'ありがとうございました。',r:'arigatō gozaimashita.',e:'Muchas gracias.'},opts:[
+   {j:'どうも',e:'gracias (casual y natural)',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida (no comiste ahí)'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+ ]},
+ {id:'eki',name:'Estación',art:'train',steps:[
+  {s:{who:'駅員 · staff de estación',j:'こんにちは。どうされましたか。',r:'konnichiwa. dō saremashita ka.',e:'Buenas. ¿En qué le ayudo?'},opts:[
+   {j:'すみません、しんじゅくにいきたいです',e:'disculpe, quiero ir a Shinjuku',ok:1},
+   {j:'ふたりです',e:'somos dos'},
+   {j:'おかいけいおねがいします',e:'la cuenta, por favor'}]},
+  {s:{who:'駅員 · staff de estación',j:'しんじゅくですね。やまのてせんです。',r:'shinjuku desu ne. yamanote-sen desu.',e:'A Shinjuku, ¿no? Es la línea Yamanote.'},opts:[
+   {j:'きっぷはいくらですか',e:'¿cuánto cuesta el boleto?',ok:1},
+   {j:'おいしいですね',e:'qué rico, ¿no?'},
+   {j:'ふくろをください',e:'una bolsa, por favor'}]},
+  {s:{who:'駅員 · staff de estación',j:'にひゃくえんです。',r:'nihyaku-en desu.',e:'Son ¥200.'},opts:[
+   {j:'じゃあ、きっぷをいちまいください',e:'entonces, un boleto por favor',ok:1},
+   {j:'ビールをください',e:'una cerveza, por favor'},
+   {j:'たかいですね！',e:'¡qué caro! (¥200 es baratísimo)'}]},
+  {s:{who:'駅員 · staff de estación',j:'さんばんせんからです。',r:'sanban-sen kara desu.',e:'Sale del andén 3.'},opts:[
+   {j:'ありがとうございます。つぎのでんしゃはなんじですか',e:'gracias. ¿a qué hora es el próximo tren?',ok:1},
+   {j:'トイレです',e:'soy el baño'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'駅員 · staff de estación',j:'じゅうごふんごです。',r:'jūgo-fun go desu.',e:'En 15 minutos.'},opts:[
+   {j:'わかりました。どうもありがとうございます',e:'entendido. muchísimas gracias',ok:1},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'},
+   {j:'おかわりください',e:'otra ronda, por favor'}]},
+ ]},
+ {id:'lib',name:'Librería',art:'books',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ。なにかおさがしですか。',r:'irasshaimase. nanika o-sagashi desu ka.',e:'Bienvenido. ¿Busca algo?'},opts:[
+   {j:'にほんごのほんはありますか',e:'¿tienen libros de japonés?',ok:1},
+   {j:'みずをください',e:'agua, por favor'},
+   {j:'ふたりです',e:'somos dos'}]},
+  {s:{who:'店員 · staff',j:'はい、あちらのたなです。',r:'hai, achira no tana desu.',e:'Sí, en aquel estante.'},opts:[
+   {j:'ありがとうございます。まんがはどこですか',e:'gracias. ¿dónde está el manga?',ok:1},
+   {j:'おいしそうですね',e:'se ve delicioso'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'店員 · staff',j:'まんがはにかいです。',r:'manga wa nikai desu.',e:'El manga está en el segundo piso.'},opts:[
+   {j:'わかりました。エレベーターはありますか',e:'entendido. ¿hay elevador?',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida'},
+   {j:'ここでのみます',e:'lo tomo aquí'}]},
+  {s:{who:'店員 · staff',j:'（en caja）カバーをおかけしますか。',r:'kabā o o-kake shimasu ka.',e:'¿Le pongo forro al libro? (costumbre japonesa)'},opts:[
+   {j:'はい、おねがいします',e:'sí, por favor',ok:1},
+   {j:'かばんです',e:'es una mochila'},
+   {j:'あたためてください',e:'caliéntemelo, por favor'}]},
+  {s:{who:'店員 · staff',j:'せんにひゃくえんです。',r:'sen nihyaku-en desu.',e:'Son ¥1,200.'},opts:[
+   {j:'カードでおねがいします',e:'con tarjeta, por favor',ok:1},
+   {j:'えきはどこですか',e:'¿dónde está la estación?'},
+   {j:'まけてください',e:'hágame descuento (no se regatea)'}]},
+ ]},
+ {id:'ropa',name:'Tienda de ropa',art:'shirt',steps:[
+  {s:{who:'店員 · staff',j:'いらっしゃいませ！なにかおさがしですか。',r:'irasshaimase! nanika o-sagashi desu ka.',e:'¡Bienvenido! ¿Busca algo?'},opts:[
+   {j:'みているだけです',e:'solo estoy viendo (frase salvavidas)',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida'},
+   {j:'ふたりです',e:'somos dos'}]},
+  {s:{who:'店員 · staff',j:'それ、にんきですよ。',r:'sore, ninki desu yo.',e:'Ese es muy popular, ¿eh?'},opts:[
+   {j:'しちゃくしてもいいですか',e:'¿puedo probármelo?',ok:1},
+   {j:'たべてもいいですか',e:'¿puedo comérmelo?'},
+   {j:'さようなら',e:'adiós'}]},
+  {s:{who:'店員 · staff',j:'どうぞ！サイズはいかがですか。',r:'dōzo! saizu wa ikaga desu ka.',e:'¡Adelante! ¿Qué tal la talla?'},opts:[
+   {j:'ちょっとちいさいです。おおきいのはありますか',e:'está algo pequeño. ¿tiene uno más grande?',ok:1},
+   {j:'おいしいです',e:'está delicioso'},
+   {j:'なんじですか',e:'¿qué hora es?'}]},
+  {s:{who:'店員 · staff',j:'エルサイズです。いかがですか。',r:'eru saizu desu. ikaga desu ka.',e:'Aquí está la talla L. ¿Qué tal?'},opts:[
+   {j:'いいですね！これをください',e:'¡me encanta! me lo llevo',ok:1},
+   {j:'みずをください',e:'agua, por favor'},
+   {j:'トイレです',e:'soy el baño'}]},
+  {s:{who:'店員 · staff',j:'めんぜいできますが、パスポートはおもちですか。',r:'menzei dekimasu ga, pasupōto wa o-mochi desu ka.',e:'Podemos hacerlo tax-free. ¿Trae su pasaporte?'},opts:[
+   {j:'はい、あります',e:'sí, aquí lo tengo',ok:1},
+   {j:'ビールをください',e:'una cerveza, por favor'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+ ]},
+ {id:'aero',name:'Aeropuerto',art:'plane',steps:[
+  {s:{who:'入国審査 · migración',j:'パスポートをおねがいします。',r:'pasupōto o onegai shimasu.',e:'Su pasaporte, por favor.'},opts:[
+   {j:'はい、どうぞ',e:'sí, aquí tiene',ok:1},
+   {j:'ちょっとまってください、どこかな…',e:'un momento… ¿dónde lo dejé? 😅'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'入国審査 · migración',j:'りょこうのもくてきはなんですか。',r:'ryokō no mokuteki wa nan desu ka.',e:'¿Cuál es el propósito de su viaje?'},opts:[
+   {j:'かんこうです',e:'turismo',ok:1},
+   {j:'しごとがきらいです',e:'odio mi trabajo'},
+   {j:'おいしいです',e:'está delicioso'}]},
+  {s:{who:'入国審査 · migración',j:'なんにちかんたいざいしますか。',r:'nannichi-kan taizai shimasu ka.',e:'¿Cuántos días se queda?'},opts:[
+   {j:'とおかかんです',e:'diez días',ok:1},
+   {j:'じゅうごふんです',e:'quince minutos'},
+   {j:'まいにちです',e:'todos los días'}]},
+  {s:{who:'入国審査 · migración',j:'どこにとまりますか。',r:'doko ni tomarimasu ka.',e:'¿Dónde se hospeda?'},opts:[
+   {j:'しんじゅくのホテルです',e:'en un hotel de Shinjuku',ok:1},
+   {j:'でんしゃです',e:'en el tren'},
+   {j:'あなたのいえです',e:'en su casa 😅'}]},
+  {s:{who:'入国審査 · migración',j:'はい、けっこうです。ようこそにほんへ！',r:'hai, kekkō desu. yōkoso nihon e!',e:'Todo en orden. ¡Bienvenido a Japón!'},opts:[
+   {j:'ありがとうございます！',e:'¡muchas gracias!',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida'},
+   {j:'おだいじに',e:'que se mejore'}]},
+ ]},
+ {id:'taxi',name:'Taxi',art:'taxi',steps:[
+  {s:{who:'運転手 · chofer',j:'どちらまでですか。',r:'dochira made desu ka.',e:'¿A dónde lo llevo?'},opts:[
+   {j:'しんじゅくえきまでおねがいします',e:'a la estación Shinjuku, por favor',ok:1},
+   {j:'ふたりです',e:'somos dos'},
+   {j:'みているだけです',e:'solo estoy viendo'}]},
+  {s:{who:'運転手 · chofer',j:'しんじゅくえきですね。',r:'shinjuku-eki desu ne.',e:'A la estación Shinjuku, entendido.'},opts:[
+   {j:'はい。どのくらいかかりますか',e:'sí. ¿cuánto tarda?',ok:1},
+   {j:'あたたかいですね',e:'qué calientito, ¿no?'},
+   {j:'ほんはありますか',e:'¿tiene libros?'}]},
+  {s:{who:'運転手 · chofer',j:'にじゅっぷんぐらいです。',r:'nijuppun gurai desu.',e:'Unos 20 minutos.'},opts:[
+   {j:'わかりました、おねがいします',e:'perfecto, adelante por favor',ok:1},
+   {j:'はやいですね！とめてください',e:'¡qué rápido! deténgase'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'運転手 · chofer',j:'つきました。せんごひゃくえんです。',r:'tsukimashita. sen gohyaku-en desu.',e:'Llegamos. Son ¥1,500.'},opts:[
+   {j:'カードではらえますか',e:'¿puedo pagar con tarjeta?',ok:1},
+   {j:'まけてください',e:'hágame descuento (no se regatea)'},
+   {j:'おかわりください',e:'otra ronda, por favor'}]},
+  {s:{who:'運転手 · chofer',j:'はい、だいじょうぶですよ。',r:'hai, daijōbu desu yo.',e:'Sí, claro que sí.'},opts:[
+   {j:'ありがとうございました',e:'muchas gracias',ok:1},
+   {j:'いってきます',e:'ya me voy (se dice al salir de casa)'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+ ]},
+ {id:'hotel',name:'Hotel',art:'hotel',steps:[
+  {s:{who:'フロント · recepción',j:'いらっしゃいませ。ごよやくはございますか。',r:'irasshaimase. go-yoyaku wa gozaimasu ka.',e:'Bienvenido. ¿Tiene reservación?'},opts:[
+   {j:'はい、よやくしています',e:'sí, tengo reservación',ok:1},
+   {j:'ふたつください',e:'deme dos'},
+   {j:'みているだけです',e:'solo estoy viendo'}]},
+  {s:{who:'フロント · recepción',j:'パスポートをおねがいします。',r:'pasupōto o onegai shimasu.',e:'Su pasaporte, por favor.'},opts:[
+   {j:'はい、どうぞ',e:'sí, aquí tiene',ok:1},
+   {j:'ないです',e:'no tengo (¡uy!)'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'フロント · recepción',j:'あさごはんはしちじからです。',r:'asagohan wa shichiji kara desu.',e:'El desayuno es a partir de las 7.'},opts:[
+   {j:'わかりました。なんかいですか',e:'entendido. ¿en qué piso?',ok:1},
+   {j:'おかわりください',e:'otra ronda, por favor'},
+   {j:'さようなら',e:'adiós'}]},
+  {s:{who:'フロント · recepción',j:'にかいです。おへやはごひゃくさんごうしつです。',r:'nikai desu. o-heya wa gohyaku-san gōshitsu desu.',e:'En el 2° piso. Su habitación es la 503.'},opts:[
+   {j:'ありがとうございます。ワイファイはありますか',e:'gracias. ¿hay wifi?',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida'},
+   {j:'ふくろをください',e:'una bolsa, por favor'}]},
+  {s:{who:'フロント · recepción',j:'はい、パスワードはこちらです。ごゆっくりどうぞ。',r:'hai, pasuwādo wa kochira desu. go-yukkuri dōzo.',e:'Sí, aquí está la contraseña. Que descanse.'},opts:[
+   {j:'どうもありがとうございます',e:'muchísimas gracias',ok:1},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'},
+   {j:'おかいけいおねがいします',e:'la cuenta, por favor'}]},
+ ]},
+ {id:'farm',name:'Farmacia',art:'pharma',steps:[
+  {s:{who:'薬剤師 · farmacéutico',j:'いらっしゃいませ。どうされましたか。',r:'irasshaimase. dō saremashita ka.',e:'Bienvenido. ¿Qué le pasa?'},opts:[
+   {j:'あたまがいたいです',e:'me duele la cabeza',ok:1},
+   {j:'とりあえずビール！',e:'¡para empezar, cerveza!'},
+   {j:'しちゃくしてもいいですか',e:'¿puedo probármelo?'}]},
+  {s:{who:'薬剤師 · farmacéutico',j:'おくすりはこちらです。ねつはありますか。',r:'o-kusuri wa kochira desu. netsu wa arimasu ka.',e:'Aquí está la medicina. ¿Tiene fiebre?'},opts:[
+   {j:'いいえ、ないです',e:'no, no tengo',ok:1},
+   {j:'きっぷをください',e:'un boleto, por favor'},
+   {j:'にかいです',e:'en el segundo piso'}]},
+  {s:{who:'薬剤師 · farmacéutico',j:'いちにちさんかい、しょくごにのんでください。',r:'ichinichi sankai, shokugo ni nonde kudasai.',e:'Tómela 3 veces al día, después de comer.'},opts:[
+   {j:'わかりました',e:'entendido',ok:1},
+   {j:'のみほうだいですか',e:'¿es barra libre?'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'薬剤師 · farmacéutico',j:'おみずもいりますか。',r:'o-mizu mo irimasu ka.',e:'¿Necesita también agua?'},opts:[
+   {j:'はい、おねがいします',e:'sí, por favor',ok:1},
+   {j:'いいえ、ビールでのみます',e:'no, la tomo con cerveza 🚫'},
+   {j:'トイレです',e:'soy el baño'}]},
+  {s:{who:'薬剤師 · farmacéutico',j:'おだいじに。',r:'odaiji ni.',e:'Que se mejore. (frase clave de farmacias)'},opts:[
+   {j:'ありがとうございます',e:'muchas gracias',ok:1},
+   {j:'ごちそうさまでした',e:'gracias por la comida'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+ ]},
+ {id:'koban',name:'Me perdí',art:'koban',steps:[
+  {s:{who:'警察官 · policía del kōban',j:'こんにちは。どうしましたか。',r:'konnichiwa. dō shimashita ka.',e:'Buenas. ¿Qué le pasó?'},opts:[
+   {j:'すみません、みちにまよいました',e:'disculpe, me perdí',ok:1},
+   {j:'おなかがすきました',e:'tengo hambre'},
+   {j:'とりあえずビール！',e:'¡para empezar, cerveza!'}]},
+  {s:{who:'警察官 · policía del kōban',j:'どこにいきたいですか。',r:'doko ni ikitai desu ka.',e:'¿A dónde quiere ir?'},opts:[
+   {j:'このホテルにいきたいです（mostrando el mapa）',e:'quiero ir a este hotel',ok:1},
+   {j:'にほんにいきたいです',e:'quiero ir a Japón (ya estás aquí)'},
+   {j:'トイレです',e:'soy el baño'}]},
+  {s:{who:'警察官 · policía del kōban',j:'ここをまっすぐいって、ふたつめのしんごうをみぎです。',r:'koko o massugu itte, futatsume no shingō o migi desu.',e:'Siga derecho, y a la derecha en el segundo semáforo.'},opts:[
+   {j:'まっすぐ、それからみぎですね',e:'derecho y luego a la derecha, ¿verdad? (confirmas)',ok:1},
+   {j:'ひだりですね',e:'a la izquierda, ¿verdad? (¡no escuchaste!)'},
+   {j:'わかりません、さようなら',e:'no entiendo, adiós'}]},
+  {s:{who:'警察官 · policía del kōban',j:'そうです。あるいてごふんぐらいです。',r:'sō desu. aruite gofun gurai desu.',e:'Así es. Como 5 minutos caminando.'},opts:[
+   {j:'ちかいですね！ありがとうございます',e:'¡qué cerca! muchas gracias',ok:1},
+   {j:'とおいですね…タクシー！',e:'qué lejos… ¡taxi!'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'警察官 · policía del kōban',j:'きをつけて！',r:'ki o tsukete!',e:'¡Con cuidado!'},opts:[
+   {j:'ありがとうございました！',e:'¡muchas gracias!',ok:1},
+   {j:'おだいじに',e:'que se mejore'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+ ]},
+];
+/* ---------- MODO HISTORIA ---------- */
+const STORY=[
+ {id:'aero',day:'Día 1',sub:'aterrizas en Narita'},
+ {id:'eki',day:'Día 1',sub:'del aeropuerto al centro'},
+ {id:'taxi',day:'Día 1',sub:'último tramo al hotel'},
+ {id:'hotel',day:'Día 1',sub:'check-in, por fin descansas'},
+ {id:'kon',day:'Día 2',sub:'desayuno de konbini'},
+ {id:'cafe',day:'Día 2',sub:'café para arrancar el día'},
+ {id:'rest',day:'Día 3',sub:'tu primer teishoku'},
+ {id:'lib',day:'Día 4',sub:'cazas manga en la librería'},
+ {id:'ropa',day:'Día 5',sub:'shopping con tax-free'},
+ {id:'farm',day:'Día 6',sub:'algo te cayó mal…'},
+ {id:'koban',day:'Día 6',sub:'te pierdes volviendo'},
+ {id:'iza',day:'Día 7',sub:'gran final: noche de izakaya'},
+];
+function openStory(){renderStory();go('scr-story')}
+function renderStory(){
+  const done=S.story||0;
+  const el=document.getElementById('story-line');el.innerHTML='';
+  STORY.forEach((st,i)=>{
+    const sc=SCENES.find(s=>s.id===st.id);
+    const state=i<done?'done':(i===done?'cur':'lock');
+    const status=state==='done'?'✅':(state==='cur'?'▶':'🔒');
+    el.insertAdjacentHTML('beforeend',
+     `<button class="st-row ${state}" ${state==='cur'?`onclick="openScene(${SCENES.indexOf(sc)},${i})"`:''}>
+        <div class="st-dot2"></div>
+        <div><div class="st-name">${sc.name}</div><div class="st-day">${st.day} · ${st.sub}</div></div>
+        <div class="st-status">${status}</div>
+      </button>`);
+  });
+  if(done>=STORY.length){
+    el.insertAdjacentHTML('beforeend',
+     `<div class="tip" style="margin-top:12px;text-align:center">🏆 ¡Completaste los 7 días! にほんのたつじんですね。<br>Puedes repetir cualquier escenario desde el carrusel.</div>`);
+  }
+}
+
+/* ---------- LOGROS ---------- */
+const ACH=[
+ {id:'first',ico:'🎫',n:'Primer boleto',d:'Completa tu primer quiz',f:s=>s.quizzes>=1},
+ {id:'streak3',ico:'🔥',n:'Tres días seguidos',d:'Racha de 3 días',f:s=>s.streak>=3},
+ {id:'streak7',ico:'🚄',n:'Semana Yamanote',d:'Racha de 7 días',f:s=>s.streak>=7},
+ {id:'xp500',ico:'⚡',n:'500 de voltaje',d:'Acumula 500 XP',f:s=>s.xp>=500},
+ {id:'xp1500',ico:'🏮',n:'Luz de izakaya',d:'Acumula 1,500 XP',f:s=>s.xp>=1500},
+ {id:'sent50',ico:'🧱',n:'Arquitecto',d:'Arma 50 oraciones',f:s=>(s.sentences||0)>=50},
+ {id:'scene100',ico:'🎭',n:'Conversación perfecta',d:'100% en un escenario',f:s=>Object.keys(s.best).some(k=>k.startsWith('esc-')&&s.best[k]===100)},
+ {id:'allsc',ico:'🗾',n:'Vuelta completa',d:'Juega los 12 escenarios',f:s=>SCENES.every(sc=>(s.best['esc-'+sc.id]||0)>0)},
+ {id:'words100',ico:'📚',n:'Coleccionista',d:'Ve 100 tarjetas',f:s=>Object.keys(s.seen).length>=100},
+ {id:'story',ico:'🇯🇵',n:'7 días en Japón',d:'Termina el modo historia',f:s=>(s.story||0)>=STORY.length},
+];
+function checkAch(){
+  S.ach=S.ach||{};let neu=false;
+  ACH.forEach(a=>{try{if(!S.ach[a.id]&&a.f(S)){S.ach[a.id]=1;neu=true;toast('🏅 Logro: '+a.n)}}catch(e){}});
+  if(neu)saveState();
+}
+function renderAch(){
+  const g=document.getElementById('ach-grid');if(!g)return;g.innerHTML='';
+  S.ach=S.ach||{};
+  ACH.forEach(a=>{
+    const got=!!S.ach[a.id];
+    g.insertAdjacentHTML('beforeend',
+     `<div class="ach-card ${got?'':'lock'}"><div class="a-ico">${a.ico}</div><div class="a-n">${a.n}</div><div class="a-d">${a.d}</div></div>`);
+  });
+}
+
+/* ---------- MISIONES DIARIAS ---------- */
+function ensureMissions(){
+  const today=new Date().toDateString();
+  if(!S.m||S.m.day!==today)S.m={day:today,quiz:0,scene:0,price:0,bonus:false};
+}
+function bumpMission(k,n){
+  ensureMissions();S.m[k]=(S.m[k]||0)+(n||1);
+  if(S.m.quiz>=1&&S.m.scene>=1&&S.m.price>=5&&!S.m.bonus){
+    S.m.bonus=true;S.xp+=30;toast('🎌 ¡Misiones del día completas! +30 XP');
+  }
+}
+function renderMissions(){
+  ensureMissions();
+  const el=document.getElementById('mis-card');if(!el)return;
+  const rows=[
+    {k:'quiz',t:'Completa 1 quiz de vocabulario',cur:Math.min(S.m.quiz,1),max:1},
+    {k:'scene',t:'Juega 1 escenario',cur:Math.min(S.m.scene,1),max:1},
+    {k:'price',t:'Acierta 5 precios',cur:Math.min(S.m.price,5),max:5},
+  ];
+  el.innerHTML=rows.map(r=>{
+    const done=r.cur>=r.max;
+    return `<div class="mis-row ${done?'done':''}">
+      <div class="mis-chk">${done?'✓':''}</div>
+      <div class="mis-txt">${r.t}</div>
+      <div class="mis-prog">${r.cur}/${r.max}</div>
+    </div>`;
+  }).join('')+(S.m.bonus
+    ?'<div class="mis-bonus">🎌 Bonus del día cobrado: +30 XP</div>'
+    :'<div class="mis-bonus" style="color:var(--ink-soft)">completa las 3 → +30 XP</div>');
+}
+
+let SC=null;
+function renderScenes(){
+  const g=document.getElementById('scene-grid');g.innerHTML='';
+  /* Tarjeta del modo historia (animada) al frente del carrusel */
+  const st=document.createElement('button');
+  st.className='scene-card story-card';st.onclick=openStory;
+  st.appendChild(pixCanvas('train',4.5));
+  st.insertAdjacentHTML('beforeend',
+    `<div class="sc-name">🇯🇵 Modo historia</div><div class="sc-best">${S.story||0}/${STORY.length} estaciones</div>`);
+  g.appendChild(st);
+  SCENES.forEach((sc,i)=>{
+    const best=S.best['esc-'+sc.id]||0;
+    const card=document.createElement('button');
+    card.className='scene-card';card.onclick=()=>openScene(i);
+    card.appendChild(pixCanvas(sc.art,4.5));
+    card.insertAdjacentHTML('beforeend',
+      `<div class="sc-name">${sc.name}</div><div class="sc-best">${best?best+'%':'nuevo'}</div>`);
+    g.appendChild(card);
+  });
+}
+function openScene(i,storyIdx){
+  SC={sc:SCENES[i],i:0,right:0,xp:0,done:false,storyIdx:(storyIdx===undefined?null:storyIdx)};
+  document.getElementById('sc-title').textContent=SC.sc.name;
+  document.getElementById('sc-sub').textContent='elige la respuesta correcta · escucha al staff';
+  const aw=document.getElementById('sc-art');aw.innerHTML='';aw.appendChild(pixCanvas(SC.sc.art,7));
+  go('scr-scene');renderStep();
+}
+function renderStep(){
+  const st=SC.sc.steps[SC.i];SC.done=false;
+  document.getElementById('sc-dots').innerHTML=SC.sc.steps.map((_,i)=>
+    `<div class="sdot ${i<SC.i?'on':''}"></div>`).join('');
+  const opts=shuffle(st.opts.map((o,i)=>({...o,_i:i})));
+  document.getElementById('sc-body').innerHTML=`
+    <div class="bubble">
+      <div class="bw">${st.s.who}</div>
+      <div class="bj">${st.s.j}</div>
+      <div class="br">${st.s.r}</div>
+      <div class="be">"${st.s.e}"</div>
+      <button class="spk" onclick="speak(SC.sc.steps[SC.i].s.j)">🔊</button>
+    </div>
+    <div class="q-prompt-label">Tu respuesta</div>
+    <div class="opts">${opts.map(o=>
+      `<button class="opt" data-ok="${o.ok?1:0}" data-j="${o.j}" style="text-align:left" onclick="sceneAnswer(this)">${o.j}<div style="font-size:11.5px;font-weight:500;opacity:.7">${o.e}</div></button>`).join('')}</div>
+    <div class="feedback" id="sc-fb"></div>
+    <div id="sc-next" style="display:none;margin-top:12px"><button class="btn" onclick="sceneNext()">Continuar →</button></div>`;
+  setTimeout(()=>speak(st.s.j),250);
+}
+function sceneAnswer(btn){
+  if(SC.done)return;SC.done=true;
+  const ok=btn.dataset.ok==='1';
+  document.querySelectorAll('#sc-body .opt').forEach(o=>{
+    if(o.dataset.ok==='1')o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  const st=SC.sc.steps[SC.i];
+  const correct=st.opts.find(o=>o.ok);
+  const fb=document.getElementById('sc-fb');
+  if(ok){SC.right++;SC.xp+=10;fb.className='feedback ok';fb.textContent='✅ ¡Perfecto! +10 XP';}
+  else{fb.className='feedback no';fb.textContent='❌ Lo natural era: '+correct.j;}
+  speak(correct.j);
+  document.getElementById('sc-next').style.display='block';
+}
+function sceneNext(){
+  SC.i++;
+  if(SC.i>=SC.sc.steps.length){sceneEnd();return}
+  renderStep();
+}
+function sceneEnd(){
+  const total=SC.sc.steps.length;
+  const pct=Math.round(SC.right/total*100);
+  const prev=S.best['esc-'+SC.sc.id]||0;
+  if(pct>prev)S.best['esc-'+SC.sc.id]=pct;
+  S.xp+=SC.xp;bumpMission('scene');
+  /* avance del modo historia */
+  let storyMsg='';
+  const inStory=SC.storyIdx!==null&&SC.storyIdx===((S.story||0));
+  const passed=pct>=60;
+  if(inStory&&passed){
+    S.story=(S.story||0)+1;
+    storyMsg=S.story>=STORY.length
+      ?'<p style="font-weight:800;color:var(--jr-green)">🏆 ¡Terminaste los 7 días en Japón!</p>'
+      :'<p style="font-weight:800;color:var(--jr-green)">🚃 Estación completada · siguiente desbloqueada</p>';
+  }else if(inStory&&!passed){
+    storyMsg='<p style="font-weight:800;color:var(--bad)">Necesitas 60% para avanzar en la historia</p>';
+  }
+  touchStreak();saveState();renderAll();
+  document.getElementById('sc-dots').innerHTML='';
+  const btns=inStory
+    ?`<button class="btn ghost" onclick="openStory()">Mapa de historia</button>
+      <button class="btn" onclick="${passed?'openStory()':'openScene('+SCENES.indexOf(SC.sc)+','+SC.storyIdx+')'}">${passed?'Siguiente estación →':'Reintentar'}</button>`
+    :`<button class="btn ghost" onclick="go('scr-home')">Al mapa</button>
+      <button class="btn" onclick="openScene(${SCENES.indexOf(SC.sc)})">Repetir</button>`;
+  document.getElementById('sc-body').innerHTML=`
+    <div class="result" style="padding-top:6px">
+      <div class="medal">${pct===100?'🏆':pct>=70?'🎉':'🚃'}</div>
+      <h2>${pct===100?'¡Conversación perfecta!':pct>=70?'¡Muy bien!':'Sigue practicando'}</h2>
+      <p>Respondiste bien ${SC.right} de ${total} turnos.</p>
+      ${storyMsg}
+      <div class="r-xp">+${SC.xp} XP</div>
+      <div class="btn-row">${btns}</div>
+    </div>`;
+}
+
+/* =================== REPASO DEL DÍA (SRS-lite) =================== */
+function buildReview(){
+  const pool=[];
+  ALL_LINES.forEach(c=>c.words.forEach(w=>{
+    const k=c.id+':'+w.j;
+    const st=S.w&&S.w[k];
+    const score=st?(st.bad*2-st.ok):0;
+    pool.push({w:{...w,_k:k},score});
+  }));
+  pool.sort((a,b)=>b.score-a.score);
+  const pick=pool.filter(p=>p.score>0).slice(0,10);
+  const used=new Set(pick.map(p=>p.w._k));
+  while(pick.length<10){
+    const r=pool[Math.floor(Math.random()*pool.length)];
+    if(!used.has(r.w._k)){pick.push(r);used.add(r.w._k)}
+  }
+  return shuffle(pick.map(p=>p.w));
+}
+function startReview(){
+  cur={id:'review',name:'Repaso del día',jp:'ふくしゅう',words:buildReview()};
+  startQuiz();
+}
+
+/* =================== ENTRENADOR DE PRECIOS =================== */
+const NUM_U=['','いち','に','さん','よん','ご','ろく','なな','はち','きゅう'];
+const NUM_H={1:'ひゃく',2:'にひゃく',3:'さんびゃく',4:'よんひゃく',5:'ごひゃく',6:'ろっぴゃく',7:'ななひゃく',8:'はっぴゃく',9:'きゅうひゃく'};
+const NUM_T={1:'せん',2:'にせん',3:'さんぜん',4:'よんせん',5:'ごせん',6:'ろくせん',7:'ななせん',8:'はっせん',9:'きゅうせん'};
+function yen2kana(n){
+  let s='';
+  const man=Math.floor(n/10000),rest=n%10000;
+  if(man)s+=NUM_U[man]+'まん';
+  const th=Math.floor(rest/1000);if(th)s+=NUM_T[th];
+  const h=Math.floor(rest%1000/100);if(h)s+=NUM_H[h];
+  const t=Math.floor(rest%100/10);if(t)s+=(t>1?NUM_U[t]:'')+'じゅう';
+  const u=rest%10;if(u)s+=NUM_U[u];
+  return s+'えん';
+}
+function randPrice(){
+  const r=Math.random();
+  if(r<0.45)return (Math.floor(Math.random()*90)+10)*10;      // ¥100–¥990
+  if(r<0.85)return (Math.floor(Math.random()*90)+10)*100;     // ¥1,000–¥9,900
+  return (Math.floor(Math.random()*3)+1)*10000+Math.floor(Math.random()*10)*1000; // ¥1万–¥3.9万
+}
+let PR={score:0,total:0,done:false,n:0,dir:'j2e',correct:''};
+function openPrice(){PR={score:0,total:0,done:false};go('scr-price');newPrice();}
+function newPrice(){
+  const n=randPrice();
+  const dir=Math.random()<0.5?'read':'num';
+  const set=new Set([n]);
+  while(set.size<4){
+    const d=[10,20,50,100,200,500,1000,2000][Math.floor(Math.random()*8)];
+    const cand=Math.max(10,n+(Math.random()<0.5?-d:d));
+    set.add(cand);
+  }
+  const opts=shuffle([...set]);
+  PR.n=n;PR.dir=dir;PR.done=false;
+  PR.correct=dir==='read'?yen2kana(n):'¥'+n.toLocaleString();
+  document.getElementById('pr-body').innerHTML=`
+    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${PR.score}/${PR.total}</div>
+    <div class="q-prompt-label">${dir==='read'?'¿Cómo se lee?':'¿Qué precio escuchas/lees?'}</div>
+    <div class="q-prompt" style="position:relative">
+      ${dir==='read'
+        ?'<div class="price-big">¥'+n.toLocaleString()+'</div>'
+        :'<div class="big" style="font-size:24px">'+yen2kana(n)+'</div><button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(yen2kana(PR.n))">🔊</button>'}
+    </div>
+    <div class="opts">${opts.map(o=>
+      `<button class="opt" data-v="${o}" onclick="priceAnswer(this)">${dir==='read'?yen2kana(o):'¥'+o.toLocaleString()}</button>`).join('')}</div>
+    <div class="feedback" id="pr-fb"></div>
+    <div id="pr-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newPrice()">Siguiente →</button></div>`;
+}
+function priceAnswer(btn){
+  if(PR.done)return;PR.done=true;PR.total++;
+  const ok=Number(btn.dataset.v)===PR.n;
+  document.querySelectorAll('#pr-body .opt').forEach(o=>{
+    if(Number(o.dataset.v)===PR.n)o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  const fb=document.getElementById('pr-fb');
+  if(ok){PR.score++;S.xp+=8;bumpMission('price');touchStreak();saveState();renderAll();
+    fb.className='feedback ok';fb.innerHTML='✅ +8 XP · ¥'+PR.n.toLocaleString()+' = '+yen2kana(PR.n);
+  }else{
+    fb.className='feedback no';fb.innerHTML='❌ ¥'+PR.n.toLocaleString()+' = '+yen2kana(PR.n);
+  }
+  speak(yen2kana(PR.n));
+  document.getElementById('pr-next').style.display='block';
+}
+
+/* =================== EXPORTAR / IMPORTAR PROGRESO =================== */
+function exportProgress(){
+  try{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='densha-progreso.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    toast('Progreso exportado ⬇️');
+  }catch(e){toast('No se pudo exportar')}
+}
+function importProgress(ev){
+  const f=ev.target.files&&ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(typeof d.xp!=='number')throw 0;
+      S={...S,...d};saveState();renderAll();
+      toast('Progreso importado ⚡'+S.xp);
+    }catch(e){toast('Archivo no válido')}
+  };
+  r.readAsText(f);ev.target.value='';
+}
+
+/* =================== SENTENCE BUILDER =================== */
+const FIXBANK=['ください','です','どこですか','たいです','すきです','いくらですか','ありますか','とおもいます'];
+const PARTBANK=['は','を','が','に','で'];
+const PATTERNS=[
+ {id:'pet',name:'Pedir cosas',tag:'Órdenes, compras, restaurantes',color:'#B4001E',
+  anatomy:'La petición cortés solo necesita 3 piezas: la <b>cosa</b> que quieres, la partícula <b>を</b> que la marca como objeto, y el bloque fijo <b>ください</b> ("deme, por favor"). Cambia la primera pieza y generas cientos de peticiones.',
+  es:'{A}, por favor',
+  pieces:[
+   {t:'s',k:'A',label:'cosa',exp:'Cualquier sustantivo entra aquí: la cosa que pides.',opts:[
+    {j:'みず',r:'mizu',e:'agua'},{j:'コーヒー',r:'kōhī',e:'un café'},{j:'ビール',r:'bīru',e:'una cerveza'},{j:'メニュー',r:'menyū',e:'el menú'},{j:'これ',r:'kore',e:'esto'},{j:'おかいけい',r:'o-kaikei',e:'la cuenta'}]},
+   {t:'p',j:'を',r:'o',dis:['は','に','で'],exp:'Partícula de objeto directo: etiqueta la cosa sobre la que cae la acción.'},
+   {t:'f',j:'ください',r:'kudasai',exp:'Bloque fijo: "deme, por favor". Convierte todo en petición cortés.'}]},
+ {id:'ide',name:'Decir qué es algo',tag:'Identidad y descripción',color:'#E60012',
+  anatomy:'El patrón más importante del idioma: <b>A は B です</b> = "A es B". La partícula <b>は</b> presenta el tema y <b>です</b> cierra con cortesía. Sirve para presentarte, describir y señalar.',
+  es:'{A} es {B}',
+  pieces:[
+   {t:'s',k:'A',label:'sujeto',exp:'De qué o quién hablamos.',opts:[
+    {j:'これ',r:'kore',e:'esto'},{j:'それ',r:'sore',e:'eso'},{j:'あれ',r:'are',e:'aquello'},{j:'かれ',r:'kare',e:'él'},{j:'かのじょ',r:'kanojo',e:'ella'}]},
+   {t:'p',j:'は',r:'wa',dis:['を','が','で'],exp:'Partícula de tema: "hablando de…". Se escribe は pero se pronuncia wa.'},
+   {t:'s',k:'B',label:'descripción',exp:'Lo que el sujeto es: un sustantivo o un adjetivo.',opts:[
+    {j:'すし',r:'sushi',e:'sushi'},{j:'メキシコじん',r:'mekishikojin',e:'mexicano'},{j:'せんせい',r:'sensei',e:'maestro'},{j:'おいしい',r:'oishii',e:'rico'},{j:'たかい',r:'takai',e:'caro'},{j:'きれい',r:'kirei',e:'bonito'}]},
+   {t:'f',j:'です',r:'desu',exp:'"Es / está". El cierre cortés de la oración.'}]},
+ {id:'don',name:'Preguntar dónde',tag:'Ubicación y supervivencia',color:'#009B4B',
+  anatomy:'Para ubicar cualquier cosa: <b>A は どこですか</b>. Solo cambias la primera pieza: el baño, la estación, la salida… El bloque <b>どこですか</b> nunca cambia.',
+  es:'¿dónde está {A}?',
+  pieces:[
+   {t:'s',k:'A',label:'lugar/cosa',exp:'Lo que buscas: un lugar, una persona, un objeto.',opts:[
+    {j:'トイレ',r:'toire',e:'el baño'},{j:'えき',r:'eki',e:'la estación'},{j:'レジ',r:'reji',e:'la caja'},{j:'でぐち',r:'deguchi',e:'la salida'},{j:'ホテル',r:'hoteru',e:'el hotel'},{j:'コンビニ',r:'konbini',e:'el konbini'}]},
+   {t:'p',j:'は',r:'wa',dis:['を','に','が'],exp:'Marca el tema: "hablando del baño…"'},
+   {t:'f',j:'どこですか',r:'doko desu ka',exp:'"¿Dónde está?". どこ = dónde + ですか = pregunta cortés.'}]},
+ {id:'des',name:'Expresar deseos',tag:'Quiero comer / ir / comprar…',color:'#F39700',
+  anatomy:'Toma un verbo, quítale ます y queda la <b>raíz</b> (たべます → たべ). Pégale <b>たいです</b> y expresa deseo. Con la cosa + を adelante, dices exactamente qué quieres hacer.',
+  es:'quiero {V} {A}',
+  pieces:[
+   {t:'s',k:'A',label:'cosa',exp:'La cosa sobre la que cae tu deseo.',opts:[
+    {j:'すし',r:'sushi',e:'sushi'},{j:'ラーメン',r:'rāmen',e:'ramen'},{j:'ビール',r:'bīru',e:'cerveza'},{j:'これ',r:'kore',e:'esto'},{j:'おみやげ',r:'omiyage',e:'un souvenir'}]},
+   {t:'p',j:'を',r:'o',dis:['は','が','で'],exp:'Objeto directo: marca la cosa deseada.'},
+   {t:'s',k:'V',label:'raíz verbal',exp:'El verbo sin ます: たべます→たべ, のみます→のみ.',opts:[
+    {j:'たべ',r:'tabe',e:'comer'},{j:'のみ',r:'nomi',e:'beber'},{j:'かい',r:'kai',e:'comprar'},{j:'み',r:'mi',e:'ver'}]},
+   {t:'f',j:'たいです',r:'tai desu',exp:'"Quiero…". Pegado a la raíz del verbo expresa deseo cortés.'}]},
+ {id:'gus',name:'Hablar de gustos',tag:'Me gusta…',color:'#E85298',
+  anatomy:'Los gustos usan <b>が</b>, no を: <b>A が すきです</b>. Es tu herramienta estrella para small talk: anime, comida, lugares… Para negar: すきじゃないです.',
+  es:'me gusta {A}',
+  pieces:[
+   {t:'s',k:'A',label:'lo que te gusta',exp:'Cualquier cosa: comida, hobbies, lugares.',opts:[
+    {j:'アニメ',r:'anime',e:'el anime'},{j:'すし',r:'sushi',e:'el sushi'},{j:'コーヒー',r:'kōhī',e:'el café'},{j:'にほん',r:'nihon',e:'Japón'},{j:'ゲーム',r:'gēmu',e:'los videojuegos'},{j:'さくら',r:'sakura',e:'las flores de cerezo'}]},
+   {t:'p',j:'が',r:'ga',dis:['を','は','に'],exp:'Con すき, el gusto se marca con が (no con を). Es una excepción que hay que memorizar.'},
+   {t:'f',j:'すきです',r:'suki desu',exp:'"Me gusta". Bloque fijo de gustos.'}]},
+ {id:'hay',name:'Preguntar si tienen',tag:'Tiendas y servicios',color:'#00A7DB',
+  anatomy:'<b>A は ありますか</b> pregunta por la existencia de cosas: "¿hay / tienen A?". Úsalo en tiendas, cafés y hoteles. Para personas y animales sería いますか.',
+  es:'¿tienen {A}?',
+  pieces:[
+   {t:'s',k:'A',label:'cosa',exp:'Lo que buscas que exista o tengan.',opts:[
+    {j:'ワイファイ',r:'waifai',e:'wifi'},{j:'ふくろ',r:'fukuro',e:'bolsa'},{j:'コンセント',r:'konsento',e:'enchufes'},{j:'みず',r:'mizu',e:'agua'},{j:'えいごのメニュー',r:'eigo no menyū',e:'menú en inglés'}]},
+   {t:'p',j:'は',r:'wa',dis:['を','が','で'],exp:'Tema: "hablando del wifi…"'},
+   {t:'f',j:'ありますか',r:'arimasu ka',exp:'"¿Hay? / ¿Tienen?". Existencia de cosas inanimadas.'}]},
+ {id:'com',name:'Oración completa',tag:'Lugar + cosa + verbo',color:'#8F76D6',
+  anatomy:'La oración Lego completa: <b>[lugar]で [cosa]を [verbo]</b>. La partícula <b>で</b> marca dónde ocurre la acción, <b>を</b> marca la cosa, y el verbo cierra al final, como siempre.',
+  es:'{V} {A} en {L}',
+  pieces:[
+   {t:'s',k:'L',label:'lugar',exp:'Dónde ocurre la acción.',opts:[
+    {j:'レストラン',r:'resutoran',e:'un restaurante'},{j:'いえ',r:'ie',e:'casa'},{j:'カフェ',r:'kafe',e:'un café'},{j:'いざかや',r:'izakaya',e:'un izakaya'},{j:'こうえん',r:'kōen',e:'el parque'}]},
+   {t:'p',j:'で',r:'de',dis:['に','を','は'],exp:'Lugar de la acción: marca DÓNDE pasa lo que haces.'},
+   {t:'s',k:'A',label:'cosa',exp:'El objeto de la acción.',opts:[
+    {j:'ラーメン',r:'rāmen',e:'ramen'},{j:'コーヒー',r:'kōhī',e:'café'},{j:'ビール',r:'bīru',e:'cerveza'},{j:'おみやげ',r:'omiyage',e:'souvenirs'}]},
+   {t:'p',j:'を',r:'o',dis:['は','が','に'],exp:'Objeto directo de la acción.'},
+   {t:'s',k:'V',label:'verbo',exp:'El verbo siempre cierra la oración japonesa.',opts:[
+    {j:'たべます',r:'tabemasu',e:'como'},{j:'のみます',r:'nomimasu',e:'bebo'},{j:'かいます',r:'kaimasu',e:'compro'}]}]},
+ {id:'pre',name:'Preguntar precios',tag:'Compras y mercados',color:'#9C5E31',
+  anatomy:'<b>A は いくらですか</b> = "¿cuánto cuesta A?". El bloque <b>いくらですか</b> es fijo. Combínalo con これ/それ/あれ y puedes preguntar el precio de todo señalando.',
+  es:'¿cuánto cuesta {A}?',
+  pieces:[
+   {t:'s',k:'A',label:'cosa',exp:'Lo que quieres cotizar. これ + señalar funciona siempre.',opts:[
+    {j:'これ',r:'kore',e:'esto'},{j:'それ',r:'sore',e:'eso'},{j:'きっぷ',r:'kippu',e:'el boleto'},{j:'おみやげ',r:'omiyage',e:'el souvenir'},{j:'チケット',r:'chiketto',e:'el boleto (evento)'}]},
+   {t:'p',j:'は',r:'wa',dis:['を','が','で'],exp:'Tema de la pregunta.'},
+   {t:'f',j:'いくらですか',r:'ikura desu ka',exp:'"¿Cuánto cuesta?". いくら = cuánto (precio).'}]},
+];
+
+let P=null,PSel={},PMode='lab',GAP=null,TIL=null;
+
+function renderPatterns(){
+  const el=document.getElementById('pattern-list');el.innerHTML='';
+  PATTERNS.forEach((p,i)=>{
+    const mini=p.pieces.map(pc=>pc.t==='s'
+      ?`<span class="s">${pc.label}</span>`
+      :`<span class="${pc.t}">${pc.j}</span>`).join('');
+    el.insertAdjacentHTML('beforeend',
+     `<button class="line-card" onclick="openPattern(${i})">
+        <div class="line-badge" style="background:${p.color}">${i+1}</div>
+        <div class="line-info"><h3>${p.name}</h3><div class="jp">${p.tag}</div>
+        <div class="pt-mini">${mini}</div></div>
+      </button>`);
+  });
+}
+function openPattern(i){
+  P=PATTERNS[i];PSel={};
+  P.pieces.forEach(pc=>{if(pc.t==='s')PSel[pc.k]=pc.opts[0]});
+  document.getElementById('pt-title').textContent=P.name;
+  document.getElementById('pt-tag').textContent=P.tag;
+  document.getElementById('pt-anatomy').innerHTML=P.anatomy;
+  document.getElementById('pt-exp').innerHTML='👆 Toca una pieza de la fórmula para ver qué hace.';
+  renderFormulaMain();setPMode('lab');go('scr-pattern');
+}
+function renderFormulaMain(){
+  const el=document.getElementById('pt-formula');el.innerHTML='';
+  P.pieces.forEach((pc,i)=>{
+    const cls=pc.t==='s'?'s':pc.t==='p'?'p':'f';
+    const txt=pc.t==='s'?PSel[pc.k].j:pc.j;
+    const lbl=pc.t==='s'?pc.label:pc.t==='p'?'partícula':'bloque fijo';
+    el.insertAdjacentHTML('beforeend',
+     `<button class="fx-piece ${cls}" onclick="pieceTap(${i},this)">${txt}<small>${lbl}</small></button>`);
+  });
+}
+function pieceTap(i,el){
+  document.querySelectorAll('#pt-formula .fx-piece').forEach(p=>p.classList.remove('hl'));
+  el.classList.add('hl');
+  const pc=P.pieces[i];
+  const head=pc.t==='s'?'🟡 HUECO «'+pc.label+'»':pc.t==='p'?'⬛ Partícula '+pc.j:'🟩 Bloque fijo '+pc.j;
+  document.getElementById('pt-exp').innerHTML='<b>'+head+':</b> '+pc.exp;
+}
+function setPMode(m){
+  PMode=m;
+  ['lab','gap','tiles'].forEach(x=>document.getElementById('mt-'+x).classList.toggle('on',x===m));
+  if(m==='lab')renderLab();
+  if(m==='gap')newGap();
+  if(m==='tiles')newTiles();
+}
+function randomSel(){
+  const s={};
+  P.pieces.forEach(pc=>{if(pc.t==='s')s[pc.k]=pc.opts[Math.floor(Math.random()*pc.opts.length)]});
+  return s;
+}
+function jpOf(sel){return P.pieces.map(pc=>pc.t==='s'?sel[pc.k].j:pc.j).join('')}
+function roOf(sel){return P.pieces.map(pc=>pc.t==='s'?sel[pc.k].r:pc.r).join(' ')}
+function esOf(sel){return P.es.replace(/\{(\w)\}/g,(m,k)=>sel[k].e)}
+function addXP(n){S.xp+=n;touchStreak();saveState();renderAll()}
+
+/* --- Modo LAB --- */
+function renderLab(){
+  const area=document.getElementById('pt-area');
+  let slots='';
+  P.pieces.forEach((pc,pi)=>{
+    if(pc.t!=='s')return;
+    slots+=`<div class="sg"><div class="sg-label">🟡 ${pc.label}</div><div class="sg-chips">`+
+      pc.opts.map((o,oi)=>
+       `<button class="wchip ${PSel[pc.k]===o?'on':''}" onclick="labPick(${pi},${oi})">${o.j}<small>${o.e}</small></button>`).join('')+
+      `</div></div>`;
+  });
+  area.innerHTML=`
+    <div class="lab-out" style="position:relative">
+      <div class="lo-jp">${jpOf(PSel)}</div>
+      <div class="lo-ro">${roOf(PSel)}</div>
+      <div class="lo-es">"${esOf(PSel)}"</div>
+      <button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(jpOf(PSel))">🔊</button>
+    </div>
+    <button class="btn ghost small" onclick="labDice()" style="margin-bottom:14px">🎲 Sorpréndeme</button>
+    ${slots}`;
+}
+function labPick(pi,oi){
+  const pc=P.pieces[pi];PSel[pc.k]=pc.opts[oi];
+  renderFormulaMain();renderLab();
+}
+function labDice(){PSel=randomSel();renderFormulaMain();renderLab()}
+
+/* --- Modo HUECOS --- */
+function newGap(){
+  const sel=randomSel();
+  const idx=Math.floor(Math.random()*P.pieces.length);
+  const pc=P.pieces[idx];
+  let correct,opts;
+  if(pc.t==='s'){
+    correct=sel[pc.k].j;
+    opts=[correct,...shuffle(pc.opts.filter(o=>o.j!==correct)).slice(0,3).map(o=>o.j)];
+  }else if(pc.t==='p'){
+    correct=pc.j;opts=[correct,...shuffle(pc.dis).slice(0,3)];
+  }else{
+    correct=pc.j;opts=[correct,...shuffle(FIXBANK.filter(f=>f!==pc.j)).slice(0,3)];
+  }
+  GAP={sel,idx,correct,done:false};
+  const blocks=P.pieces.map((p2,i)=>{
+    const cls=i===idx?'blank':(p2.t==='s'?'s':p2.t==='p'?'p':'f');
+    const txt=i===idx?'？':(p2.t==='s'?sel[p2.k].j:p2.j);
+    return `<div class="fx-piece ${cls}" style="cursor:default">${txt}</div>`;
+  }).join('');
+  document.getElementById('pt-area').innerHTML=`
+    <div class="q-prompt-label">Completa la oración</div>
+    <div class="q-prompt"><div style="font-size:14px;color:var(--ink-soft);margin-bottom:10px">"${esOf(sel)}"</div>
+      <div class="fx" style="margin:0">${blocks}</div></div>
+    <div class="opts">${shuffle(opts).map(o=>
+      `<button class="opt" onclick="gapAnswer(this)">${o}</button>`).join('')}</div>
+    <div class="feedback" id="g-fb"></div>
+    <div id="g-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newGap()">Siguiente →</button></div>`;
+}
+function gapAnswer(btn){
+  if(GAP.done)return;GAP.done=true;
+  const ok=btn.textContent===GAP.correct;
+  document.querySelectorAll('#pt-area .opt').forEach(o=>{
+    if(o.textContent===GAP.correct)o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  const fb=document.getElementById('g-fb');
+  if(ok){S.sentences=(S.sentences||0)+1;addXP(8);
+    fb.className='feedback ok';fb.innerHTML='✅ +8 XP · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>';
+  }else{
+    fb.className='feedback no';fb.innerHTML='❌ Era <b>'+GAP.correct+'</b> · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>';
+  }
+  document.getElementById('g-next').style.display='block';
+}
+
+/* --- Modo FICHAS --- */
+function newTiles(){
+  const sel=randomSel();
+  const tokens=P.pieces.map(pc=>pc.t==='s'?sel[pc.k].j:pc.j);
+  const pool=[...PARTBANK.filter(x=>!tokens.includes(x)),...FIXBANK.filter(x=>!tokens.includes(x))];
+  const dis=shuffle(pool).slice(0,2);
+  const bank=shuffle([...tokens,...dis]).map((t,i)=>({t,used:false}));
+  TIL={sel,tokens,bank,ans:[],done:false};
+  renderTiles();
+}
+function renderTiles(){
+  const area=document.getElementById('pt-area');
+  area.innerHTML=`
+    <div class="q-prompt-label">Arma la oración</div>
+    <div class="q-prompt"><div class="big" style="font-size:19px">"${esOf(TIL.sel)}"</div></div>
+    <div class="tz-label">Tu oración</div>
+    <div class="tile-zone" id="t-ans">${TIL.ans.map((a,i)=>
+      `<button class="tile" onclick="ansTap(${i})">${TIL.bank[a].t}</button>`).join('')||''}</div>
+    <div class="tz-label">Fichas</div>
+    <div class="tile-zone" style="background:transparent;border-color:var(--line)">${TIL.bank.map((b,i)=>
+      `<button class="tile ${b.used?'used':''}" onclick="tileTap(${i})">${b.t}</button>`).join('')}</div>
+    <div class="btn-row">
+      <button class="btn ghost small" onclick="tilesClear()">Borrar</button>
+      <button class="btn small" onclick="tilesCheck()" ${TIL.done?'disabled':''}>Comprobar</button>
+    </div>
+    <div class="feedback" id="t-fb"></div>
+    <div id="t-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newTiles()">Siguiente →</button></div>`;
+}
+function tileTap(i){
+  if(TIL.done||TIL.bank[i].used)return;
+  TIL.bank[i].used=true;TIL.ans.push(i);renderTiles();
+}
+function ansTap(ai){
+  if(TIL.done)return;
+  const bi=TIL.ans[ai];TIL.bank[bi].used=false;TIL.ans.splice(ai,1);renderTiles();
+}
+function tilesClear(){
+  if(TIL.done)return;
+  TIL.ans=[];TIL.bank.forEach(b=>b.used=false);renderTiles();
+}
+function tilesCheck(){
+  if(TIL.done)return;
+  const built=TIL.ans.map(a=>TIL.bank[a].t).join('');
+  const target=TIL.tokens.join('');
+  TIL.done=true;renderTiles();
+  const fb=document.getElementById('t-fb');
+  if(built===target){
+    S.sentences=(S.sentences||0)+1;addXP(14);
+    fb.className='feedback ok';fb.innerHTML='✅ ¡Perfecto! +14 XP<br>'+target+'<br><small>'+roOf(TIL.sel)+'</small>';
+  }else{
+    fb.className='feedback no';fb.innerHTML='❌ La correcta era:<br><b>'+target+'</b><br><small>'+roOf(TIL.sel)+'</small>';
+  }
+  document.getElementById('t-next').style.display='block';
+}
+renderPatterns();
+
+/* =================== VOCAB DICTIONARY =================== */
+let vFilter='all';
+function renderChips(){
+  const el=document.getElementById('v-chips');el.innerHTML='';
+  el.insertAdjacentHTML('beforeend',
+    `<button class="chip ${vFilter==='all'?'on':''}" onclick="setVFilter('all')">Todas</button>`);
+  ALL_LINES.forEach(c=>{
+    el.insertAdjacentHTML('beforeend',
+     `<button class="chip ${vFilter===c.id?'on':''}" onclick="setVFilter('${c.id}')">
+        <span class="c-dot" style="background:${c.color}"></span>${c.name}
+      </button>`);
+  });
+}
+function setVFilter(id){vFilter=id;renderChips();renderVocab()}
+function renderVocab(){
+  const q=(document.getElementById('v-search').value||'').toLowerCase().trim();
+  const list=document.getElementById('v-list');list.innerHTML='';
+  let total=0;
+  ALL_LINES.forEach(c=>{
+    if(vFilter!=='all'&&vFilter!==c.id)return;
+    const hits=c.words.filter(w=>
+      !q||w.j.toLowerCase().includes(q)||w.r.toLowerCase().includes(q)||w.e.toLowerCase().includes(q));
+    if(!hits.length)return;
+    total+=hits.length;
+    list.insertAdjacentHTML('beforeend',
+     `<div class="v-group">
+        <div class="v-group-head">
+          <span class="vg-badge" style="background:${c.color}">${c.letter}</span>
+          ${c.name}<span class="vg-count">${hits.length}</span>
+        </div>
+        ${hits.map(w=>
+         `<div class="v-row" style="--vc:${c.color};cursor:pointer" onclick="speak('${w.j.replace(/'/g,'')}')">
+            <div class="v-l"><div class="v-jp">${w.j}</div><div class="v-ro">${w.r}</div></div>
+            <div class="v-es">${w.e} <span style="opacity:.45">🔊</span></div>
+          </div>`).join('')}
+      </div>`);
+  });
+  if(!total){
+    list.innerHTML=`<div class="v-empty"><div class="ve-jp">🔍</div>Sin resultados para "${q}".<br>Prueba en kana, rōmaji o español.</div>`;
+  }
+}
+renderChips();renderVocab();
+
+/* =================== INIT =================== */
+loadState();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
