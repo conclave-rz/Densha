@@ -10,7 +10,10 @@ Hecha para una sola misión: pasar de cero a conversaciones reales en cafés, re
 
 | | |
 |---|---|
-| 🗾 **21 líneas de estudio** | ~270 tarjetas de vocabulario, frases hechas y 56 kanji con lecturas くん/オン |
+| 🎓 **Sistema JLPT N5 → N4** | Empiezas en N5; desbloqueas N4 con 70% de promedio + la historia completa. En N4 el rōmaji desaparece de los quizzes y el audio acelera: dificultad evolutiva real |
+| 🗾 **29 líneas de estudio** | ~380 tarjetas de vocabulario, frases y 84 kanji con lecturas くん/オン — verbos de movimiento, adjetivos de emociones, y contenido N4 con candado |
+| 活 **Conjugador** | El gimnasio de verbos: 20 verbos × 7 formas (corteses en N5; diccionario, ない y た se suman en N4) |
+| 👂 **Listening evolutivo** | Preguntas de puro oído en los quizzes, y modo oído en escenarios (se desbloquea al sacar 100%): el staff habla sin texto |
 | 🎴 **Quizzes y pares** | Opción múltiple en ambas direcciones + juego de unir pares, con XP y combos |
 | 組 **Constructor de oraciones** | 8 fórmulas con anatomía explicada pieza por pieza: laboratorio libre, huecos y fichas |
 | 🎭 **12 escenarios pixel-art** | Diálogos por turnos con el staff: aeropuerto, taxi, hotel, konbini, café, restaurante, izakaya, librería, tienda de ropa, estación, farmacia y kōban |
@@ -89,4 +92,4 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 
 ### Parte de Codex 4004
 
-**Densha** es un proyecto dentro del framework **Codex 4004** — una constelación de herramientas y aplicaciones de práctica artística y exploración mental.
+**Densha** es un proyecto dentro del framework **Codex 4004** — una constelación de herramientas y aplicaciones de práctica artística y exploración visual.
