@@ -11,19 +11,20 @@ Hecha para una sola misión: pasar de cero a conversaciones reales en cafés, re
 | | |
 |---|---|
 | 🎓 **Sistema JLPT N5 → N4** | Empiezas en N5; desbloqueas N4 con 70% de promedio + la historia completa. En N4 el rōmaji desaparece de los quizzes y el audio acelera: dificultad evolutiva real |
-| 🗾 **29 líneas de estudio** | ~380 tarjetas de vocabulario, frases y 84 kanji con lecturas くん/オン — verbos de movimiento, adjetivos de emociones, y contenido N4 con candado |
-| 活 **Conjugador** | El gimnasio de verbos: 20 verbos × 7 formas (corteses en N5; diccionario, ない y た se suman en N4) |
-| 👂 **Listening evolutivo** | Preguntas de puro oído en los quizzes, y modo oído en escenarios (se desbloquea al sacar 100%): el staff habla sin texto |
-| 🎴 **Quizzes y pares** | Opción múltiple en ambas direcciones + juego de unir pares, con XP y combos |
-| 組 **Constructor de oraciones** | 8 fórmulas con anatomía explicada pieza por pieza: laboratorio libre, huecos y fichas |
-| 🎭 **12 escenarios pixel-art** | Diálogos por turnos con el staff: aeropuerto, taxi, hotel, konbini, café, restaurante, izakaya, librería, tienda de ropa, estación, farmacia y kōban |
-| 🇯🇵 **Modo historia** | "7 días en Japón": encadena los 12 escenarios como un viaje, estación por estación |
+| 🗾 **31 líneas · 439 tarjetas** | Vocabulario por tema, frases hechas y **98 kanji** con lecturas くん/オン y palabra de ejemplo |
+| 🎭 **14 escenarios pixel-art** | Diálogos por turnos con el staff: aeropuerto, estación, taxi, hotel, konbini, café, restaurante, librería, ropa, farmacia, kōban, izakaya — y con candado N4: **banco** y **teléfono** (もしもし → しつれいします) |
+| 🇯🇵 **Modo historia** | "7 días en Japón": los 12 escenarios base encadenados como un viaje, estación por estación |
+| 組 **Constructor de oraciones** | 9 fórmulas con anatomía explicada pieza por pieza: laboratorio libre, huecos y fichas |
+| 活 **Conjugador** | 20 verbos × 7 formas (corteses en N5; diccionario, ない y た se suman en N4), irregulares incluidas |
+| 👂 **Listening evolutivo** | Preguntas de puro oído en los quizzes, **✍️ Dictado** (arma la palabra kana por kana) y modo oído en escenarios (se desbloquea con 100%) |
 | 🔊 **Audio nativo** | Pronunciación japonesa con la voz del sistema — sin servicios externos, funciona offline |
 | 🎯 **Repaso inteligente** | Detecta tus palabras débiles y arma el repaso del día con ellas |
 | 💴 **Entrenador de precios** | Lee cantidades en yenes como local (せんさんびゃくはちじゅうえん) |
-| 🏅 **Logros, misiones y rachas** | 10 logros, 3 misiones diarias con bonus, y racha de días con fuego 🔥 |
+| 🏅 **11 logros, misiones y rachas** | 3 misiones diarias con bonus de XP y racha de días 🔥 |
 
-Todo en **un solo archivo HTML**: sin frameworks, sin build, sin dependencias. Vanilla JS + canvas para el pixel art + Web Speech API para el audio.
+**Diseño**: lenguaje editorial inspirado en el diseño web japonés contemporáneo — bloques súper redondeados, etiquetas pill, títulos grandes, sombras suaves y dock de navegación flotante — con color semántico: crema de fondo, cian para práctica y progreso, azul para escenarios, amarillo para misiones, y el verde JR reservado para la identidad Yamanote. El header integra nivel, XP, racha y tu camino a N4 en una cabecera compacta que te acompaña en toda la app.
+
+Todo en **un solo archivo HTML**: sin frameworks, sin build, sin dependencias. Vanilla JS + canvas para el pixel art 16-bits + Web Speech API para el audio.
 
 ## 📦 Contenido del paquete
 
@@ -39,7 +40,7 @@ densha/
 
 ## 🚀 Publicar
 
-La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse y funcionar offline). Dos rutas gratuitas, elige una:
+La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse y funcionar offline). Dos rutas gratuitas:
 
 ### Opción A · GitHub Pages
 
@@ -50,39 +51,52 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 
 ### Opción B · Netlify Drop
 
-1. Entra a [app.netlify.com](https://app.netlify.com) e **inicia sesión primero** (con GitHub o Google, un clic). ⚠️ Sin sesión, el sitio se borra en 1 hora.
+1. Entra a [app.netlify.com](https://app.netlify.com) e **inicia sesión primero** (con GitHub o Google). ⚠️ Sin sesión, el sitio se borra en 1 hora.
 2. Ve a [app.netlify.com/drop](https://app.netlify.com/drop) y arrastra la **carpeta completa**.
-3. En ~30 segundos tienes tu URL. Opcional: *Site configuration → Change site name* para algo memorable.
+3. En ~30 segundos tienes tu URL.
 
 ## 📱 Instalar en tu teléfono (Android)
 
 1. Abre tu URL en **Chrome**.
 2. Acepta el aviso de **"Instalar app"** (o menú ⋮ → *Agregar a pantalla de inicio*).
-3. Aparece el ícono verde 語 en tu inicio. Ábrela desde ahí: pantalla completa, sin barra del navegador.
+3. Aparece el ícono verde 語 en tu inicio. Pantalla completa, sin barra del navegador.
 4. Tras la primera carga con internet, **funciona offline** — aviones, metro de Tokio 🚇, donde sea.
 
 ## 🔄 Actualizar la app
 
-1. Sube los archivos nuevos encima de los viejos:
-   - **GitHub**: repo → *Add file → Upload files* → arrastra → *Commit* (reemplaza los del mismo nombre).
-   - **Netlify**: tu sitio → pestaña *Deploys* → arrastra la carpeta ahí.
-2. En `sw.js`, sube la versión de caché (`densha-v6` → `densha-v7`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
+1. Sube los archivos nuevos encima de los viejos: **GitHub** → repo → *Add file → Upload files* → arrastra → *Commit*. **Netlify** → tu sitio → pestaña *Deploys* → arrastra la carpeta.
+2. En `sw.js`, sube la versión de caché (`densha-v11` → `densha-v12`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
 
 ## 💾 Tu progreso
 
-- XP, racha, récords y logros se guardan **en tu teléfono** (localStorage del navegador), amarrados al dominio donde instalaste.
+- XP, racha, récords y logros se guardan **en tu teléfono** (localStorage), amarrados al dominio donde instalaste.
 - **Respaldo**: Perfil → ⬇️ *Exportar* descarga un `densha-progreso.json`; ⬆️ *Importar* lo restaura. Úsalo antes de cambiar de dominio o de teléfono.
 - No borres los "datos de sitios" de Chrome para tu dominio: ahí vive tu racha. 🔥
 
 ## 🔧 Problemas comunes
 
-**"El sitio expira en 1 hora" (Netlify)** → arrastraste sin iniciar sesión. Inicia sesión y vuelve a arrastrar; borra el ícono viejo del teléfono e instala desde la URL nueva.
+**"El sitio expira en 1 hora" (Netlify)** → arrastraste sin iniciar sesión. Inicia sesión, re-arrastra, y reinstala desde la URL nueva.
 
-**No aparece "Instalar app"** → verifica que la URL sea HTTPS y que abriste con Chrome; espera unos segundos o busca en el menú ⋮. Con archivos locales (`file://`) la instalación no está disponible: publica primero.
+**404 en GitHub Pages** → revisa que el repo sea Public, que en Settings → Pages el Source esté en *Deploy from a branch* / `main` / root, que `index.html` esté en la raíz del repo (no dentro de una carpeta), y espera 1-2 min al primer deploy (pestaña Actions).
 
-**No suena el audio** → la primera reproducción puede tardar 1–2 s mientras Android carga la voz. Si sigue mudo: Ajustes → Sistema → *Salida de texto a voz* → verifica que el japonés esté disponible en el motor de Google.
+**No aparece "Instalar app"** → verifica HTTPS y Chrome; espera unos segundos o busca en el menú ⋮.
 
-**Actualicé y no veo cambios** → cierra la app por completo y ábrela dos veces (el service worker instala la versión nueva en el primer arranque y la activa en el segundo), o confirma que subiste la versión en `sw.js`.
+**No suena el audio** → la primera reproducción tarda 1–2 s. Si sigue mudo: Ajustes → Sistema → *Salida de texto a voz* → verifica que el japonés esté en el motor de Google.
+
+**Actualicé y no veo cambios** → cierra la app por completo y ábrela dos veces (el service worker activa la versión nueva en el segundo arranque), o confirma que subiste la versión en `sw.js`.
+
+## 🗓 Historial de versiones
+
+| v | Qué trajo |
+|---|---|
+| v11 | Header integrado (nivel + XP + racha + camino a N4) y diccionario con índice colapsable |
+| v9–v10 | Color semántico (crema/cian/azul/amarillo), escenarios Banco y Teléfono (N4), modo Dictado, adverbios y kanji N4 |
+| v8 | Rediseño editorial: bloques redondeados, pills, títulos grandes, dock flotante |
+| v7 | Sistema JLPT N5→N4, verbos/adjetivos nuevos, Conjugador, listening evolutivo |
+| v5–v6 | Modo historia, logros, misiones diarias, home compacto |
+| v1–v4 | Base: líneas, quizzes, constructor, escenarios pixel-art, precios, repaso, PWA |
+
+**Roadmap**: v12 → paquete N3 (vocabulario abstracto, ~370 kanji, formas potencial/pasiva, kanji con furigana).
 
 ---
 

@@ -13,9 +13,16 @@
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F1F6F0;
+  --paper:#F6F4EC;         /* crema cálido (fondo co-coco) */
   --mint:#E2F0E5;
   --mint-deep:#CFE6D6;
+  --teal:#1BB8CE;          /* cian firma de la referencia */
+  --teal-deep:#0E8FA3;
+  --teal-pale:#E0F5F8;
+  --blue:#2B50C8;          /* azul del bloque Books */
+  --sun:#FFD23E;           /* amarillo editorial */
+  --sun-pale:#FFF3C7;
+  --coral-pale:#FCE9E4;
   --ink:#17181C;
   --ink-soft:#5A5C66;
   --card:#FFFFFF;
@@ -24,8 +31,9 @@
   --good:#0B7A3E;
   --bad:#D5382E;
   --gold:#E8A020;
-  --radius:18px;
-  --shadow:0 2px 0 rgba(23,24,28,.08);
+  --radius:22px;
+  --radius-xl:38px;
+  --shadow:0 2px 10px rgba(23,24,28,.08);
   --font-jp:'M PLUS Rounded 1c',system-ui,sans-serif;
   --font-px:'DotGothic16',monospace;
 }
@@ -44,21 +52,24 @@ body{
 }
 /* ---------- Header ---------- */
 header{
-  padding:14px 18px 10px;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px 10px;
   position:sticky;top:0;background:var(--paper);z-index:20;
-  border-bottom:2px solid var(--ink);
-  box-shadow:0 4px 0 var(--jr-green);
+  border-bottom:1.5px solid var(--ink);
 }
+.head-top{display:flex;align-items:center;justify-content:space-between}
+.head-prog{margin-top:9px}
+.hp-track{height:8px;background:var(--mint-deep);border:1.5px solid var(--ink);border-radius:99px;overflow:hidden}
+.hp-fill{height:100%;background:linear-gradient(90deg,#0B7A3E,#31C871);border-radius:99px;transition:width .5s ease}
+.hp-txt{font-size:10.5px;color:var(--ink-soft);margin-top:5px;font-weight:600}
 .logo{display:flex;align-items:center;gap:9px}
 .logo-mark{
   width:34px;height:34px;border-radius:50%;
   background:var(--jr-green);color:#fff;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-px);font-size:19px;border:2.5px solid var(--ink);
+  font-family:var(--font-px);font-size:19px;border:1.5px solid var(--ink);
 }
-.logo h1{font-size:17px;font-weight:800;letter-spacing:.5px}
-.logo h1 span{color:var(--ink-soft);font-weight:500;font-size:12px;display:block;letter-spacing:1px}
+.logo h1{font-size:19px;font-weight:800;letter-spacing:.5px}
+.hud-chip.lv{background:var(--jr-green);color:#fff;font-size:13px;padding:4px 12px}
 .hud{display:flex;gap:8px;align-items:center}
 .hud-chip{
   display:flex;align-items:center;gap:5px;
@@ -68,21 +79,41 @@ header{
 }
 .hud-chip .ico{font-size:13px}
 /* ---------- Main ---------- */
-main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:touch}
+main{flex:1;overflow-y:auto;padding:16px 16px 122px;-webkit-overflow-scrolling:touch}
 .screen{display:none;animation:fadein .25s ease}
 .screen.active{display:block}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .section-label{
-  font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--ink-soft);margin:20px 2px 10px;display:flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;padding:5px 14px;margin:22px 2px 12px;
+  border:1.5px solid var(--ink);border-radius:999px;background:var(--card);
+  font-size:10.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);
 }
-.section-label::after{content:'';flex:1;height:2px;background:var(--mint-deep);border-radius:2px}
+.section-label::after{display:none}
+/* ---------- Encabezados de sección (pill + título editorial) ---------- */
+.sec-head{margin:28px 2px 13px}
+.sec-pill{
+  display:inline-flex;align-items:center;padding:5px 14px;
+  border:1.5px solid var(--ink);border-radius:999px;background:var(--card);
+  font-size:10.5px;font-weight:800;letter-spacing:1.5px;
+}
+.sec-title{font-size:27px;font-weight:800;line-height:1.12;margin-top:9px;display:flex;align-items:baseline;gap:10px}
+.sec-hint{font-size:12px;font-weight:700;color:var(--ink-soft)}
+/* ---------- Bloques-sección redondeados ---------- */
+.block{border:1.5px solid var(--ink);border-radius:var(--radius-xl);padding:20px 15px 15px;margin:28px 0 4px}
+.block .sec-head{margin:0 2px 13px}
+.block-blue{background:var(--blue);color:#fff}
+.block-blue .sec-pill{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
+.block-blue .sec-title{color:#fff}
+.block-blue .sec-hint{color:rgba(255,255,255,.75)}
+.block-mint{background:var(--mint)}
+.block-mint .sec-pill{background:var(--paper)}
+.block .scene-grid{padding-bottom:4px}
 /* ---------- Rank board (signature) ---------- */
 .rankboard{
-  background:var(--mint);color:var(--ink);border-radius:var(--radius);
+  background:var(--mint);color:var(--ink);border-radius:var(--radius-xl);
   padding:16px 18px 14px;margin-top:4px;position:relative;overflow:hidden;
-  border:2.5px solid var(--ink);box-shadow:var(--shadow);
+  border:1.5px solid var(--ink);box-shadow:var(--shadow);
 }
 .rankboard .rb-top{display:flex;justify-content:space-between;align-items:baseline}
 .rankboard .rb-rank{font-size:19px;font-weight:800}
@@ -94,16 +125,17 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .rb-next{font-size:11px;color:var(--ink-soft);margin-top:7px}
 /* ---------- Line cards ---------- */
 .line-card{
-  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
   padding:14px;display:flex;align-items:center;gap:13px;margin-bottom:11px;
   box-shadow:var(--shadow);cursor:pointer;user-select:none;
-  transition:transform .08s ease;width:100%;text-align:left;font-family:inherit;color:inherit;
+  transition:transform .3s ease,box-shadow .3s ease;width:100%;text-align:left;font-family:inherit;color:inherit;
 }
-.line-card:active{transform:scale(.98)}
+.line-card:active{transform:scale(.975)}
 .line-card.locked{opacity:.55;filter:grayscale(.5)}
+.scene-card.locked{opacity:.5;filter:grayscale(.6)}
 .line-badge{
   width:46px;height:46px;border-radius:50%;flex-shrink:0;
-  border:3px solid var(--ink);color:#fff;
+  border:2px solid var(--ink);color:#fff;
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-px);font-size:22px;
 }
@@ -111,27 +143,27 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .line-info h3{font-size:15.5px;font-weight:800}
 .line-info .jp{font-size:12px;color:var(--ink-soft);font-weight:500}
 .stations{display:flex;align-items:center;gap:0;margin-top:8px}
-.st-dot{width:11px;height:11px;border-radius:50%;border:2.5px solid var(--ink);background:var(--card);flex-shrink:0}
+.st-dot{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink);background:var(--card);flex-shrink:0}
 .st-dot.full{background:var(--dotc,var(--jr-green))}
 .st-seg{height:3px;width:16px;background:var(--ink);flex-shrink:0}
 .line-pct{font-family:var(--font-px);font-size:15px;color:var(--ink-soft);flex-shrink:0}
 /* ---------- Buttons ---------- */
 .btn{
-  display:block;width:100%;padding:15px;border-radius:16px;
-  border:2.5px solid var(--ink);background:var(--jr-green);color:#fff;
+  display:block;width:100%;padding:15px;border-radius:999px;
+  border:1.5px solid var(--ink);background:var(--jr-green);color:#fff;
   font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;
-  box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;
+  box-shadow:0 4px 14px rgba(23,24,28,.14);transition:transform .08s,box-shadow .08s;
 }
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 5px rgba(23,24,28,.12)}
 .btn.ghost{background:var(--card);color:var(--ink)}
-.btn.small{padding:11px;font-size:14px;border-radius:13px}
+.btn.small{padding:11px;font-size:14px;border-radius:999px}
 .btn:disabled{opacity:.45;pointer-events:none}
 .btn-row{display:flex;gap:10px;margin-top:12px}
 .btn-row .btn{flex:1}
 /* ---------- Lesson intro ---------- */
 .lesson-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .back-btn{
-  width:40px;height:40px;border-radius:12px;border:2.5px solid var(--ink);
+  width:40px;height:40px;border-radius:12px;border:1.5px solid var(--ink);
   background:var(--card);font-size:18px;cursor:pointer;box-shadow:var(--shadow);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
 }
@@ -146,17 +178,17 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .flashcard.flip{transform:rotateY(180deg)}
 .f-face{
   position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
   box-shadow:var(--shadow);padding:18px;text-align:center;
 }
-.f-face.back{transform:rotateY(180deg);background:var(--mint);color:var(--ink)}
+.f-face.back{transform:rotateY(180deg);background:var(--teal-pale);color:var(--ink)}
 .f-jp{font-size:40px;font-weight:800;line-height:1.2}
 .f-ro{font-size:15px;color:var(--ink-soft)}
 .f-face.back .f-es{font-size:26px;font-weight:800}
-.f-face.back .f-ro{color:var(--jr-green);font-weight:700}
+.f-face.back .f-ro{color:var(--teal-deep);font-weight:700}
 .f-kd{display:none;font-size:12.5px;line-height:1.6;text-align:center;margin-top:2px}
-.f-kd span{display:inline-block;background:var(--mint-deep);color:#0B5A30;border-radius:8px;padding:2px 9px;margin:2px 3px;font-weight:700;border:1.5px solid var(--ink)}
+.f-kd span{display:inline-block;background:#C6ECF2;color:#085E6E;border-radius:8px;padding:2px 9px;margin:2px 3px;font-weight:700;border:1.5px solid var(--ink)}
 .f-kd .kd-ex{color:var(--ink-soft);margin-top:6px}
 .f-hint{position:absolute;bottom:12px;font-size:11px;color:var(--ink-soft);letter-spacing:1px}
 .f-face.back .f-hint{color:var(--ink-soft)}
@@ -164,22 +196,22 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 /* ---------- Quiz ---------- */
 .quiz-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .q-track{flex:1;height:12px;background:var(--line);border-radius:99px;overflow:hidden;border:2px solid var(--ink)}
-.q-fill{height:100%;background:var(--jr-green);transition:width .3s ease}
+.q-fill{height:100%;background:var(--teal);transition:width .3s ease}
 .combo{
   font-family:var(--font-px);font-size:14px;color:var(--gold);min-width:52px;text-align:right;
 }
 .q-prompt-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
 .q-prompt{
-  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
   padding:22px 16px;text-align:center;margin-bottom:16px;box-shadow:var(--shadow);
 }
 .q-prompt .big{font-size:32px;font-weight:800;line-height:1.25}
 .q-prompt .ro{font-size:14px;color:var(--ink-soft);margin-top:4px}
 .opts{display:grid;gap:10px}
 .opt{
-  padding:15px 14px;border-radius:15px;border:2.5px solid var(--ink);
+  padding:15px 14px;border-radius:18px;border:1.5px solid var(--ink);
   background:var(--card);font-family:inherit;font-size:16.5px;font-weight:700;
-  cursor:pointer;box-shadow:0 3px 0 var(--ink);text-align:center;color:var(--ink);
+  cursor:pointer;box-shadow:0 3px 10px rgba(23,24,28,.12);text-align:center;color:var(--ink);
   transition:transform .07s;
 }
 .opt:active{transform:translateY(2px)}
@@ -187,7 +219,7 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .opt.wrong{background:var(--bad);color:#fff}
 .opt.dim{opacity:.4;pointer-events:none}
 .feedback{
-  margin-top:14px;padding:13px 15px;border-radius:14px;border:2.5px solid var(--ink);
+  margin-top:14px;padding:13px 15px;border-radius:14px;border:1.5px solid var(--ink);
   font-weight:700;font-size:14.5px;display:none;
 }
 .feedback.ok{display:block;background:#DFF3E6;color:#0B5A30}
@@ -195,9 +227,9 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 /* ---------- Match game ---------- */
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .m-tile{
-  padding:16px 8px;border-radius:15px;border:2.5px solid var(--ink);background:var(--card);
+  padding:16px 8px;border-radius:18px;border:1.5px solid var(--ink);background:var(--card);
   font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;
-  box-shadow:0 3px 0 var(--ink);text-align:center;color:var(--ink);min-height:64px;
+  box-shadow:0 3px 10px rgba(23,24,28,.12);text-align:center;color:var(--ink);min-height:64px;
 }
 .m-tile.sel{background:#FFF3D6;border-color:var(--gold)}
 .m-tile.done{opacity:.25;pointer-events:none;background:var(--good);color:#fff}
@@ -213,14 +245,14 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .result p{color:var(--ink-soft);font-size:14px}
 .r-stats{display:flex;justify-content:center;gap:12px;margin:20px 0}
 .r-stat{
-  background:var(--card);border:2.5px solid var(--ink);border-radius:14px;
+  background:var(--card);border:1.5px solid var(--ink);border-radius:14px;
   padding:10px 16px;box-shadow:var(--shadow);min-width:88px;
 }
 .r-stat .n{font-family:var(--font-px);font-size:20px}
 .r-stat .l{font-size:10.5px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase}
 /* ---------- Guide ---------- */
 .acc{
-  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
   margin-bottom:11px;box-shadow:var(--shadow);overflow:hidden;
 }
 .acc-head{
@@ -229,7 +261,7 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
   cursor:pointer;text-align:left;color:var(--ink);
 }
 .acc-head .a-badge{
-  width:34px;height:34px;border-radius:50%;border:2.5px solid var(--ink);
+  width:34px;height:34px;border-radius:50%;border:1.5px solid var(--ink);
   color:#fff;display:flex;align-items:center;justify-content:center;
   font-size:16px;flex-shrink:0;font-family:var(--font-px);
 }
@@ -252,7 +284,7 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 /* ---------- Profile ---------- */
 .p-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:6px}
 .p-card{
-  background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
   padding:16px 14px;box-shadow:var(--shadow);text-align:center;
 }
 .p-card .n{font-family:var(--font-px);font-size:26px}
@@ -260,7 +292,7 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .ranks-list{margin-top:6px}
 .rank-row{
   display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:9px;
-  background:var(--card);border:2.5px solid var(--line);border-radius:14px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:14px;
 }
 .rank-row.hit{border-color:var(--ink);box-shadow:var(--shadow)}
 .rank-row .rr-ico{font-size:22px;width:30px;text-align:center}
@@ -269,27 +301,27 @@ main{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:to
 .rank-row .rr-xp{margin-left:auto;font-family:var(--font-px);font-size:13px;color:var(--ink-soft)}
 /* ---------- Bottom nav ---------- */
 nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;background:var(--card);
-  border-top:2.5px solid var(--ink);display:flex;z-index:30;
-  padding-bottom:env(safe-area-inset-bottom);
+  position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  width:calc(100% - 26px);max-width:452px;background:var(--card);
+  border:1.5px solid var(--ink);border-radius:999px;display:flex;z-index:30;
+  box-shadow:0 8px 22px rgba(23,24,28,.18);padding:4px;
 }
 .nav-btn{
-  flex:1;padding:9px 4px 10px;background:none;border:none;cursor:pointer;
+  flex:1;padding:7px 2px 8px;background:none;border:none;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:2px;
-  font-family:inherit;color:var(--ink-soft);
+  font-family:inherit;color:var(--ink-soft);border-radius:999px;
 }
 .nav-btn .n-ico{
   font-size:17px;width:34px;height:34px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;font-weight:800;
 }
 .nav-btn.active{color:var(--ink)}
-.nav-btn.active .n-ico{background:var(--jr-green);color:#fff}
+.nav-btn.active .n-ico{background:var(--ink);color:var(--paper)}
 .nav-btn .n-lbl{font-size:10.5px;font-weight:700;letter-spacing:.5px}
 /* ---------- Sentence builder ---------- */
-.anat{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:13px 15px;font-size:13.5px;line-height:1.6;box-shadow:var(--shadow);margin-bottom:4px}
+.anat{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);padding:13px 15px;font-size:13.5px;line-height:1.6;box-shadow:var(--shadow);margin-bottom:4px}
 .fx{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 10px}
-.fx-piece{padding:10px 13px;border:2.5px solid var(--ink);border-radius:12px;font-weight:800;font-size:17px;box-shadow:0 3px 0 var(--ink);background:var(--card);cursor:pointer;font-family:inherit;color:var(--ink);text-align:center}
+.fx-piece{padding:10px 13px;border:1.5px solid var(--ink);border-radius:12px;font-weight:800;font-size:17px;box-shadow:0 3px 10px rgba(23,24,28,.12);background:var(--card);cursor:pointer;font-family:inherit;color:var(--ink);text-align:center}
 .fx-piece small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--ink-soft);text-transform:uppercase;margin-top:1px}
 .fx-piece.s{background:#FFF3D6;border-style:dashed}
 .fx-piece.p{background:var(--ink);color:var(--paper)}
@@ -299,22 +331,22 @@ nav{
 .fx-piece.blank{background:#ECEAE3;border-style:dotted;color:var(--ink-soft);min-width:64px}
 .fx-exp{background:#FFF6E3;border:2px dashed var(--gold);border-radius:12px;padding:10px 13px;font-size:13px;margin-bottom:14px;min-height:44px}
 .mode-tabs{display:flex;gap:8px;margin-bottom:14px}
-.mtab{flex:1;padding:10px 4px;border-radius:12px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
-.mtab.on{background:var(--jr-green);color:#fff}
-.lab-out{background:var(--mint);color:var(--ink);border-radius:var(--radius);border:2.5px solid var(--ink);padding:18px 15px;text-align:center;margin-bottom:12px;box-shadow:var(--shadow)}
+.mtab{flex:1;padding:10px 4px;border-radius:999px;border:1.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(23,24,28,.12);color:var(--ink)}
+.mtab.on{background:var(--teal);color:#fff}
+.lab-out{background:var(--teal-pale);color:var(--ink);border-radius:var(--radius);border:1.5px solid var(--ink);padding:18px 15px;text-align:center;margin-bottom:12px;box-shadow:var(--shadow)}
 .lab-out .lo-jp{font-size:23px;font-weight:800;line-height:1.4}
-.lab-out .lo-ro{font-size:13px;color:var(--jr-green);margin-top:4px;font-weight:700}
+.lab-out .lo-ro{font-size:13px;color:var(--teal-deep);margin-top:4px;font-weight:700}
 .lab-out .lo-es{font-size:14px;color:var(--ink-soft);margin-top:6px}
 .sg{margin-bottom:12px}
 .sg-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:0 2px 6px}
 .sg-chips{display:flex;flex-wrap:wrap;gap:7px}
-.wchip{padding:8px 12px;border-radius:99px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.wchip{padding:8px 12px;border-radius:99px;border:1.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--ink)}
 .wchip small{font-size:10px;color:var(--ink-soft);font-weight:600;margin-left:4px}
 .wchip.on{background:var(--gold)}
 .wchip.on small{color:#5c4400}
 .tz-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:0 2px 6px}
-.tile-zone{min-height:60px;border:2.5px dashed var(--ink-soft);border-radius:14px;padding:9px;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;background:#EFEEE8}
-.tile{padding:10px 13px;border-radius:12px;border:2.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
+.tile-zone{min-height:60px;border:1.5px dashed var(--ink-soft);border-radius:14px;padding:9px;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;background:#EFEEE8}
+.tile{padding:10px 13px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(23,24,28,.12);color:var(--ink)}
 .tile.used{opacity:.22;pointer-events:none}
 .pt-mini{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .pt-mini span{font-size:11.5px;font-weight:800;border:2px solid var(--ink);border-radius:8px;padding:3px 7px;background:var(--card)}
@@ -323,7 +355,7 @@ nav{
 .pt-mini span.f{background:#E2F1E7}
 /* ---------- Vocab dictionary ---------- */
 .search-box{
-  width:100%;padding:13px 16px;border-radius:15px;border:2.5px solid var(--ink);
+  width:100%;padding:13px 16px;border-radius:15px;border:1.5px solid var(--ink);
   background:var(--card);font-family:inherit;font-size:15px;font-weight:500;
   box-shadow:var(--shadow);margin-bottom:11px;color:var(--ink);
 }
@@ -331,19 +363,23 @@ nav{
 .chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{
-  flex-shrink:0;padding:7px 13px;border-radius:99px;border:2.5px solid var(--ink);
+  flex-shrink:0;padding:7px 13px;border-radius:99px;border:1.5px solid var(--ink);
   background:var(--card);font-family:inherit;font-size:12.5px;font-weight:800;
   cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:6px;
 }
 .chip .c-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
 .chip.on{background:var(--ink);color:var(--paper)}
-.v-group{margin-bottom:16px}
+.v-group{margin-bottom:10px}
 .v-group-head{
-  display:flex;align-items:center;gap:9px;margin:4px 2px 8px;
-  font-size:13.5px;font-weight:800;
+  width:100%;display:flex;align-items:center;gap:9px;margin:0 0 8px;
+  font-size:13.5px;font-weight:800;background:var(--card);
+  border:1.5px solid var(--ink);border-radius:16px;padding:10px 13px;
+  cursor:pointer;font-family:inherit;color:var(--ink);box-shadow:var(--shadow);text-align:left;
 }
+.vg-chev{font-size:11px;color:var(--ink-soft);margin-left:8px;transition:transform .25s}
+.v-group.open .vg-chev{transform:rotate(90deg)}
 .v-group-head .vg-badge{
-  width:26px;height:26px;border-radius:50%;border:2.5px solid var(--ink);color:#fff;
+  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink);color:#fff;
   display:flex;align-items:center;justify-content:center;font-family:var(--font-px);font-size:13px;
 }
 .v-group-head .vg-count{margin-left:auto;font-family:var(--font-px);font-size:12px;color:var(--ink-soft)}
@@ -354,46 +390,50 @@ nav{
 }
 .v-row .v-l{flex:1;min-width:0}
 .v-row .v-jp{font-size:16.5px;font-weight:800;line-height:1.3}
-.v-row .v-ro{font-size:11.5px;color:var(--jr-green);font-weight:600}
+.v-row .v-ro{font-size:11.5px;color:var(--teal-deep);font-weight:600}
 .v-row .v-es{font-size:13px;color:var(--ink-soft);text-align:right;max-width:45%}
 .v-empty{
   text-align:center;padding:36px 16px;color:var(--ink-soft);font-size:14px;
 }
 .v-empty .ve-jp{font-size:34px;margin-bottom:8px}
 /* ---------- Práctica diaria + escenarios ---------- */
-.prac-row{display:flex;gap:10px;margin-top:2px}
-.prac-btn{flex:1;background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:13px 8px;box-shadow:var(--shadow);cursor:pointer;font-family:inherit;text-align:center;color:var(--ink)}
+.prac-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+.prac-btn:nth-child(1){background:var(--teal-pale)}
+.prac-btn:nth-child(2){background:var(--sun-pale)}
+.prac-btn:nth-child(3){background:var(--mint)}
+.prac-btn:nth-child(4){background:var(--coral-pale)}
+.prac-btn{flex:1;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);padding:13px 8px;box-shadow:var(--shadow);cursor:pointer;font-family:inherit;text-align:center;color:var(--ink)}
 .prac-btn .pb-ico{font-size:26px}
 .prac-btn .pb-t{font-weight:800;font-size:13.5px;margin-top:3px}
 .prac-btn .pb-s{font-size:11px;color:var(--ink-soft);margin-top:1px}
 .scene-grid{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .scene-grid::-webkit-scrollbar{display:none}
-.scene-card{flex:0 0 44%;scroll-snap-align:start;background:var(--mint);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px 8px 10px;cursor:pointer;text-align:center;box-shadow:var(--shadow);font-family:inherit}
+.scene-card{flex:0 0 44%;scroll-snap-align:start;background:#FDFBF3;border:1.5px solid var(--ink);border-radius:var(--radius);padding:12px 8px 10px;cursor:pointer;text-align:center;box-shadow:var(--shadow);font-family:inherit}
 .scene-card canvas{display:block;margin:0 auto}
 .scene-card .sc-name{color:var(--ink);font-weight:800;font-size:13.5px;margin-top:7px}
-.scene-card .sc-best{font-family:var(--font-px);font-size:11px;color:var(--jr-green);margin-top:2px}
-.story-card{border-color:var(--jr-green);border-width:3px;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--mint),#F4FAF5)}
+.scene-card .sc-best{font-family:var(--font-px);font-size:11px;color:var(--teal-deep);margin-top:2px}
+.story-card{border-color:var(--teal);border-width:2px;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--teal-pale),#FFFFFF)}
 .story-card canvas{animation:chug 2.4s ease-in-out infinite}
 @keyframes chug{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
 .story-card::after{content:'';position:absolute;left:-45%;top:0;bottom:0;width:38%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:sheen 3s ease-in-out infinite;pointer-events:none}
 @keyframes sheen{0%{left:-45%}60%,100%{left:130%}}
 canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
-.sc-art-wrap{display:flex;justify-content:center;background:var(--mint);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.sc-art-wrap{display:flex;justify-content:center;background:#FDFBF3;border:1.5px solid var(--ink);border-radius:var(--radius);padding:12px;margin-bottom:12px;box-shadow:var(--shadow)}
 /* ---------- Misiones diarias ---------- */
-.mis-card{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:12px 15px;box-shadow:var(--shadow)}
-.mis-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1.5px dashed var(--line)}
+.mis-card{background:var(--sun-pale);border:1.5px solid var(--ink);border-radius:var(--radius);padding:12px 15px;box-shadow:var(--shadow)}
+.mis-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1.5px dashed #E8D89A}
 .mis-row:last-of-type{border-bottom:none}
-.mis-chk{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--card)}
-.mis-row.done .mis-chk{background:var(--jr-green);color:#fff}
+.mis-chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--card)}
+.mis-row.done .mis-chk{background:#E8A020;color:#fff}
 .mis-txt{flex:1;font-size:13.5px;font-weight:700}
 .mis-row.done .mis-txt{opacity:.55;text-decoration:line-through}
 .mis-prog{font-family:var(--font-px);font-size:12px;color:var(--ink-soft)}
-.mis-bonus{margin-top:9px;font-size:12px;font-weight:800;color:var(--jr-green);text-align:center}
+.mis-bonus{margin-top:9px;font-size:12px;font-weight:800;color:#9A6A00;text-align:center}
 /* ---------- Modo historia (línea de estaciones) ---------- */
 .story-line{position:relative;padding:6px 0 6px 6px}
 .story-line::before{content:'';position:absolute;left:17px;top:16px;bottom:16px;width:6px;background:var(--jr-green);border-radius:3px}
 .st-row{display:flex;align-items:center;gap:14px;padding:9px 4px;position:relative;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:inherit;color:var(--ink)}
-.st-dot2{width:20px;height:20px;border-radius:50%;border:3px solid var(--ink);background:var(--card);flex-shrink:0;z-index:1;margin-left:1px}
+.st-dot2{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink);background:var(--card);flex-shrink:0;z-index:1;margin-left:1px}
 .st-row.done .st-dot2{background:var(--jr-green)}
 .st-row.cur .st-dot2{background:var(--gold);animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,.55)}50%{box-shadow:0 0 0 7px rgba(232,160,32,0)}}
@@ -403,7 +443,7 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 .st-status{margin-left:auto;font-size:16px}
 /* ---------- Logros ---------- */
 .ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ach-card{background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:11px 10px;box-shadow:var(--shadow);text-align:center}
+.ach-card{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:11px 10px;box-shadow:var(--shadow);text-align:center}
 .ach-card.lock{opacity:.38;border-color:var(--line);box-shadow:none;filter:grayscale(1)}
 .ach-card .a-ico{font-size:26px}
 .ach-card .a-n{font-weight:800;font-size:12.5px;margin-top:3px}
@@ -411,19 +451,19 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 .sdots{display:flex;gap:6px;justify-content:center;margin:0 0 14px}
 .sdot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--card)}
 .sdot.on{background:var(--jr-green)}
-.bubble{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:14px 52px 14px 15px;box-shadow:var(--shadow);margin-bottom:14px;position:relative}
+.bubble{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);padding:14px 52px 14px 15px;box-shadow:var(--shadow);margin-bottom:14px;position:relative}
 .bubble .bw{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft)}
 .bubble .bj{font-size:19px;font-weight:800;line-height:1.4;margin-top:3px}
-.bubble .br{font-size:12px;color:var(--jr-green);font-weight:600;margin-top:2px}
+.bubble .br{font-size:12px;color:var(--teal-deep);font-weight:600;margin-top:2px}
 .bubble .be{font-size:12.5px;color:var(--ink-soft);margin-top:5px}
-.spk{border:2.5px solid var(--ink);background:var(--card);border-radius:99px;width:38px;height:38px;font-size:15px;cursor:pointer;box-shadow:0 2px 0 var(--ink);flex-shrink:0;font-family:inherit}
+.spk{border:1.5px solid var(--ink);background:var(--card);border-radius:99px;width:38px;height:38px;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(23,24,28,.10);flex-shrink:0;font-family:inherit}
 .spk:active{transform:translateY(2px);box-shadow:none}
 .bubble .spk{position:absolute;top:12px;right:11px}
 .price-big{font-family:var(--font-px);font-size:42px;letter-spacing:1px}
 /* ---------- Toast ---------- */
 .toast{
   position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
-  background:var(--jr-green);color:#fff;padding:10px 20px;border-radius:99px;border:2px solid var(--ink);
+  background:var(--teal);color:#fff;padding:10px 20px;border-radius:99px;border:2px solid var(--ink);
   font-family:var(--font-px);font-size:14px;opacity:0;pointer-events:none;
   transition:all .3s ease;z-index:50;white-space:nowrap;
 }
@@ -436,39 +476,43 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 <body>
 <div id="app">
   <header>
-    <div class="logo">
-      <div class="logo-mark">語</div>
-      <h1>Densha<span>にほんご · tu línea al japonés</span></h1>
+    <div class="head-top">
+      <div class="logo">
+        <div class="logo-mark">語</div>
+        <h1>Densha</h1>
+      </div>
+      <div class="hud">
+        <div class="hud-chip lv"><span id="hud-lv">N5</span></div>
+        <div class="hud-chip"><span class="ico">⚡</span><span id="hud-xp">0</span></div>
+        <div class="hud-chip"><span class="ico">🔥</span><span id="hud-streak">0</span></div>
+      </div>
     </div>
-    <div class="hud">
-      <div class="hud-chip"><span class="ico">⚡</span><span id="hud-xp">0</span></div>
-      <div class="hud-chip"><span class="ico">🔥</span><span id="hud-streak">0</span></div>
+    <div class="head-prog">
+      <div class="hp-track"><div class="hp-fill" id="rb-fill" style="width:0%"></div></div>
+      <div class="hp-txt" id="rb-next"></div>
     </div>
   </header>
 
   <main>
     <!-- HOME -->
     <section class="screen active" id="scr-home">
-      <div class="rankboard">
-        <div class="rb-top">
-          <div class="rb-rank"><span id="rb-rank-es">Turista</span><small id="rb-rank-jp">りょこうしゃ · LV.1</small></div>
-          <div class="rb-xp"><span id="rb-xp">0</span><small>XP TOTAL</small></div>
-        </div>
-        <div class="rb-track"><div class="rb-fill" id="rb-fill" style="width:0%"></div></div>
-        <div class="rb-next" id="rb-next"></div>
-      </div>
-      <div class="section-label">Misiones de hoy</div>
+      <div class="sec-head" style="margin-top:6px"><span class="sec-pill" style="background:var(--sun)">きょうのミッション</span><h2 class="sec-title">Misiones</h2></div>
       <div class="mis-card" id="mis-card"></div>
-      <div class="section-label">Práctica diaria</div>
+      <div class="sec-head"><span class="sec-pill" style="background:var(--teal);color:#fff;border-color:var(--teal)">まいにちのれんしゅう</span><h2 class="sec-title">Práctica</h2></div>
       <div class="prac-row">
         <button class="prac-btn" onclick="startReview()"><div class="pb-ico">🎯</div><div class="pb-t">Repaso del día</div><div class="pb-s">tus palabras débiles</div></button>
         <button class="prac-btn" onclick="openPrice()"><div class="pb-ico">💴</div><div class="pb-t">Precios</div><div class="pb-s">lee números como local</div></button>
         <button class="prac-btn" onclick="openConj()"><div class="pb-ico">活</div><div class="pb-t">Conjugar</div><div class="pb-s">el gimnasio de verbos</div></button>
+        <button class="prac-btn" onclick="openDict()"><div class="pb-ico">✍️</div><div class="pb-t">Dictado</div><div class="pb-s">oye y arma con kana</div></button>
       </div>
-      <div class="section-label">Escenarios · desliza →</div>
-      <div class="scene-grid" id="scene-grid"></div>
-      <div class="section-label">Estudio</div>
-      <div id="study-hubs"></div>
+      <div class="block block-blue">
+        <div class="sec-head"><span class="sec-pill">シナリオ</span><h2 class="sec-title">Escenarios <span class="sec-hint">desliza →</span></h2></div>
+        <div class="scene-grid" id="scene-grid"></div>
+      </div>
+      <div class="block block-mint">
+        <div class="sec-head"><span class="sec-pill">べんきょう</span><h2 class="sec-title">Estudio</h2></div>
+        <div id="study-hubs"></div>
+      </div>
     </section>
 
     <!-- LINE GROUP (sub-secciones) -->
@@ -577,6 +621,15 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
         <div><h2>💴 Precios</h2><div class="sub">lee cantidades en yenes como un local</div></div>
       </div>
       <div id="pr-body"></div>
+    </section>
+
+    <!-- DICTATION -->
+    <section class="screen" id="scr-dict">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2>✍️ Dictado</h2><div class="sub">escucha la palabra y ármala kana por kana</div></div>
+      </div>
+      <div id="dt-body"></div>
     </section>
 
     <!-- CONJUGATOR -->
@@ -993,6 +1046,22 @@ const VOCAB = [
   {j:'きそく',r:'kisoku',e:'regla'},
   {j:'しあい',r:'shiai',e:'partido / competencia'},
  ]},
+ {id:'n4adv',lv:'N4',letter:'副',color:'#1BB8CE',name:'Adverbios y conectores N4',jp:'ふくし',words:[
+  {j:'とても',r:'totemo',e:'muy'},
+  {j:'すこし',r:'sukoshi',e:'un poco'},
+  {j:'ぜんぜん',r:'zenzen',e:'para nada (+ negativo)'},
+  {j:'もっと',r:'motto',e:'más'},
+  {j:'いちばん',r:'ichiban',e:'el más / número uno'},
+  {j:'だいたい',r:'daitai',e:'más o menos'},
+  {j:'ほとんど',r:'hotondo',e:'casi todo'},
+  {j:'やっと',r:'yatto',e:'por fin'},
+  {j:'さいきん',r:'saikin',e:'últimamente'},
+  {j:'これから',r:'korekara',e:'de ahora en adelante'},
+  {j:'とくに',r:'tokuni',e:'especialmente'},
+  {j:'ぜひ',r:'zehi',e:'sin falta / con gusto'},
+  {j:'たとえば',r:'tatoeba',e:'por ejemplo'},
+  {j:'やっぱり',r:'yappari',e:'como pensaba / al final'},
+ ]},
 ];
 
 /* Frases completas: se estudian como bloques */
@@ -1138,6 +1207,22 @@ const KANJI=[
   {j:'動',r:'ugo(ku) · dō',e:'moverse',kun:'うご(く)',on:'ドウ',ex:'動物 (dōbutsu) = animal'},
   {j:'物',r:'mono · butsu',e:'cosa',kun:'もの',on:'ブツ',ex:'飲み物 (nomimono) = bebida'},
   {j:'着',r:'ki(ru) · chaku',e:'llegar · vestir',kun:'き(る)',on:'チャク',ex:'到着 (tōchaku) = llegada'},
+ ]},
+ {id:'kn4b',lv:'N4',letter:'朝',color:'#E8A020',name:'Kanji · tiempo y gente N4',jp:'ときとひと',words:[
+  {j:'朝',r:'asa · chō',e:'mañana (a.m.)',kun:'あさ',on:'チョウ',ex:'朝ごはん (asagohan) = desayuno'},
+  {j:'昼',r:'hiru · chū',e:'mediodía',kun:'ひる',on:'チュウ',ex:'昼休み (hiruyasumi) = descanso de mediodía'},
+  {j:'夜',r:'yoru · ya',e:'noche',kun:'よる',on:'ヤ',ex:'今夜 (kon’ya) = esta noche'},
+  {j:'週',r:'shū',e:'semana',on:'シュウ',ex:'今週 (konshū) = esta semana'},
+  {j:'春',r:'haru · shun',e:'primavera',kun:'はる',on:'シュン',ex:'春休み (haruyasumi) = vacaciones de primavera'},
+  {j:'夏',r:'natsu · ka',e:'verano',kun:'なつ',on:'カ',ex:'夏祭り (natsumatsuri) = festival de verano'},
+  {j:'秋',r:'aki · shū',e:'otoño',kun:'あき',on:'シュウ',ex:'秋葉原 (akihabara) = Akihabara'},
+  {j:'冬',r:'fuyu · tō',e:'invierno',kun:'ふゆ',on:'トウ',ex:'冬休み (fuyuyasumi) = vacaciones de invierno'},
+  {j:'家',r:'ie · ka',e:'casa',kun:'いえ · うち',on:'カ',ex:'家族 (kazoku) = familia'},
+  {j:'族',r:'zoku',e:'tribu · clan',on:'ゾク',ex:'家族 (kazoku) = familia'},
+  {j:'友',r:'tomo · yū',e:'amigo',kun:'とも',on:'ユウ',ex:'友達 (tomodachi) = amigo'},
+  {j:'私',r:'watashi · shi',e:'yo · privado',kun:'わたし',on:'シ',ex:'私立 (shiritsu) = privado (escuela)'},
+  {j:'毎',r:'mai',e:'cada',on:'マイ',ex:'毎日 (mainichi) = todos los días'},
+  {j:'何',r:'nani · ka',e:'qué',kun:'なに · なん',on:'カ',ex:'何時 (nanji) = qué hora'},
  ]},
 ];
 
@@ -1293,19 +1378,17 @@ function rankFor(xp){let r=RANKS[0],i=0;RANKS.forEach((k,idx)=>{if(xp>=k.xp){r=k
 function renderAll(){
   document.getElementById('hud-xp').textContent=S.xp;
   document.getElementById('hud-streak').textContent=S.streak;
+  document.getElementById('hud-lv').textContent=S.n4?'N4':'N5';
   const rk=rankFor(S.xp);
-  document.getElementById('rb-rank-es').textContent='JLPT '+(S.n4?'N4':'N5');
-  document.getElementById('rb-rank-jp').textContent=rk.es+' · '+rk.jp+' · ⚡'+S.xp+' XP';
-  document.getElementById('rb-xp').textContent=S.n4?'N4':'N5';
   if(!S.n4){
     const avg=n5Avg();
     const storyDone=Math.min((S.story||0),STORY.length);
     const pct=Math.round(Math.min(avg/70,1)*70+(storyDone/STORY.length)*30);
     document.getElementById('rb-fill').style.width=pct+'%';
-    document.getElementById('rb-next').textContent='Camino a N4: promedio N5 '+avg+'%/70 · historia '+storyDone+'/'+STORY.length;
+    document.getElementById('rb-next').textContent=rk.ico+' '+rk.es+' · Camino a N4: N5 '+avg+'%/70 · historia '+storyDone+'/'+STORY.length;
   }else{
     document.getElementById('rb-fill').style.width='100%';
-    document.getElementById('rb-next').textContent='🎓 N4 activo: sin rōmaji en quizzes, audio más rápido, líneas N4 abiertas. N3 llega en la próxima versión.';
+    document.getElementById('rb-next').textContent=rk.ico+' '+rk.es+' · 🎓 N4 activo · N3 llega en la próxima versión';
   }
   renderHubs();
   if(curGroup)renderLines('lines-list',GROUPS[curGroup].list);
@@ -1784,6 +1867,36 @@ const ART={
   '.....kwwwwwkddkwwwk.......',
   '.....kkkkkkkkkkkkkk.......',
   '..........................']},
+ atm:{p:{k:'#17181C',d:'#5A5C66',t:'#1BB8CE',w:'#F6F5F1',y:'#FFD23E'},g:[
+  '..........................',
+  '.....kkkkkkkkkkkkkk.......',
+  '.....kddddddddddddk.......',
+  '.....kdtttttttttdk........',
+  '.....kdtttttttttdk........',
+  '.....kdtttttttttdk........',
+  '.....kddddddddddddk.......',
+  '.....kdkkkkkkkkkddk.......',
+  '.....kdww.ww.ww.ddk.......',
+  '.....kdww.ww.ww.ddk.......',
+  '.....kdyy.......ddk.......',
+  '.....kkkkkkkkkkkkkk.......',
+  '......kk........kk........',
+  '..........................']},
+ phone:{p:{k:'#17181C',G:'#31C871',g:'#0B7A3E',w:'#F6F5F1'},g:[
+  '.....kkkk.........kkkk....',
+  '....kGGGGk.......kGGGGk...',
+  '....kGGGGkkkkkkkkkGGGGk...',
+  '....kGGGGGGGGGGGGGGGGGk...',
+  '.....kkkGGGGGGGGGGkkk.....',
+  '........kkkkkkkkk.........',
+  '......kkkkkkkkkkkk........',
+  '......kggggggggggk........',
+  '......kgwwgwwgwwgk........',
+  '......kgwwgwwgwwgk........',
+  '......kgwwgwwgwwgk........',
+  '......kggggggggggk........',
+  '......kkkkkkkkkkkk........',
+  '..........................']},
  shirt:{p:{k:'#17181C',r:'#D5382E',w:'#F6F5F1',d:'#8C1F17'},g:[
   '............kk............',
   '............kk............',
@@ -2093,6 +2206,54 @@ const SCENES=[
    {j:'おだいじに',e:'que se mejore'},
    {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
  ]},
+ {id:'banco',name:'Banco',art:'atm',lv:'N4',steps:[
+  {s:{who:'銀行員 · staff del banco',j:'いらっしゃいませ。どうされましたか。',r:'irasshaimase. dō saremashita ka.',e:'Bienvenido. ¿En qué le ayudo?'},opts:[
+   {j:'すみません、おかねをおろしたいです',e:'disculpe, quiero sacar dinero',ok:1},
+   {j:'おかねをください',e:'deme dinero (¡eso es un asalto! 😅)'},
+   {j:'とりあえずビール！',e:'¡para empezar, cerveza!'}]},
+  {s:{who:'銀行員 · staff del banco',j:'ATMはあちらです。',r:'ATM wa achira desu.',e:'El cajero está por allá.'},opts:[
+   {j:'がいこくのカードもつかえますか',e:'¿acepta tarjetas extranjeras?',ok:1},
+   {j:'おかねはどこですか',e:'¿dónde está el dinero?'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'銀行員 · staff del banco',j:'はい、つかえますよ。',r:'hai, tsukaemasu yo.',e:'Sí, claro que las acepta.'},opts:[
+   {j:'てすうりょうはかかりますか',e:'¿cobra comisión?',ok:1},
+   {j:'ただでください',e:'démelo gratis'},
+   {j:'トイレです',e:'soy el baño'}]},
+  {s:{who:'銀行員 · staff del banco',j:'にひゃくえんかかります。',r:'nihyaku-en kakarimasu.',e:'Cobra ¥200 de comisión.'},opts:[
+   {j:'わかりました。ありがとうございます',e:'entendido. muchas gracias',ok:1},
+   {j:'たかい！まけてください',e:'¡caro! hágame descuento'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+  {s:{who:'銀行員 · staff del banco',j:'ほかにごようけんはありますか。',r:'hoka ni go-yōken wa arimasu ka.',e:'¿Algo más en que le pueda ayudar?'},opts:[
+   {j:'いいえ、だいじょうぶです。どうも',e:'no, estoy bien. gracias',ok:1},
+   {j:'はい、ビールをください',e:'sí, una cerveza por favor'},
+   {j:'おだいじに',e:'que se mejore'}]},
+ ]},
+ {id:'tel',name:'Teléfono',art:'phone',lv:'N4',steps:[
+  {s:{who:'レストラン · por teléfono',j:'はい、レストランさくらです。',r:'hai, resutoran sakura desu.',e:'Sí, restaurante Sakura, buenas.'},opts:[
+   {j:'もしもし、よやくをおねがいしたいんですが',e:'bueno… quisiera hacer una reservación',ok:1},
+   {j:'ふたりです',e:'somos dos (aún no preguntan)'},
+   {j:'いらっしゃいませ',e:'¡bienvenido!'}]},
+  {s:{who:'レストラン · por teléfono',j:'ありがとうございます。いつがよろしいですか。',r:'arigatō gozaimasu. itsu ga yoroshii desu ka.',e:'Gracias. ¿Para cuándo?'},opts:[
+   {j:'あしたのしちじはあいていますか',e:'¿tienen lugar mañana a las 7?',ok:1},
+   {j:'きのうのしちじです',e:'ayer a las 7 (imposible)'},
+   {j:'まいにちです',e:'todos los días'}]},
+  {s:{who:'レストラン · por teléfono',j:'はい、あいています。なんめいさまですか。',r:'hai, aite imasu. nanmei-sama desu ka.',e:'Sí, hay lugar. ¿Cuántas personas?'},opts:[
+   {j:'ふたりです',e:'somos dos',ok:1},
+   {j:'しちじです',e:'a las siete'},
+   {j:'にひゃくえんです',e:'son ¥200'}]},
+  {s:{who:'レストラン · por teléfono',j:'おなまえをおねがいします。',r:'o-namae o onegai shimasu.',e:'Su nombre, por favor.'},opts:[
+   {j:'ガルシアです。よろしくおねがいします',e:'García. quedo a sus órdenes',ok:1},
+   {j:'ひみつです',e:'es secreto'},
+   {j:'なまえはありません',e:'no tengo nombre'}]},
+  {s:{who:'レストラン · por teléfono',j:'ガルシアさま、あしたのしちじ、ふたりさまですね。',r:'garushia-sama, ashita no shichiji, futari-sama desu ne.',e:'Sr. García, mañana a las 7, dos personas, ¿correcto?'},opts:[
+   {j:'はい、そうです。ありがとうございます',e:'sí, así es. muchas gracias',ok:1},
+   {j:'いいえ、ぜんぶちがいます',e:'no, todo está mal'},
+   {j:'かんぱい！',e:'¡salud!'}]},
+  {s:{who:'レストラン · por teléfono',j:'おまちしております。',r:'o-machi shite orimasu.',e:'Le esperamos.'},opts:[
+   {j:'しつれいします',e:'con permiso (así se cuelga formal)',ok:1},
+   {j:'さようなら〜！',e:'¡adióooos! (muy casual para colgar)'},
+   {j:'ごちそうさまでした',e:'gracias por la comida'}]},
+ ]},
 ];
 /* ---------- MODO HISTORIA ---------- */
 const STORY=[
@@ -2201,12 +2362,14 @@ function renderScenes(){
     `<div class="sc-name">🇯🇵 Modo historia</div><div class="sc-best">${S.story||0}/${STORY.length} estaciones</div>`);
   g.appendChild(st);
   SCENES.forEach((sc,i)=>{
+    const locked=(sc.lv==='N4')&&!S.n4;
     const best=S.best['esc-'+sc.id]||0;
     const card=document.createElement('button');
-    card.className='scene-card';card.onclick=()=>openScene(i);
+    card.className='scene-card'+(locked?' locked':'');
+    card.onclick=()=>locked?toast('🔒 Escenario N4: llega a 70% en N5 y termina la historia'):openScene(i);
     card.appendChild(pixCanvas(sc.art,4.5));
     card.insertAdjacentHTML('beforeend',
-      `<div class="sc-name">${sc.name}</div><div class="sc-best">${best?best+'%':'nuevo'}</div>`);
+      `<div class="sc-name">${locked?'🔒 ':''}${sc.name}</div><div class="sc-best">${locked?'N4':(best?best+'%':'nuevo')}</div>`);
     g.appendChild(card);
   });
 }
@@ -2382,6 +2545,67 @@ function priceAnswer(btn){
   }
   speak(yen2kana(PR.n));
   document.getElementById('pr-next').style.display='block';
+}
+
+/* =================== DICTADO =================== */
+const KANA_EXTRA=[...'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわんがぎじずだでどばびぶぼぱっゃゅょー'];
+function dictPool(){
+  const pool=[];
+  ALL_LINES.filter(c=>!isLocked(c)).forEach(c=>c.words.forEach(w=>{
+    if(/^[ぁ-んー]+$/.test(w.j)&&w.j.length>=3&&w.j.length<=6)pool.push(w);
+  }));
+  return pool;
+}
+let DT={score:0,total:0,done:false};
+function openDict(){DT={score:0,total:0,done:false};go('scr-dict');newDict();}
+function newDict(){
+  const pool=dictPool();
+  const w=pool[Math.floor(Math.random()*pool.length)];
+  const chars=[...w.j];
+  const extras=shuffle(KANA_EXTRA.filter(k=>!chars.includes(k))).slice(0,2);
+  DT.w=w;DT.done=false;
+  DT.bank=shuffle([...chars,...extras]).map(t=>({t,used:false}));
+  DT.ans=[];
+  renderDict();
+  setTimeout(()=>speak(w.j),300);
+}
+function renderDict(){
+  document.getElementById('dt-body').innerHTML=`
+    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${DT.score}/${DT.total}</div>
+    <div class="q-prompt-label">👂 Escucha y arma la palabra</div>
+    <div class="q-prompt">
+      <button class="spk" style="width:64px;height:64px;font-size:26px" onclick="speak(DT.w.j)">🔊</button>
+      <div style="font-size:12px;color:var(--ink-soft);margin-top:8px">pista: ${DT.w.e}</div>
+    </div>
+    <div class="tz-label">Tu palabra</div>
+    <div class="tile-zone" id="dt-ans">${DT.ans.map((a,i)=>
+      `<button class="tile" onclick="dtAnsTap(${i})">${DT.bank[a].t}</button>`).join('')}</div>
+    <div class="tz-label">Kana</div>
+    <div class="tile-zone" style="background:transparent;border-color:var(--line)">${DT.bank.map((b,i)=>
+      `<button class="tile ${b.used?'used':''}" onclick="dtTileTap(${i})">${b.t}</button>`).join('')}</div>
+    <div class="btn-row">
+      <button class="btn ghost small" onclick="dtClear()">Borrar</button>
+      <button class="btn small" onclick="dtCheck()" ${DT.done?'disabled':''}>Comprobar</button>
+    </div>
+    <div class="feedback" id="dt-fb"></div>
+    <div id="dt-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newDict()">Siguiente →</button></div>`;
+}
+function dtTileTap(i){if(DT.done||DT.bank[i].used)return;DT.bank[i].used=true;DT.ans.push(i);renderDict();}
+function dtAnsTap(ai){if(DT.done)return;const bi=DT.ans[ai];DT.bank[bi].used=false;DT.ans.splice(ai,1);renderDict();}
+function dtClear(){if(DT.done)return;DT.ans=[];DT.bank.forEach(b=>b.used=false);renderDict();}
+function dtCheck(){
+  if(DT.done)return;DT.done=true;DT.total++;
+  const built=DT.ans.map(a=>DT.bank[a].t).join('');
+  renderDict();
+  const fb=document.getElementById('dt-fb');
+  if(built===DT.w.j){
+    DT.score++;S.xp+=10;touchStreak();saveState();renderAll();
+    fb.className='feedback ok';fb.innerHTML='✅ +10 XP · '+DT.w.j+' ('+DT.w.r+') = '+DT.w.e;
+  }else{
+    fb.className='feedback no';fb.innerHTML='❌ Era: <b>'+DT.w.j+'</b> ('+DT.w.r+') = '+DT.w.e;
+  }
+  speak(DT.w.j);
+  document.getElementById('dt-next').style.display='block';
 }
 
 /* =================== CONJUGADOR =================== */
@@ -2768,6 +2992,8 @@ renderPatterns();
 
 /* =================== VOCAB DICTIONARY =================== */
 let vFilter='all';
+let vOpen={};
+function toggleVGroup(id){vOpen[id]=!vOpen[id];renderVocab();}
 function renderChips(){
   const el=document.getElementById('v-chips');el.innerHTML='';
   el.insertAdjacentHTML('beforeend',
@@ -2787,21 +3013,23 @@ function renderVocab(){
   ALL_LINES.forEach(c=>{
     if(isLocked(c))return;
     if(vFilter!=='all'&&vFilter!==c.id)return;
-    const hits=c.words.filter(w=>
-      !q||w.j.toLowerCase().includes(q)||w.r.toLowerCase().includes(q)||w.e.toLowerCase().includes(q));
-    if(!hits.length)return;
+    const hits=q?c.words.filter(w=>
+      w.j.toLowerCase().includes(q)||w.r.toLowerCase().includes(q)||w.e.toLowerCase().includes(q)):c.words;
+    if(q&&!hits.length)return;
     total+=hits.length;
+    /* IA: colapsado por defecto; abierto si buscas, filtras por chip o lo expandes */
+    const open=q?true:(vFilter!=='all'?true:!!vOpen[c.id]);
     list.insertAdjacentHTML('beforeend',
-     `<div class="v-group">
-        <div class="v-group-head">
+     `<div class="v-group ${open?'open':''}">
+        <button class="v-group-head" onclick="toggleVGroup('${c.id}')">
           <span class="vg-badge" style="background:${c.color}">${c.letter}</span>
-          ${c.name}<span class="vg-count">${hits.length}</span>
-        </div>
-        ${hits.map(w=>
+          ${c.name}<span class="vg-count">${hits.length}</span><span class="vg-chev">▶</span>
+        </button>
+        ${open?hits.map(w=>
          `<div class="v-row" style="--vc:${c.color};cursor:pointer" onclick="speak('${w.j.replace(/'/g,'')}')">
             <div class="v-l"><div class="v-jp">${w.j}</div><div class="v-ro">${w.r}</div></div>
             <div class="v-es">${w.e} <span style="opacity:.45">🔊</span></div>
-          </div>`).join('')}
+          </div>`).join(''):''}
       </div>`);
   });
   if(!total){

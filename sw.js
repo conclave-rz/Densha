@@ -1,5 +1,5 @@
 /* Densha service worker · offline-first */
-const CACHE = 'densha-v7';
+const CACHE = 'densha-v11';
 const FONT_CACHE = 'densha-fonts-v1';
 const ASSETS = [
   './',
