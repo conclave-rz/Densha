@@ -1,31 +1,92 @@
-# Densha · にほんご — Instrucciones de instalación
+# 🚃 Densha · にほんご
 
-## Qué hay en esta carpeta
+**Tu línea al japonés.** Una app de estudio gamificada al estilo del metro de Tokio: cada tema es una línea, cada avance una estación, y la meta es darle la vuelta completa — como la Yamanote.
 
-- `index.html` — la app completa
-- `manifest.json` — identidad de la PWA (nombre, ícono, colores)
-- `sw.js` — service worker: hace que funcione offline
-- `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` — íconos de la app
+Hecha para una sola misión: pasar de cero a conversaciones reales en cafés, restaurantes, izakayas y tiendas en 6 meses.
 
-## Paso 1 · Publicar (5 minutos, sin git ni repos)
+---
 
-1. En tu computadora, descomprime el zip. Te queda una carpeta `densha-pwa` con los 6 archivos.
-2. Entra a **https://app.netlify.com/drop** (crea la cuenta gratis si te la pide; con Google es un clic).
-3. **Arrastra la carpeta completa** a la zona de drop.
-4. En ~30 segundos te da tu URL, algo como `https://random-name-123.netlify.app`.
-5. Opcional: en Site settings → Change site name puedes ponerle algo memorable como `densha-nihongo.netlify.app`.
+## ✨ Qué trae
 
-## Paso 2 · Instalar en tu Android
+| | |
+|---|---|
+| 🗾 **21 líneas de estudio** | ~270 tarjetas de vocabulario, frases hechas y 56 kanji con lecturas くん/オン |
+| 🎴 **Quizzes y pares** | Opción múltiple en ambas direcciones + juego de unir pares, con XP y combos |
+| 組 **Constructor de oraciones** | 8 fórmulas con anatomía explicada pieza por pieza: laboratorio libre, huecos y fichas |
+| 🎭 **12 escenarios pixel-art** | Diálogos por turnos con el staff: aeropuerto, taxi, hotel, konbini, café, restaurante, izakaya, librería, tienda de ropa, estación, farmacia y kōban |
+| 🇯🇵 **Modo historia** | "7 días en Japón": encadena los 12 escenarios como un viaje, estación por estación |
+| 🔊 **Audio nativo** | Pronunciación japonesa con la voz del sistema — sin servicios externos, funciona offline |
+| 🎯 **Repaso inteligente** | Detecta tus palabras débiles y arma el repaso del día con ellas |
+| 💴 **Entrenador de precios** | Lee cantidades en yenes como local (せんさんびゃくはちじゅうえん) |
+| 🏅 **Logros, misiones y rachas** | 10 logros, 3 misiones diarias con bonus, y racha de días con fuego 🔥 |
 
-1. Abre tu URL en **Chrome** en el teléfono.
-2. Chrome te mostrará un aviso de **"Agregar Densha a la pantalla de inicio"** (o menú ⋮ → **"Instalar app"**).
-3. Acepta. Aparece el ícono verde 語 en tu pantalla de inicio.
-4. Ábrela desde el ícono: pantalla completa, sin barra del navegador, como app nativa.
+Todo en **un solo archivo HTML**: sin frameworks, sin build, sin dependencias. Vanilla JS + canvas para el pixel art + Web Speech API para el audio.
 
-## Notas
+## 📦 Contenido del paquete
 
-- **Offline**: después de abrirla una vez con internet, funciona sin conexión (aviones, metro de Tokio 🚇).
-- **Progreso**: tu XP, racha y récords se guardan en el teléfono. No borres los "datos de sitios" de Chrome para ese dominio.
-- **Actualizaciones**: si en el futuro cambias algo en la app, vuelve a arrastrar la carpeta a Netlify Drop sobre el mismo sitio (pestaña Deploys → arrastra ahí). Sube la versión en `sw.js` (cambia `densha-v1` a `densha-v2`) para que los teléfonos tomen la nueva versión.
+```
+densha/
+├── index.html              ← la app completa
+├── manifest.json           ← identidad de la PWA (nombre, colores)
+├── sw.js                   ← service worker: modo offline
+├── icon-192.png            ← ícono de la app
+├── icon-512.png            ← ícono grande
+└── icon-maskable-512.png   ← ícono adaptable (Android)
+```
 
-がんばってください！
+## 🚀 Publicar
+
+La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse y funcionar offline). Dos rutas gratuitas, elige una:
+
+### Opción A · GitHub Pages
+
+1. En [github.com](https://github.com) crea un repositorio nuevo → nómbralo `densha` → **Public** → *Create repository*.
+2. Toca **"uploading an existing file"** y arrastra los **6 archivos sueltos** (no la carpeta) → *Commit changes*.
+3. Ve a **Settings → Pages** → Source: *Deploy from a branch* → branch `main`, carpeta `/ (root)` → *Save*.
+4. En 1–2 minutos tu app vive en `https://tuusuario.github.io/densha/`.
+
+### Opción B · Netlify Drop
+
+1. Entra a [app.netlify.com](https://app.netlify.com) e **inicia sesión primero** (con GitHub o Google, un clic). ⚠️ Sin sesión, el sitio se borra en 1 hora.
+2. Ve a [app.netlify.com/drop](https://app.netlify.com/drop) y arrastra la **carpeta completa**.
+3. En ~30 segundos tienes tu URL. Opcional: *Site configuration → Change site name* para algo memorable.
+
+## 📱 Instalar en tu teléfono (Android)
+
+1. Abre tu URL en **Chrome**.
+2. Acepta el aviso de **"Instalar app"** (o menú ⋮ → *Agregar a pantalla de inicio*).
+3. Aparece el ícono verde 語 en tu inicio. Ábrela desde ahí: pantalla completa, sin barra del navegador.
+4. Tras la primera carga con internet, **funciona offline** — aviones, metro de Tokio 🚇, donde sea.
+
+## 🔄 Actualizar la app
+
+1. Sube los archivos nuevos encima de los viejos:
+   - **GitHub**: repo → *Add file → Upload files* → arrastra → *Commit* (reemplaza los del mismo nombre).
+   - **Netlify**: tu sitio → pestaña *Deploys* → arrastra la carpeta ahí.
+2. En `sw.js`, sube la versión de caché (`densha-v6` → `densha-v7`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
+
+## 💾 Tu progreso
+
+- XP, racha, récords y logros se guardan **en tu teléfono** (localStorage del navegador), amarrados al dominio donde instalaste.
+- **Respaldo**: Perfil → ⬇️ *Exportar* descarga un `densha-progreso.json`; ⬆️ *Importar* lo restaura. Úsalo antes de cambiar de dominio o de teléfono.
+- No borres los "datos de sitios" de Chrome para tu dominio: ahí vive tu racha. 🔥
+
+## 🔧 Problemas comunes
+
+**"El sitio expira en 1 hora" (Netlify)** → arrastraste sin iniciar sesión. Inicia sesión y vuelve a arrastrar; borra el ícono viejo del teléfono e instala desde la URL nueva.
+
+**No aparece "Instalar app"** → verifica que la URL sea HTTPS y que abriste con Chrome; espera unos segundos o busca en el menú ⋮. Con archivos locales (`file://`) la instalación no está disponible: publica primero.
+
+**No suena el audio** → la primera reproducción puede tardar 1–2 s mientras Android carga la voz. Si sigue mudo: Ajustes → Sistema → *Salida de texto a voz* → verifica que el japonés esté disponible en el motor de Google.
+
+**Actualicé y no veo cambios** → cierra la app por completo y ábrela dos veces (el service worker instala la versión nueva en el primer arranque y la activa en el segundo), o confirma que subiste la versión en `sw.js`.
+
+---
+
+がんばってください！🏮
+
+---
+
+### Parte de Codex 4004
+
+**Densha** es un proyecto dentro del framework **Codex 4004** — una constelación de herramientas y aplicaciones de práctica artística y exploración mental.
