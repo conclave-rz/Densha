@@ -215,6 +215,8 @@ main{flex:1;overflow-y:auto;padding:16px 16px 122px;-webkit-overflow-scrolling:t
   transition:transform .07s;
 }
 .opt:active{transform:translateY(2px)}
+.opt{position:relative}
+.opt .opt-spk{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5;padding:6px}
 .opt.correct{background:var(--good);color:#fff;border-color:var(--ink)}
 .opt.wrong{background:var(--bad);color:#fff}
 .opt.dim{opacity:.4;pointer-events:none}
@@ -460,6 +462,27 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 .spk:active{transform:translateY(2px);box-shadow:none}
 .bubble .spk{position:absolute;top:12px;right:11px}
 .price-big{font-family:var(--font-px);font-size:42px;letter-spacing:1px}
+/* ---------- Den-chan (tamagotchi) ---------- */
+.pet-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pet-box{flex-shrink:0;padding:2px}
+.pet-bub{flex:1;background:var(--card);border:1.5px solid var(--ink);border-radius:16px;padding:9px 13px;position:relative}
+.pet-bub::before{content:'';position:absolute;left:-7px;top:50%;margin-top:-6px;transform:rotate(45deg);width:11px;height:11px;background:var(--card);border-left:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+.pet-name{font-weight:800;font-size:12px;letter-spacing:.5px;color:var(--ink-soft)}
+.pet-msg{font-size:14.5px;font-weight:800;margin-top:1px}
+.pet-care{font-size:10.5px;color:var(--ink-soft);margin-top:3px}
+/* ---------- Lecturas ---------- */
+.read-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.read-card{background:#FDFBF3;border:1.5px solid var(--ink);border-radius:16px;padding:12px 10px;cursor:pointer;text-align:center;font-family:inherit;color:var(--ink);box-shadow:var(--shadow)}
+.read-card .rc-emoji{font-size:26px}
+.read-card .rc-title{font-weight:800;font-size:13px;margin-top:4px;line-height:1.25}
+.read-card .rc-type{font-size:10px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.read-card .rc-done{font-family:var(--font-px);font-size:11px;color:var(--teal-deep);margin-top:3px}
+.rl-line{background:var(--card);border:1.5px solid var(--line);border-left:5px solid var(--teal);border-radius:13px;padding:11px 13px;margin-bottom:8px;cursor:pointer}
+.rl-line .rl-j{font-size:16.5px;font-weight:800;line-height:1.5}
+.rl-line .rl-r{font-size:11.5px;color:var(--teal-deep);font-weight:600;margin-top:2px}
+.rl-line .rl-e{font-size:12.5px;color:var(--ink-soft);margin-top:4px;display:none}
+.reader.show-es .rl-line .rl-e{display:block}
+@media (min-width:600px){.read-grid{grid-template-columns:repeat(4,1fr)}}
 /* ---------- Toast ---------- */
 .toast{
   position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
@@ -532,6 +555,10 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="block block-mint">
         <div class="sec-head"><span class="sec-pill">べんきょう</span><h2 class="sec-title">Estudio</h2></div>
         <div id="study-hubs"></div>
+      </div>
+      <div class="block" style="background:var(--coral-pale)">
+        <div class="sec-head"><span class="sec-pill" style="background:var(--card)">よみもの</span><h2 class="sec-title">Lecturas</h2></div>
+        <div class="read-grid" id="read-grid"></div>
       </div>
     </section>
 
@@ -623,6 +650,17 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="story-line" id="story-line"></div>
     </section>
 
+    <!-- READER -->
+    <section class="screen" id="scr-read">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="go('scr-home')">←</button>
+        <div><h2 id="rd-title"></h2><div class="sub" id="rd-type"></div></div>
+      </div>
+      <button class="btn ghost small" id="rd-toggle" style="margin-bottom:12px" onclick="toggleEs()">🇪🇸 Mostrar traducción</button>
+      <div class="reader" id="rd-lines"></div>
+      <div id="rd-quiz" style="margin-top:14px"></div>
+    </section>
+
     <!-- SCENE SIMULATOR -->
     <section class="screen" id="scr-scene">
       <div class="lesson-head">
@@ -709,6 +747,14 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="ranks-list" id="ranks-list"></div>
       <div class="section-label">Logros</div>
       <div class="ach-grid" id="ach-grid"></div>
+      <div class="section-label">Versión</div>
+      <div class="mis-card" style="background:var(--card)">
+        <div style="font-size:13.5px">Instalada: <b id="app-ver">—</b> <span id="upd-status" style="color:var(--ink-soft)"></span></div>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn ghost small" onclick="checkUpdate(true)">🔄 Buscar actualización</button>
+          <button class="btn small" id="upd-apply" style="display:none" onclick="applyUpdate()">⬇️ Instalar ahora</button>
+        </div>
+      </div>
       <div class="section-label">Respaldo</div>
       <div class="btn-row" style="margin-top:2px">
         <button class="btn ghost small" onclick="exportProgress()">⬇️ Exportar</button>
@@ -1413,6 +1459,7 @@ function renderAll(){
   renderHubs();
   if(curGroup)renderLines('lines-list',GROUPS[curGroup].list);
   renderScenes();
+  renderReads();
   renderMissions();
   renderAch();
   checkN4();
@@ -1590,6 +1637,7 @@ function renderQuestion(){
   if(q.type==='match'){renderMatch(q,body);return}
   const others=shuffle(cur.words.filter(w=>w!==q.w)).slice(0,3);
   const opts=shuffle([q.w,...others]);
+  Q.opts=opts;
   const showRo=!S.n4; /* en N4 el rōmaji desaparece de los quizzes */
   if(q.type==='listen'){
     body.innerHTML=`
@@ -1598,8 +1646,8 @@ function renderQuestion(){
         <button class="spk" style="width:64px;height:64px;font-size:26px" onclick="speak(Q.qs[Q.i].w.j)">🔊</button>
         <div style="font-size:12px;color:var(--ink-soft);margin-top:8px">toca para repetir</div>
       </div>
-      <div class="opts">${opts.map(o=>
-        `<button class="opt" data-ok="${o===q.w?1:0}" onclick="answer(this,'e')">${o.e}</button>`).join('')}</div>`;
+      <div class="opts">${opts.map((o,i)=>
+        `<button class="opt" data-ok="${o===q.w?1:0}" data-i="${i}" onclick="answer(this,'e')">${o.e}</button>`).join('')}</div>`;
     setTimeout(()=>speak(q.w.j),300);
     return;
   }
@@ -1611,7 +1659,7 @@ function renderQuestion(){
       ${isJ2E?(showRo?'<div class="ro">'+q.w.r+'</div>':'')+'<button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(Q.qs[Q.i].w.j)">🔊</button>':''}
     </div>
     <div class="opts">${opts.map((o,i)=>
-      `<button class="opt" data-ok="${o===q.w?1:0}" onclick="answer(this,'${isJ2E?'e':'j'}')">${isJ2E?o.e:o.j}${(!isJ2E&&showRo)?'<div style="font-size:11.5px;font-weight:500;color:inherit;opacity:.75">'+o.r+'</div>':''}</button>`
+      `<button class="opt" data-ok="${o===q.w?1:0}" data-i="${i}" onclick="answer(this,'${isJ2E?'e':'j'}')">${isJ2E?o.e:o.j}${(!isJ2E&&showRo)?'<div style="font-size:11.5px;font-weight:500;color:inherit;opacity:.75">'+o.r+'</div>':''}${!isJ2E?'<span class="opt-spk" onclick="event.stopPropagation();speak(Q.opts[':''}${!isJ2E?i:''}${!isJ2E?'].j)">🔊</span>':''}</button>`
     ).join('')}</div>`;
 }
 function answer(btn,mode){
@@ -1638,7 +1686,14 @@ function answer(btn,mode){
   }else{
     Q.combo=0;
     fb.className='feedback no';
-    fb.textContent='❌ Era: '+q.w.j+' ('+q.w.r+') = '+q.w.e;
+    /* explicar POR QUÉ se equivocó: qué significa lo que eligió */
+    const pick=(Q.opts&&btn.dataset.i!==undefined)?Q.opts[+btn.dataset.i]:null;
+    let why='';
+    if(pick){
+      if(q.type==='e2j')why='Elegiste '+pick.j+', que significa "'+pick.e+'". ';
+      else why='"'+pick.e+'" es el significado de '+pick.j+' ('+pick.r+'), no de esta palabra. ';
+    }
+    fb.innerHTML='❌ '+why+'<b>La correcta:</b> '+q.w.j+' ('+q.w.r+') = '+q.w.e;
   }
   updateQuizTop();
   document.getElementById('q-continue').style.display='block';
@@ -1688,10 +1743,14 @@ function finishQuiz(){
   const pct=Math.round(Q.correct/total*100);
   const prev=S.best[cur.id]||0;
   if(pct>prev)S.best[cur.id]=pct;
-  S.xp+=Q.xp;S.quizzes++;bumpMission('quiz');touchStreak();saveState();renderAll();
+  S.xp+=Q.xp;S.quizzes++;bumpMission('quiz');
+  if(cur&&cur.id==='review')bumpMission('clean');
+  touchStreak();saveState();renderAll();
   document.getElementById('r-medal').textContent=pct===100?'🏆':pct>=70?'🎉':'🚃';
   document.getElementById('r-title').textContent=pct===100?'¡Perfecto! かんぺき！':pct>=70?'¡Bien hecho! よくできました！':'Sigue practicando がんばって！';
-  document.getElementById('r-msg').textContent=pct>prev?'Nuevo récord en esta línea: '+pct+'%':'Tu récord en esta línea: '+Math.max(pct,prev)+'%';
+  document.getElementById('r-msg').textContent=pct>prev
+    ?'📈 Avance de línea: '+prev+'% → '+pct+'%'
+    :'Sacaste '+pct+'% · tu récord sigue en '+prev+'% (el avance solo sube al superarlo)';
   document.getElementById('r-xp').textContent='+'+Q.xp+' XP';
   document.getElementById('r-correct').textContent=Q.correct+'/'+total;
   document.getElementById('r-combo').textContent='x'+Q.bestCombo;
@@ -1887,6 +1946,51 @@ const ART={
   '.....kwwwwwkddkwwwk.......',
   '.....kkkkkkkkkkkkkk.......',
   '..........................']},
+ denOk:{p:{k:'#17181C',G:'#5FD695',y:'#FFD23E',p:'#FF9EC4'},g:[
+  '.......kk..........',
+  '.......kyk.........',
+  '.......kk..........',
+  '....kkkkkkkkk......',
+  '...kGGGGGGGGGk.....',
+  '..kGGGGGGGGGGGk....',
+  '..kGkkGGGGGkkGk....',
+  '..kGkkGGGGGkkGk....',
+  '..kGGGGGGGGGGGk....',
+  '..kGpGGGGGGGpGk....',
+  '..kGGGGkkkGGGGk....',
+  '...kGGGGGGGGGk.....',
+  '....kkkkkkkkk......',
+  '...kk.......kk.....']},
+ denHap:{p:{k:'#17181C',G:'#5FD695',y:'#FFD23E',p:'#FF9EC4'},g:[
+  '.......kk..........',
+  '.......kyk.........',
+  '.......kk..........',
+  '....kkkkkkkkk......',
+  '...kGGGGGGGGGk.....',
+  '..kGGkkGGGkkGGk....',
+  '..kGkGGkGkGGkGk....',
+  '..kGGGGGGGGGGGk....',
+  '..kGppGGGGGppGk....',
+  '..kGGkGGGGGkGGk....',
+  '..kGGGkkkkkGGGk....',
+  '...kGGGGGGGGGk.....',
+  '....kkkkkkkkk......',
+  '...kk.......kk.....']},
+ denSad:{p:{k:'#17181C',G:'#5FD695',y:'#FFD23E',b:'#8FE7F5'},g:[
+  '.......kk..........',
+  '......kyk..........',
+  '......kk...........',
+  '....kkkkkkkkk......',
+  '...kGGGGGGGGGk.....',
+  '..kGGGGGGGGGGGk....',
+  '..kGkkGGGGGkkGk....',
+  '..kGkkGGGGGkkGk....',
+  '..kGbGGGGGGGbGk....',
+  '..kGbGGGGGGGbGk....',
+  '..kGGGGkkkGGGGk....',
+  '..kGGGkGGGkGGGk....',
+  '....kkkkkkkkk......',
+  '...kk.......kk.....']},
  atm:{p:{k:'#17181C',d:'#5A5C66',t:'#1BB8CE',w:'#F6F5F1',y:'#FFD23E'},g:[
   '..........................',
   '.....kkkkkkkkkkkkkk.......',
@@ -1946,6 +2050,166 @@ function pixCanvas(name,scale){
   c.className='pix';
   c.style.width=(c.width*scale)+'px';c.style.height=(c.height*scale)+'px';
   return c;
+}
+
+/* =================== LECTURAS =================== */
+const READINGS=[
+ {id:'daj1',emoji:'🤣',type:'だじゃれ · chistes',title:'Dajare I: juegos de palabras',lines:[
+  {j:'ふとんが ふっとんだ！',r:'futon ga futtonda!',e:'¡El futón salió volando! (futon ≈ futtonda: suenan casi igual)'},
+  {j:'アルミかんの うえに ある みかん。',r:'arumikan no ue ni aru mikan.',e:'La mandarina sobre la lata de aluminio. (arumikan ≈ aru mikan)'},
+  {j:'イルカは いるか？',r:'iruka wa iruka?',e:'¿Hay delfines? (iruka = delfín, iru ka = ¿hay?)'},
+ ],qs:[
+  {q:'¿Por qué es gracioso ふとんが ふっとんだ?',opts:[{t:'futon y futtonda suenan casi igual',ok:1},{t:'los futones vuelan en Japón'},{t:'es un refrán muy antiguo'}],expl:'El dajare junta dos sonidos casi idénticos: ふとん (futón) y ふっとんだ (salió volando).'},
+  {q:'イルカは いるか significa…',opts:[{t:'¿hay delfines?',ok:1},{t:'me gustan los delfines'},{t:'el delfín está comiendo'}],expl:'いるか final = "¿hay?" (います en pregunta casual), igual que イルカ = delfín.'},
+ ]},
+ {id:'daj2',emoji:'🍛',type:'だじゃれ · chistes',title:'Dajare II: pan y curry',lines:[
+  {j:'パン つくった こと ある？',r:'pan tsukutta koto aru?',e:'¿Has hecho pan? (dicho rápido suena a "pantsu kutta" = me comí unos calzones 😂)'},
+  {j:'カレーは かれー。',r:'karē wa karē.',e:'El curry pica. (karē = curry, karai → karē en casual relajado = picante)'},
+  {j:'この チーズは だれの？ …チーズケーキ？',r:'kono chīzu wa dare no?… chīzukēki?',e:'¿De quién es este queso?… ¿del pastel? (dare no ≈ suena dentro de palabras)'},
+ ],qs:[
+  {q:'¿Con qué se confunde パンつくったことある?',opts:[{t:'con "me comí unos calzones"',ok:1},{t:'con "compré pan ayer"'},{t:'con "el pan está rico"'}],expl:'パンつくった (hice pan) suena como パンツくった (me comí calzones): el clásico dajare de escuela.'},
+  {q:'カレーは かれー juega con…',opts:[{t:'curry (karē) y picante (karai)',ok:1},{t:'curry y caro (takai)'},{t:'curry y color (iro)'}],expl:'からい (picante) en habla casual relajada suena かれー, igual que カレー.'},
+ ]},
+ {id:'momo',emoji:'🍑',type:'むかしばなし · cuento popular',title:'Momotarō (mini)',lines:[
+  {j:'むかしむかし、おじいさんと おばあさんが いました。',r:'mukashi mukashi, ojiisan to obāsan ga imashita.',e:'Hace mucho, mucho tiempo, vivían un anciano y una anciana.'},
+  {j:'おばあさんは かわで おおきな ももを みつけました。',r:'obāsan wa kawa de ōkina momo o mitsukemashita.',e:'La anciana encontró un durazno enorme en el río.'},
+  {j:'ももの なかから おとこのこが うまれました。',r:'momo no naka kara otokonoko ga umaremashita.',e:'De dentro del durazno nació un niño.'},
+  {j:'なまえは ももたろうです。',r:'namae wa momotarō desu.',e:'Su nombre: Momotarō.'},
+  {j:'ももたろうは おにの しまに いきました。',r:'momotarō wa oni no shima ni ikimashita.',e:'Momotarō fue a la isla de los ogros.'},
+  {j:'いぬと さると きじが ともだちに なりました。',r:'inu to saru to kiji ga tomodachi ni narimashita.',e:'Un perro, un mono y un faisán se hicieron sus amigos.'},
+  {j:'みんなで おにと たたかいました。そして かちました！',r:'minna de oni to tatakaimashita. soshite kachimashita!',e:'Todos juntos pelearon contra los ogros. ¡Y ganaron!'},
+  {j:'めでたし、めでたし。',r:'medetashi, medetashi.',e:'Colorín colorado (cierre clásico de los cuentos).'},
+ ],qs:[
+  {q:'¿Dónde encontró la anciana el durazno?',opts:[{t:'en el río',ok:1},{t:'en la montaña'},{t:'en el mercado'}],expl:'かわで みつけました: かわ = río, で marca el lugar de la acción.'},
+  {q:'¿Quiénes acompañaron a Momotarō?',opts:[{t:'un perro, un mono y un faisán',ok:1},{t:'un gato, un perro y un zorro'},{t:'tres samuráis'}],expl:'いぬ (perro) と さる (mono) と きじ (faisán): と conecta la lista.'},
+ ]},
+ {id:'usagi',emoji:'🐢',type:'むかしばなし · fábula',title:'La liebre y la tortuga',lines:[
+  {j:'うさぎと かめが きょうそうを しました。',r:'usagi to kame ga kyōsō o shimashita.',e:'Una liebre y una tortuga hicieron una carrera.'},
+  {j:'うさぎは とても はやいです。',r:'usagi wa totemo hayai desu.',e:'La liebre es muy rápida.'},
+  {j:'「かめは おそいから、ちょっと ねます。」',r:'"kame wa osoi kara, chotto nemasu."',e:'"Como la tortuga es lenta, voy a dormir un poco."'},
+  {j:'うさぎは きの したで ねました。',r:'usagi wa ki no shita de nemashita.',e:'La liebre durmió bajo un árbol.'},
+  {j:'かめは ゆっくり、ゆっくり あるきました。',r:'kame wa yukkuri, yukkuri arukimashita.',e:'La tortuga caminó despacito, despacito.'},
+  {j:'かめが かちました！',r:'kame ga kachimashita!',e:'¡Ganó la tortuga!'},
+ ],qs:[
+  {q:'¿Por qué perdió la liebre?',opts:[{t:'se durmió bajo un árbol',ok:1},{t:'se lastimó una pata'},{t:'se perdió en el bosque'}],expl:'きのしたで ねました: き = árbol, した = abajo, ねました = durmió.'},
+  {q:'から en「おそいから」significa…',opts:[{t:'porque / como',ok:1},{t:'desde'},{t:'pero'}],expl:'から después de una razón = "porque": おそいから = como es lenta.'},
+ ]},
+ {id:'konb',emoji:'🏪',type:'ぶんか · cultura',title:'El konbini',lines:[
+  {j:'にほんの コンビニは とても べんりです。',r:'nihon no konbini wa totemo benri desu.',e:'Los konbini de Japón son muy convenientes.'},
+  {j:'にじゅうよじかん あいています。',r:'nijūyo-jikan aite imasu.',e:'Están abiertos 24 horas.'},
+  {j:'おべんとうを あたためて くれます。',r:'o-bentō o atatamete kuremasu.',e:'Te calientan el bentō.'},
+  {j:'コンサートの チケットも かえます。',r:'konsāto no chiketto mo kaemasu.',e:'También puedes comprar boletos de conciertos.'},
+  {j:'トイレも つかえます。すごいですね！',r:'toire mo tsukaemasu. sugoi desu ne!',e:'Hasta puedes usar el baño. ¡Increíble!, ¿no?'},
+ ],qs:[
+  {q:'¿Cuántas horas abre el konbini?',opts:[{t:'24 horas',ok:1},{t:'12 horas'},{t:'solo de día'}],expl:'にじゅうよじかん = 24 horas (にじゅうよ = 24, じかん = horas).'},
+  {q:'Según la lectura, en el konbini puedes…',opts:[{t:'comprar boletos de concierto',ok:1},{t:'cortarte el pelo'},{t:'lavar tu ropa'}],expl:'チケットも かえます: も = también, かえます = poder comprar.'},
+ ]},
+ {id:'hanami',emoji:'🌸',type:'ぶんか · cultura',title:'Hanami',lines:[
+  {j:'はるに さくらが さきます。',r:'haru ni sakura ga sakimasu.',e:'En primavera florecen los cerezos.'},
+  {j:'にほんじんは こうえんで はなみを します。',r:'nihonjin wa kōen de hanami o shimasu.',e:'Los japoneses hacen hanami en los parques.'},
+  {j:'ともだちと たべたり のんだり します。',r:'tomodachi to tabetari nondari shimasu.',e:'Comen y beben con los amigos.'},
+  {j:'さくらは いっしゅうかんぐらいで ちります。',r:'sakura wa isshūkan gurai de chirimasu.',e:'Las flores caen en más o menos una semana.'},
+  {j:'だから、みんな いそいで はなみに いきます。',r:'dakara, minna isoide hanami ni ikimasu.',e:'Por eso todos corren a hacer hanami.'},
+ ],qs:[
+  {q:'¿Cuánto duran las flores de cerezo?',opts:[{t:'como una semana',ok:1},{t:'todo el verano'},{t:'un mes'}],expl:'いっしゅうかんぐらい = aproximadamente una semana (ぐらい = aprox).'},
+  {q:'¿Dónde se hace el hanami?',opts:[{t:'en los parques',ok:1},{t:'en el mar'},{t:'en casa'}],expl:'こうえんで: こうえん = parque, で = lugar de la acción.'},
+ ]},
+ {id:'onsen',emoji:'♨️',type:'ぶんか · cultura',title:'Reglas del onsen',lines:[
+  {j:'おんせんに はいる まえに、からだを あらいます。',r:'onsen ni hairu mae ni, karada o araimasu.',e:'Antes de entrar al onsen, te lavas el cuerpo.'},
+  {j:'タオルは おゆの なかに いれません。',r:'taoru wa o-yu no naka ni iremasen.',e:'La toalla no se mete al agua.'},
+  {j:'しずかに はいります。',r:'shizuka ni hairimasu.',e:'Se entra en silencio.'},
+  {j:'おんせんの あとの ぎゅうにゅうは さいこうです！',r:'onsen no ato no gyūnyū wa saikō desu!',e:'¡La leche después del onsen es lo máximo! (tradición real)'},
+ ],qs:[
+  {q:'¿Qué haces ANTES de entrar al onsen?',opts:[{t:'lavarte el cuerpo',ok:1},{t:'tomar leche'},{t:'meter la toalla al agua'}],expl:'はいる まえに = antes de entrar; からだをあらいます = lavarse el cuerpo.'},
+  {q:'¿Qué pasa con la toalla?',opts:[{t:'no se mete al agua',ok:1},{t:'se deja en casa'},{t:'se usa dentro del agua'}],expl:'いれません = no se mete (negativo de いれます).'},
+ ]},
+ {id:'denma',emoji:'🚃',type:'ぶんか · cultura',title:'Modales en el tren',lines:[
+  {j:'でんしゃの なかで でんわを しません。',r:'densha no naka de denwa o shimasen.',e:'Dentro del tren no se hacen llamadas.'},
+  {j:'おおきい こえで はなしません。',r:'ōkii koe de hanashimasen.',e:'No se habla en voz alta.'},
+  {j:'ゆうせんせきが あります。',r:'yūsenseki ga arimasu.',e:'Hay asientos prioritarios.'},
+  {j:'だから にほんの でんしゃは しずかで きもちが いいです。',r:'dakara nihon no densha wa shizuka de kimochi ga ii desu.',e:'Por eso el tren japonés es silencioso y agradable.'},
+ ],qs:[
+  {q:'¿Qué NO se hace en el tren?',opts:[{t:'hablar por teléfono',ok:1},{t:'leer manga'},{t:'dormir'}],expl:'でんわをしません = no se hacen llamadas (しません = negativo de します).'},
+  {q:'ゆうせんせき son…',opts:[{t:'asientos prioritarios',ok:1},{t:'vagones exprés'},{t:'boletos especiales'}],expl:'ゆうせん = prioridad, せき = asiento: para embarazadas, mayores, etc.'},
+ ]},
+];
+let RD=null,RDq=0,RDes=false;
+function renderReads(){
+  const g=document.getElementById('read-grid');if(!g)return;g.innerHTML='';
+  S.read=S.read||{};
+  READINGS.forEach((r,i)=>{
+    g.insertAdjacentHTML('beforeend',
+     `<button class="read-card" onclick="openReading(${i})">
+        <div class="rc-emoji">${r.emoji}</div>
+        <div class="rc-title">${r.title}</div>
+        <div class="rc-type">${r.type}</div>
+        <div class="rc-done">${S.read[r.id]?'✅ leída':'nueva'}</div>
+      </button>`);
+  });
+}
+function openReading(i){
+  RD=READINGS[i];RDq=0;RDes=false;
+  document.getElementById('rd-title').textContent=RD.emoji+' '+RD.title;
+  document.getElementById('rd-type').textContent=RD.type+' · toca una línea para escucharla';
+  const rl=document.getElementById('rd-lines');
+  rl.className='reader';
+  rl.innerHTML=RD.lines.map((l,li)=>
+   `<div class="rl-line" onclick="speak(READINGS[${i}].lines[${li}].j)">
+      <div class="rl-j">${l.j}</div>
+      <div class="rl-r">${l.r}</div>
+      <div class="rl-e">${l.e}</div>
+    </div>`).join('');
+  document.getElementById('rd-toggle').textContent='🇪🇸 Mostrar traducción';
+  document.getElementById('rd-quiz').innerHTML=
+   `<button class="btn" onclick="startRdQuiz()">📖 Preguntas de comprensión →</button>`;
+  go('scr-read');
+}
+function toggleEs(){
+  RDes=!RDes;
+  document.getElementById('rd-lines').classList.toggle('show-es',RDes);
+  document.getElementById('rd-toggle').textContent=RDes?'🙈 Ocultar traducción':'🇪🇸 Mostrar traducción';
+}
+function startRdQuiz(){RDq=0;renderRdQ()}
+function renderRdQ(){
+  const q=RD.qs[RDq];
+  const opts=shuffle(q.opts.map(o=>({...o})));
+  document.getElementById('rd-quiz').innerHTML=`
+    <div class="q-prompt-label">Pregunta ${RDq+1}/${RD.qs.length}</div>
+    <div class="q-prompt"><div class="big" style="font-size:18px">${q.q}</div></div>
+    <div class="opts">${opts.map(o=>
+      `<button class="opt" data-ok="${o.ok?1:0}" onclick="rdAnswer(this)">${o.t}</button>`).join('')}</div>
+    <div class="feedback" id="rd-fb"></div>
+    <div id="rd-next" style="display:none;margin-top:12px"><button class="btn small" onclick="rdNext()">Continuar →</button></div>`;
+}
+let rdDone=false;
+function rdAnswer(btn){
+  if(rdDone&&document.getElementById('rd-next').style.display==='block')return;
+  const q=RD.qs[RDq];
+  const ok=btn.dataset.ok==='1';
+  document.querySelectorAll('#rd-quiz .opt').forEach(o=>{
+    if(o.dataset.ok==='1')o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  const fb=document.getElementById('rd-fb');
+  if(ok){S.xp+=10;touchStreak();saveState();renderAll();
+    fb.className='feedback ok';fb.innerHTML='✅ +10 XP · '+q.expl;
+  }else{
+    fb.className='feedback no';fb.innerHTML='❌ '+q.expl;
+  }
+  document.getElementById('rd-next').style.display='block';
+}
+function rdNext(){
+  RDq++;
+  if(RDq>=RD.qs.length){
+    S.read=S.read||{};
+    if(!S.read[RD.id]){S.read[RD.id]=1;S.xp+=15;toast('📖 Lectura completada +15 XP')}
+    saveState();renderAll();
+    document.getElementById('rd-quiz').innerHTML=
+     `<div class="tip" style="text-align:center">✅ ¡Lectura terminada! Vuelve a leerla en voz alta para practicar shadowing.</div>
+      <div class="btn-row"><button class="btn ghost" onclick="go('scr-home')">Al inicio</button><button class="btn" onclick="startRdQuiz()">Repetir preguntas</button></div>`;
+    return;
+  }
+  renderRdQ();
 }
 
 /* =================== SIMULADOR DE ESCENARIOS =================== */
@@ -2324,6 +2588,7 @@ const ACH=[
  {id:'words100',ico:'📚',n:'Coleccionista',d:'Ve 100 tarjetas',f:s=>Object.keys(s.seen).length>=100},
  {id:'story',ico:'🇯🇵',n:'7 días en Japón',d:'Termina el modo historia',f:s=>(s.story||0)>=STORY.length},
  {id:'n4',ico:'🎓',n:'Ascenso a N4',d:'Desbloquea el nivel N4',f:s=>s.n4===true},
+ {id:'care7',ico:'🐣',n:'Buen cuidador',d:'Cuida a Den-chan 7 días',f:s=>(s.care||0)>=7},
 ];
 function checkAch(){
   S.ach=S.ach||{};let neu=false;
@@ -2343,32 +2608,49 @@ function renderAch(){
 /* ---------- MISIONES DIARIAS ---------- */
 function ensureMissions(){
   const today=new Date().toDateString();
-  if(!S.m||S.m.day!==today)S.m={day:today,quiz:0,scene:0,price:0,bonus:false};
+  if(!S.m||S.m.day!==today||S.m.clean===undefined)
+    S.m={day:today,quiz:0,scene:0,clean:0,calm:0,bonus:false};
 }
 function bumpMission(k,n){
   ensureMissions();S.m[k]=(S.m[k]||0)+(n||1);
-  if(S.m.quiz>=1&&S.m.scene>=1&&S.m.price>=5&&!S.m.bonus){
-    S.m.bonus=true;S.xp+=30;toast('🎌 ¡Misiones del día completas! +30 XP');
+  if(S.m.quiz>=1&&S.m.scene>=1&&S.m.clean>=1&&S.m.calm>=5&&!S.m.bonus){
+    S.m.bonus=true;S.xp+=30;S.care=(S.care||0)+1;
+    toast('❤ ¡デンちゃん está feliz! +30 XP');
   }
 }
+const NEEDS=[
+ {k:'quiz',max:1,ico:'🍙',t:'Alimentar',s:'1 quiz de vocabulario',msg:'おなかすいた… (tengo hambre)'},
+ {k:'scene',max:1,ico:'🎮',t:'Jugar',s:'1 escenario',msg:'あそぼうよ！ (¡juguemos!)'},
+ {k:'clean',max:1,ico:'🧼',t:'Limpiar',s:'1 Repaso del día',msg:'そうじして〜 (límpiame~)'},
+ {k:'calm',max:5,ico:'💤',t:'Dormir',s:'5 aciertos en precios · conjugar · dictado',msg:'ねむい… (tengo sueño)'},
+];
 function renderMissions(){
   ensureMissions();
   const el=document.getElementById('mis-card');if(!el)return;
-  const rows=[
-    {k:'quiz',t:'Completa 1 quiz de vocabulario',cur:Math.min(S.m.quiz,1),max:1},
-    {k:'scene',t:'Juega 1 escenario',cur:Math.min(S.m.scene,1),max:1},
-    {k:'price',t:'Acierta 5 precios',cur:Math.min(S.m.price,5),max:5},
-  ];
-  el.innerHTML=rows.map(r=>{
-    const done=r.cur>=r.max;
+  const met=NEEDS.filter(n=>(S.m[n.k]||0)>=n.max).length;
+  const pend=NEEDS.find(n=>(S.m[n.k]||0)<n.max);
+  const mood=met>=4?'denHap':(met>=2?'denOk':'denSad');
+  const msg=met>=4?'さいこう！だいすき！❤':pend.msg;
+  el.innerHTML=`
+   <div class="pet-row">
+     <div class="pet-box" id="pet-box"></div>
+     <div class="pet-bub">
+       <div class="pet-name">デンちゃん · tu mascota de estudio</div>
+       <div class="pet-msg">${msg}</div>
+       <div class="pet-care">🐣 días bien cuidado: ${S.care||0}</div>
+     </div>
+   </div>`+NEEDS.map(n=>{
+    const cur=Math.min(S.m[n.k]||0,n.max),done=cur>=n.max;
     return `<div class="mis-row ${done?'done':''}">
-      <div class="mis-chk">${done?'✓':''}</div>
-      <div class="mis-txt">${r.t}</div>
-      <div class="mis-prog">${r.cur}/${r.max}</div>
-    </div>`;
-  }).join('')+(S.m.bonus
-    ?'<div class="mis-bonus">🎌 Bonus del día cobrado: +30 XP</div>'
-    :'<div class="mis-bonus" style="color:var(--ink-soft)">completa las 3 → +30 XP</div>');
+      <div class="mis-chk">${done?'✓':n.ico}</div>
+      <div class="mis-txt">${n.t} <span style="font-weight:600;color:var(--ink-soft)">· ${n.s}</span></div>
+      <div class="mis-prog">${cur}/${n.max}</div>
+    </div>`}).join('')
+   +(S.m.bonus
+     ?'<div class="mis-bonus">❤ Den-chan feliz: +30 XP cobrados</div>'
+     :'<div class="mis-bonus" style="color:var(--ink-soft)">cubre sus 4 necesidades → +30 XP</div>');
+  const box=document.getElementById('pet-box');
+  if(box){box.innerHTML='';box.appendChild(pixCanvas(mood,4));}
 }
 
 let SC=null;
@@ -2419,7 +2701,7 @@ function renderStep(){
     </div>
     <div class="q-prompt-label">Tu respuesta</div>
     <div class="opts">${opts.map(o=>
-      `<button class="opt" data-ok="${o.ok?1:0}" data-j="${o.j}" style="text-align:left" onclick="sceneAnswer(this)">${o.j}<div style="font-size:11.5px;font-weight:500;opacity:.7">${o.e}</div></button>`).join('')}</div>
+      `<button class="opt" data-ok="${o.ok?1:0}" data-j="${o.j}" style="text-align:left;padding-right:38px" onclick="sceneAnswer(this)">${o.j}<div style="font-size:11.5px;font-weight:500;opacity:.7">${o.e}</div><span class="opt-spk" onclick="event.stopPropagation();speak(this.closest('.opt').dataset.j)">🔊</span></button>`).join('')}</div>
     <div class="feedback" id="sc-fb"></div>
     <div id="sc-next" style="display:none;margin-top:12px"><button class="btn" onclick="sceneNext()">Continuar →</button></div>`;
   setTimeout(()=>speak(st.s.j),250);
@@ -2435,7 +2717,11 @@ function sceneAnswer(btn){
   const correct=st.opts.find(o=>o.ok);
   const fb=document.getElementById('sc-fb');
   if(ok){SC.right++;SC.xp+=10;fb.className='feedback ok';fb.textContent='✅ ¡Perfecto! +10 XP';}
-  else{fb.className='feedback no';fb.textContent='❌ Lo natural era: '+correct.j;}
+  else{
+    const pick=st.opts.find(o=>o.j===btn.dataset.j);
+    fb.className='feedback no';
+    fb.innerHTML='❌ Elegiste "'+ (pick?pick.j:'') +'" → '+(pick?pick.e:'no encaja aquí')+'.<br><b>Lo natural:</b> '+correct.j+' ('+correct.e+')';
+  }
   speak(correct.j);
   document.getElementById('sc-next').style.display='block';
 }
@@ -2448,7 +2734,8 @@ function sceneEnd(){
   const total=SC.sc.steps.length;
   const pct=Math.round(SC.right/total*100);
   const prev=S.best['esc-'+SC.sc.id]||0;
-  if(pct>prev)S.best['esc-'+SC.sc.id]=pct;
+  const improved=pct>prev;
+  if(improved)S.best['esc-'+SC.sc.id]=pct;
   S.xp+=SC.xp;bumpMission('scene');
   /* avance del modo historia */
   let storyMsg='';
@@ -2473,7 +2760,7 @@ function sceneEnd(){
     <div class="result" style="padding-top:6px">
       <div class="medal">${pct===100?'🏆':pct>=70?'🎉':'🚃'}</div>
       <h2>${pct===100?'¡Conversación perfecta!':pct>=70?'¡Muy bien!':'Sigue practicando'}</h2>
-      <p>Respondiste bien ${SC.right} de ${total} turnos.</p>
+      <p>Respondiste bien ${SC.right} de ${total} turnos.<br><small>${improved?'📈 Avance: '+prev+'% → '+pct+'%':'Récord: '+prev+'% (supéralo para subir el avance)'}</small></p>
       ${storyMsg}
       <div class="r-xp">+${SC.xp} XP</div>
       <div class="btn-row">${btns}</div>
@@ -2558,7 +2845,7 @@ function priceAnswer(btn){
     else o.classList.add(o===btn?'wrong':'dim');
   });
   const fb=document.getElementById('pr-fb');
-  if(ok){PR.score++;S.xp+=8;bumpMission('price');touchStreak();saveState();renderAll();
+  if(ok){PR.score++;S.xp+=8;bumpMission('calm');touchStreak();saveState();renderAll();
     fb.className='feedback ok';fb.innerHTML='✅ +8 XP · ¥'+PR.n.toLocaleString()+' = '+yen2kana(PR.n);
   }else{
     fb.className='feedback no';fb.innerHTML='❌ ¥'+PR.n.toLocaleString()+' = '+yen2kana(PR.n);
@@ -2619,7 +2906,7 @@ function dtCheck(){
   renderDict();
   const fb=document.getElementById('dt-fb');
   if(built===DT.w.j){
-    DT.score++;S.xp+=10;touchStreak();saveState();renderAll();
+    DT.score++;S.xp+=10;bumpMission('calm');touchStreak();saveState();renderAll();
     fb.className='feedback ok';fb.innerHTML='✅ +10 XP · '+DT.w.j+' ('+DT.w.r+') = '+DT.w.e;
   }else{
     fb.className='feedback no';fb.innerHTML='❌ Era: <b>'+DT.w.j+'</b> ('+DT.w.r+') = '+DT.w.e;
@@ -2688,7 +2975,7 @@ function newConj(){
       <button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(CJ.v.masu)">🔊</button>
     </div>
     <div class="opts">${opts.map(o=>
-      `<button class="opt" data-v="${o}" onclick="conjAnswer(this)">${o}</button>`).join('')}</div>
+      `<button class="opt" data-v="${o}" data-say="${o}" style="padding-right:38px" onclick="conjAnswer(this)">${o}<span class="opt-spk" onclick="event.stopPropagation();speak(this.closest('.opt').dataset.say)">🔊</span></button>`).join('')}</div>
     <div class="feedback" id="cj-fb"></div>
     <div id="cj-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newConj()">Siguiente →</button></div>`;
 }
@@ -2700,10 +2987,17 @@ function conjAnswer(btn){
     else o.classList.add(o===btn?'wrong':'dim');
   });
   const fb=document.getElementById('cj-fb');
-  if(ok){CJ.score++;S.xp+=8;touchStreak();saveState();renderAll();
+  if(ok){CJ.score++;S.xp+=8;bumpMission('calm');touchStreak();saveState();renderAll();
     fb.className='feedback ok';fb.innerHTML='✅ +8 XP · '+CJ.v.masu+' → '+CJ.correct;
   }else{
-    fb.className='feedback no';fb.innerHTML='❌ '+CJ.v.masu+' → <b>'+CJ.correct+'</b> ('+CJ.f.n+')';
+    /* identificar qué forma eligió para explicar el error */
+    const names={masu:'presente cortés (〜ます)',nai_m:'negativo cortés',ta_m:'pasado cortés',nakatta_m:'pasado negativo cortés',te:'forma て',dict:'forma diccionario',nai:'negativo casual',ta:'pasado casual'};
+    let picked='';
+    for(const k of Object.keys(names)){
+      const f=(k==='masu')?CJ.v.masu:conjForm(CJ.v,k);
+      if(f===btn.dataset.v){picked=names[k];break}
+    }
+    fb.className='feedback no';fb.innerHTML='❌ '+btn.dataset.v+' es el <b>'+(picked||'otra forma')+'</b>.<br>Se pedía el '+CJ.f.n+': <b>'+CJ.correct+'</b>';
   }
   speak(CJ.correct);
   document.getElementById('cj-next').style.display='block';
@@ -2923,7 +3217,7 @@ function newGap(){
   }else{
     correct=pc.j;opts=[correct,...shuffle(FIXBANK.filter(f=>f!==pc.j)).slice(0,3)];
   }
-  GAP={sel,idx,correct,done:false};
+  GAP={sel,idx,correct,pc,done:false};
   const blocks=P.pieces.map((p2,i)=>{
     const cls=i===idx?'blank':(p2.t==='s'?'s':p2.t==='p'?'p':'f');
     const txt=i===idx?'？':(p2.t==='s'?sel[p2.k].j:p2.j);
@@ -2934,7 +3228,7 @@ function newGap(){
     <div class="q-prompt"><div style="font-size:14px;color:var(--ink-soft);margin-bottom:10px">"${esOf(sel)}"</div>
       <div class="fx" style="margin:0">${blocks}</div></div>
     <div class="opts">${shuffle(opts).map(o=>
-      `<button class="opt" onclick="gapAnswer(this)">${o}</button>`).join('')}</div>
+      `<button class="opt" data-say="${o}" style="padding-right:38px" onclick="gapAnswer(this)">${o}<span class="opt-spk" onclick="event.stopPropagation();speak(this.closest('.opt').dataset.say)">🔊</span></button>`).join('')}</div>
     <div class="feedback" id="g-fb"></div>
     <div id="g-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newGap()">Siguiente →</button></div>`;
 }
@@ -2949,7 +3243,10 @@ function gapAnswer(btn){
   if(ok){S.sentences=(S.sentences||0)+1;addXP(8);
     fb.className='feedback ok';fb.innerHTML='✅ +8 XP · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>';
   }else{
-    fb.className='feedback no';fb.innerHTML='❌ Era <b>'+GAP.correct+'</b> · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>';
+    let why='';
+    if(GAP.pc.t==='p'||GAP.pc.t==='f')why='<br><small>💡 '+GAP.pc.exp+'</small>';
+    else{const pk=GAP.pc.opts.find(o=>o.j===btn.dataset.say);if(pk)why='<br><small>💡 Elegiste '+pk.j+' = "'+pk.e+'", que no encaja con la traducción.</small>';}
+    fb.className='feedback no';fb.innerHTML='❌ Era <b>'+GAP.correct+'</b> · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>'+why;
   }
   document.getElementById('g-next').style.display='block';
 }
@@ -3058,6 +3355,32 @@ function renderVocab(){
 }
 renderChips();renderVocab();
 
+/* =================== ACTUALIZADOR IN-APP =================== */
+const APP_VERSION='v13';
+let UPD=null;
+async function checkUpdate(manual){
+  try{
+    const r=await fetch('./version.json?n='+Date.now(),{cache:'no-store'});
+    const d=await r.json();
+    if(d.version&&d.version!==APP_VERSION){
+      UPD=d.version;
+      const st=document.getElementById('upd-status');if(st)st.textContent='· disponible: '+d.version;
+      const b=document.getElementById('upd-apply');if(b)b.style.display='block';
+      toast(manual?'🔄 Hay versión nueva: '+d.version:'🔄 Actualización disponible · Perfil');
+    }else if(manual){toast('✅ Ya tienes la última versión')}
+  }catch(e){if(manual)toast('Sin conexión para buscar')}
+}
+async function applyUpdate(){
+  try{
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.getRegistration();
+      if(reg)await reg.update();
+    }
+    toast('⬇️ Instalando '+(UPD||'')+'…');
+    setTimeout(()=>location.reload(),1700);
+  }catch(e){location.reload()}
+}
+
 /* =================== INIT =================== */
 loadState();
 if ('serviceWorker' in navigator) {
@@ -3065,6 +3388,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
+(function(){const v=document.getElementById('app-ver');if(v)v.textContent=APP_VERSION;})();
+setTimeout(()=>{try{checkUpdate(false)}catch(e){}},4000);
 </script>
 </body>
 </html>

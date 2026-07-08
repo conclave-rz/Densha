@@ -20,7 +20,11 @@ Hecha para una sola misión: pasar de cero a conversaciones reales en cafés, re
 | 🔊 **Audio nativo** | Pronunciación japonesa con la voz del sistema — sin servicios externos, funciona offline |
 | 🎯 **Repaso inteligente** | Detecta tus palabras débiles y arma el repaso del día con ellas |
 | 💴 **Entrenador de precios** | Lee cantidades en yenes como local (せんさんびゃくはちじゅうえん) |
-| 🏅 **11 logros, misiones y rachas** | 3 misiones diarias con bonus de XP y racha de días 🔥 |
+| 🐣 **デンちゃん, tu tamagotchi** | Las misiones diarias son sus 4 necesidades: 🍙 Alimentar (1 quiz), 🎮 Jugar (1 escenario), 🧼 Limpiar (1 repaso) y 💤 Dormir (5 aciertos de práctica). Cúbrelas todas y Den-chan sonríe: +30 XP y cuenta de días bien cuidado |
+| 📖 **Lecturas cortas** | 8 lecturas con audio línea por línea, traducción conmutable y preguntas de comprensión: dajare (juegos de palabras), Momotarō y La liebre y la tortuga en versión mini, y cultura (konbini, hanami, onsen, modales del tren) |
+| 💡 **Errores que enseñan** | Al equivocarte, la app te explica por qué: qué significa lo que elegiste y por qué no encaja — en quizzes, escenarios, huecos y conjugador. Además, botón 🔊 en las opciones japonesas |
+| 🔄 **Actualizador in-app** | Perfil → Buscar actualización: detecta versiones nuevas en tu GitHub Pages y las instala con un toque |
+| 🏅 **12 logros, misiones y rachas** | Bonus de XP diario y racha de días 🔥 |
 
 **Diseño**: lenguaje editorial inspirado en el diseño web japonés contemporáneo — bloques súper redondeados, etiquetas pill, títulos grandes, sombras suaves y dock de navegación flotante — con color semántico: crema de fondo, cian para práctica y progreso, azul para escenarios, amarillo para misiones, y el verde JR reservado para la identidad Yamanote. El header integra nivel, XP, racha y tu camino a N4 en una cabecera compacta que te acompaña en toda la app.
 
@@ -65,7 +69,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 ## 🔄 Actualizar la app
 
 1. Sube los archivos nuevos encima de los viejos: **GitHub** → repo → *Add file → Upload files* → arrastra → *Commit*. **Netlify** → tu sitio → pestaña *Deploys* → arrastra la carpeta.
-2. En `sw.js`, sube la versión de caché (`densha-v12` → `densha-v13`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
+2. En `sw.js`, sube la versión de caché (`densha-v13` → `densha-v14`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
 
 ## 💾 Tu progreso
 
@@ -89,6 +93,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 
 | v | Qué trajo |
 |---|---|
+| v13 | Den-chan (tamagotchi de misiones), Lecturas cortas, explicación de errores, audio en respuestas, actualizador in-app |
 | v12 | Layout responsive para tablet (rejillas 2-4 columnas, contenedor amplio) |
 | v11 | Header integrado (nivel + XP + racha + camino a N4) y diccionario con índice colapsable |
 | v9–v10 | Color semántico (crema/cian/azul/amarillo), escenarios Banco y Teléfono (N4), modo Dictado, adverbios y kanji N4 |
