@@ -469,7 +469,27 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media (min-width:481px){
-  #app{border-left:2.5px solid var(--ink);border-right:2.5px solid var(--ink)}
+  #app{border-left:1.5px solid var(--ink);border-right:1.5px solid var(--ink)}
+}
+/* ---------- Tablet: aprovechar el ancho ---------- */
+@media (min-width:600px){
+  #app{max-width:768px}
+  main{padding:20px 24px 126px}
+  nav{max-width:520px}
+  .sec-title{font-size:30px}
+  .prac-row{grid-template-columns:repeat(4,1fr)}
+  #study-hubs,#lines-list,#pattern-list{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:start}
+  #study-hubs .line-card,#lines-list .line-card,#pattern-list .line-card{margin-bottom:0}
+  .scene-card{flex:0 0 30.5%}
+  .ach-grid{grid-template-columns:repeat(3,1fr)}
+  .p-grid{grid-template-columns:repeat(3,1fr)}
+  #q-body .opts,#pr-body .opts,#cj-body .opts,#pt-area .opts{grid-template-columns:1fr 1fr}
+  .match-grid{grid-template-columns:repeat(4,1fr)}
+  .flash-wrap{max-width:540px;margin-left:auto;margin-right:auto}
+  .flashcard{height:280px}
+  .lab-out,.q-prompt{max-width:640px;margin-left:auto;margin-right:auto}
+  .lab-out{margin-bottom:12px}
+  .q-prompt{margin-bottom:16px}
 }
 </style>
 </head>

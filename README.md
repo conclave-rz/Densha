@@ -65,7 +65,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 ## 🔄 Actualizar la app
 
 1. Sube los archivos nuevos encima de los viejos: **GitHub** → repo → *Add file → Upload files* → arrastra → *Commit*. **Netlify** → tu sitio → pestaña *Deploys* → arrastra la carpeta.
-2. En `sw.js`, sube la versión de caché (`densha-v11` → `densha-v12`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
+2. En `sw.js`, sube la versión de caché (`densha-v12` → `densha-v13`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
 
 ## 💾 Tu progreso
 
@@ -89,6 +89,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 
 | v | Qué trajo |
 |---|---|
+| v12 | Layout responsive para tablet (rejillas 2-4 columnas, contenedor amplio) |
 | v11 | Header integrado (nivel + XP + racha + camino a N4) y diccionario con índice colapsable |
 | v9–v10 | Color semántico (crema/cian/azul/amarillo), escenarios Banco y Teléfono (N4), modo Dictado, adverbios y kanji N4 |
 | v8 | Rediseño editorial: bloques redondeados, pills, títulos grandes, dock flotante |
