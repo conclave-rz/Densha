@@ -4159,8 +4159,9 @@ function drillGrade(score,total,key,bodyId,againFn){
 }
 
 /* =================== ACTUALIZADOR IN-APP =================== */
-const APP_VERSION='v16';
-let UPD=null;
+const APP_VERSION='v16.1';
+let UPD=null,_reloaded=false;
+function _reloadOnce(){if(_reloaded)return;_reloaded=true;location.reload();}
 async function checkUpdate(manual){
   try{
     const r=await fetch('./version.json?n='+Date.now(),{cache:'no-store'});
@@ -4174,19 +4175,37 @@ async function checkUpdate(manual){
   }catch(e){if(manual)toast('Sin conexión para buscar')}
 }
 async function applyUpdate(){
+  toast('⬇️ Instalando '+(UPD||'')+'…');
   try{
     if('serviceWorker' in navigator){
+      navigator.serviceWorker.addEventListener('controllerchange',_reloadOnce);
       const reg=await navigator.serviceWorker.getRegistration();
-      if(reg)await reg.update();
+      if(reg){
+        try{await reg.update()}catch(e){}
+        const w=reg.waiting||reg.installing;
+        if(w){try{w.postMessage({type:'SKIP_WAITING'})}catch(e){}}
+      }
     }
-    toast('⬇️ Instalando '+(UPD||'')+'…');
-    setTimeout(()=>location.reload(),1700);
-  }catch(e){location.reload()}
+  }catch(e){}
+  /* red de seguridad: si el nuevo SW no toma control en 3.5s, recarga igual */
+  setTimeout(_reloadOnce,3500);
 }
 
 /* =================== INIT =================== */
 loadState();
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(window.__denReloaded)return; window.__denReloaded=true; location.reload(); });
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      reg.addEventListener('updatefound',function(){
+        var w=reg.installing; if(!w)return;
+        w.addEventListener('statechange',function(){
+          if(w.state==='installed'&&navigator.serviceWorker.controller){ try{w.postMessage({type:'SKIP_WAITING'});}catch(e){} }
+        });
+      });
+    }).catch(function(){});
+  });
+}
 (function(){const v=document.getElementById('app-ver');if(v)v.textContent=APP_VERSION;})();
 setTimeout(()=>{try{checkUpdate(false)}catch(e){}},4000);
 </script>
