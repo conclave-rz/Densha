@@ -483,6 +483,15 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
 .rl-line .rl-e{font-size:12.5px;color:var(--ink-soft);margin-top:4px;display:none}
 .reader.show-es .rl-line .rl-e{display:block}
 @media (min-width:600px){.read-grid{grid-template-columns:repeat(4,1fr)}}
+/* ---------- Examen JLPT ---------- */
+.ex-top{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.ex-sec{background:var(--ink);color:var(--card);border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:800;letter-spacing:1px}
+.ex-prog{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.ex-timer{margin-left:auto;font-family:var(--font-px);font-size:15px;background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:4px 12px}
+.ex-timer.low{background:#FFD9D9;color:#B4001E}
+.ex-psg{background:var(--card);border:1.5px solid var(--ink);border-radius:16px;padding:14px 16px;margin-bottom:12px;font-size:16px;line-height:2;font-weight:700;box-shadow:var(--shadow)}
+.ex-psg .ex-pt{font-size:11px;letter-spacing:1.5px;color:var(--ink-soft);font-weight:800;margin-bottom:6px}
+.ex-brk{display:flex;justify-content:space-between;font-size:13px;padding:7px 4px;border-bottom:1.5px dashed var(--line)}
 /* ---------- Toast ---------- */
 .toast{
   position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
@@ -650,6 +659,15 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="story-line" id="story-line"></div>
     </section>
 
+    <!-- EXAMEN JLPT -->
+    <section class="screen" id="scr-exam">
+      <div class="lesson-head">
+        <button class="back-btn" onclick="exitExam()">←</button>
+        <div><h2 id="ex-title"></h2><div class="sub" id="ex-sub"></div></div>
+      </div>
+      <div id="ex-body"></div>
+    </section>
+
     <!-- READER -->
     <section class="screen" id="scr-read">
       <div class="lesson-head">
@@ -747,6 +765,13 @@ canvas.pix{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="ranks-list" id="ranks-list"></div>
       <div class="section-label">Logros</div>
       <div class="ach-grid" id="ach-grid"></div>
+      <div class="section-label">Sonido</div>
+      <div class="mis-card" style="background:var(--card)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="font-size:13.5px;font-weight:700">Jingles de estación 🚉<br><small style="font-weight:500;color:var(--ink-soft)">melodías 16-bit al entrar y completar</small></div>
+          <button class="btn small ghost" style="width:auto;padding:9px 16px;flex-shrink:0" id="snd-btn" onclick="toggleSnd()">🔔</button>
+        </div>
+      </div>
       <div class="section-label">Versión</div>
       <div class="mis-card" style="background:var(--card)">
         <div style="font-size:13.5px">Instalada: <b id="app-ver">—</b> <span id="upd-status" style="color:var(--ink-soft)"></span></div>
@@ -1064,6 +1089,34 @@ const VOCAB = [
   {j:'だめ(な)',r:'dame (na)',e:'no sirve / no se puede'},
   {j:'へん(な)',r:'hen (na)',e:'raro / extraño'},
   {j:'むり(な)',r:'muri (na)',e:'imposible'},
+ ]},
+ {id:'fam',letter:'家',color:'#E8618C',name:'Familia',jp:'かぞく',words:[
+  {j:'かぞく',r:'kazoku',e:'familia'},
+  {j:'ちち',r:'chichi',e:'mi papá'},
+  {j:'はは',r:'haha',e:'mi mamá'},
+  {j:'おとうさん',r:'otōsan',e:'papá (de otros / al dirigirte)'},
+  {j:'おかあさん',r:'okāsan',e:'mamá (de otros / al dirigirte)'},
+  {j:'あに',r:'ani',e:'mi hermano mayor'},
+  {j:'あね',r:'ane',e:'mi hermana mayor'},
+  {j:'おとうと',r:'otōto',e:'hermano menor'},
+  {j:'いもうと',r:'imōto',e:'hermana menor'},
+  {j:'きょうだい',r:'kyōdai',e:'hermanos'},
+  {j:'りょうしん',r:'ryōshin',e:'padres'},
+  {j:'こども',r:'kodomo',e:'niño / hijo'},
+ ]},
+ {id:'pos',letter:'上',color:'#5B8DEF',name:'Posición y existencia',jp:'ばしょ',words:[
+  {j:'うえ',r:'ue',e:'encima / arriba'},
+  {j:'した',r:'shita',e:'debajo / abajo'},
+  {j:'まえ',r:'mae',e:'enfrente / antes'},
+  {j:'うしろ',r:'ushiro',e:'detrás'},
+  {j:'となり',r:'tonari',e:'al lado'},
+  {j:'ちかく',r:'chikaku',e:'cerca'},
+  {j:'なか',r:'naka',e:'dentro'},
+  {j:'そと',r:'soto',e:'fuera'},
+  {j:'みぎ',r:'migi',e:'derecha'},
+  {j:'ひだり',r:'hidari',e:'izquierda'},
+  {j:'あります',r:'arimasu',e:'hay (cosas)'},
+  {j:'います',r:'imasu',e:'hay (personas y animales)'},
  ]},
  {id:'vtra',lv:'N4',letter:'交',color:'#9C5E31',name:'Verbos · intercambio y memoria',jp:'N4どうし',words:[
   {j:'かします',r:'kashimasu',e:'prestar'},
@@ -1437,7 +1490,7 @@ function n5Avg(){
 }
 function checkN4(){
   if(!S.n4&&n5Avg()>=70&&(S.story||0)>=STORY.length){
-    S.n4=true;toast('🎓 ¡Nivel N4 desbloqueado! おめでとう！');saveState();
+    S.n4=true;toast('🎓 ¡Nivel N4 desbloqueado! おめでとう！');jgl('perfect');saveState();
   }
 }
 function rankFor(xp){let r=RANKS[0],i=0;RANKS.forEach((k,idx)=>{if(xp>=k.xp){r=k;i=idx}});return{...r,lv:i+1,next:RANKS[i+1]||null}}
@@ -1445,6 +1498,8 @@ function renderAll(){
   document.getElementById('hud-xp').textContent=S.xp;
   document.getElementById('hud-streak').textContent=S.streak;
   document.getElementById('hud-lv').textContent=S.n4?'N4':'N5';
+  const sb=document.getElementById('snd-btn');
+  if(sb)sb.textContent=S.mute?'🔕 Silencio':'🔔 Activados';
   const rk=rankFor(S.xp);
   if(!S.n4){
     const avg=n5Avg();
@@ -1748,6 +1803,7 @@ function finishQuiz(){
   touchStreak();saveState();renderAll();
   document.getElementById('r-medal').textContent=pct===100?'🏆':pct>=70?'🎉':'🚃';
   document.getElementById('r-title').textContent=pct===100?'¡Perfecto! かんぺき！':pct>=70?'¡Bien hecho! よくできました！':'Sigue practicando がんばって！';
+  jgl(pct===100?'perfect':pct>=70?'win':'sad');
   document.getElementById('r-msg').textContent=pct>prev
     ?'📈 Avance de línea: '+prev+'% → '+pct+'%'
     :'Sacaste '+pct+'% · tu récord sigue en '+prev+'% (el avance solo sube al superarlo)';
@@ -2148,6 +2204,7 @@ function renderReads(){
   });
 }
 function openReading(i){
+  jgl('enter');
   RD=READINGS[i];RDq=0;RDes=false;
   document.getElementById('rd-title').textContent=RD.emoji+' '+RD.title;
   document.getElementById('rd-type').textContent=RD.type+' · toca una línea para escucharla';
@@ -2202,7 +2259,7 @@ function rdNext(){
   RDq++;
   if(RDq>=RD.qs.length){
     S.read=S.read||{};
-    if(!S.read[RD.id]){S.read[RD.id]=1;S.xp+=15;toast('📖 Lectura completada +15 XP')}
+    if(!S.read[RD.id]){S.read[RD.id]=1;S.xp+=15;toast('📖 Lectura completada +15 XP');jgl('win')}
     saveState();renderAll();
     document.getElementById('rd-quiz').innerHTML=
      `<div class="tip" style="text-align:center">✅ ¡Lectura terminada! Vuelve a leerla en voz alta para practicar shadowing.</div>
@@ -2210,6 +2267,264 @@ function rdNext(){
     return;
   }
   renderRdQ();
+}
+
+/* =================== EXAMEN JLPT (formato oficial · bancos aleatorizados) =================== */
+const JLPT={
+ n5:{
+  gram:[
+   {q:'わたし＿マリアです。',a:'は',dis:['を','に','が'],x:'は marca el tema: "en cuanto a mí…".'},
+   {q:'パン＿たべます。',a:'を',dis:['は','に','で'],x:'を marca el objeto directo de comer.'},
+   {q:'しちじ＿おきます。',a:'に',dis:['で','を','と'],x:'に marca la hora exacta.'},
+   {q:'としょかん＿べんきょうします。',a:'で',dis:['に','を','へ'],x:'で marca el lugar donde ocurre la acción.'},
+   {q:'ともだち＿えいがをみます。',a:'と',dis:['に','を','が'],x:'と = con (compañía).'},
+   {q:'ねこ＿います。',a:'が',dis:['を','で','へ'],x:'あります/います piden が para lo que existe.'},
+   {q:'バス＿いきます。',a:'で',dis:['に','と','を'],x:'で marca el medio de transporte.'},
+   {q:'くじ＿ごじまで はたらきます。',a:'から',dis:['まで','に','で'],x:'から = desde, まで = hasta.'},
+   {q:'にほんご＿できます。',a:'が',dis:['を','は','で'],x:'できます (saber/poder) pide が.'},
+   {q:'わたし＿がくせいです。(también)',a:'も',dis:['は','が','と'],x:'も = también; sustituye a は.'},
+   {q:'みず＿ください。',a:'を',dis:['が','に','は'],x:'〜をください = deme…'},
+   {q:'これ＿いくらですか。',a:'は',dis:['を','に','が'],x:'これは… presenta el tema de la pregunta.'},
+   {q:'えき＿いきます。',a:'に',dis:['で','を','と'],x:'に marca el destino del movimiento.'},
+   {q:'きのう えいがを＿。',a:'みました',dis:['みます','みたいです','みて'],x:'きのう (ayer) → pasado cortés 〜ました.'},
+   {q:'あした きょうとに＿。',a:'いきます',dis:['いきました','いった','いって'],x:'あした (mañana) → presente/futuro 〜ます.'},
+   {q:'すしが＿です。',a:'すき',dis:['すきな','すく','すいて'],x:'すきです; la な solo aparece antes de un sustantivo (すきな りょうり).'},
+   {q:'この へやは＿です。',a:'しずか',dis:['しずかな','しずかい','しずかく'],x:'Adjetivo-な: sin な antes de です.'},
+   {q:'きのうは あつ＿です。',a:'かった',dis:['いでした','くて','かったり'],x:'Adjetivo-い en pasado: あつい → あつかったです.'},
+   {q:'えいがは おもしろ＿です。',a:'い',dis:['な','の','く'],x:'Los adjetivos-い conservan la い antes de です.'},
+   {q:'ゆっくり はなし＿ください。',a:'て',dis:['で','に','を'],x:'〜てください = petición cortés.'},
+   {q:'テレビは あまり＿。',a:'みません',dis:['みます','みました','みたいです'],x:'あまり siempre va con negativo.'},
+   {q:'へや＿テレビが あります。',a:'に',dis:['で','を','と'],x:'に marca el lugar de existencia (no de acción).'},
+   {q:'だれ＿いますか。',a:'が',dis:['は','を','に'],x:'Con います, quien existe lleva が.'},
+   {q:'かぞくは ちち＿ははと わたしです。',a:'と',dis:['を','に','は'],x:'と une sustantivos en una lista.'},
+  ],
+  listen:[
+   {j:'すみません、トイレは どこですか。',a:'¿Dónde está el baño?',dis:['¿Cuánto cuesta esto?','¿Qué hora es?']},
+   {j:'これを ください。',a:'Deme esto, por favor',dis:['Esto es delicioso','¿Esto es tuyo?']},
+   {j:'いま なんじですか。',a:'¿Qué hora es?',dis:['¿Qué día es hoy?','¿Dónde estamos?']},
+   {j:'ちょっと まって ください。',a:'Espere un momento',dis:['Venga rápido','Hable más fuerte']},
+   {j:'えきは あそこです。',a:'La estación está allá',dis:['El banco está cerca','Esta es la estación']},
+   {j:'コーヒーを のみますか。',a:'¿Tomas café?',dis:['¿Te gusta el té?','¿Compraste café?']},
+   {j:'あしたは やすみです。',a:'Mañana es día de descanso',dis:['Hoy es feriado','Mañana trabajo']},
+   {j:'これは いくらですか。',a:'¿Cuánto cuesta esto?',dis:['¿Qué es esto?','¿Dónde compro esto?']},
+   {j:'みぎに まがって ください。',a:'Gire a la derecha',dis:['Gire a la izquierda','Siga derecho']},
+   {j:'にほんごが すこし できます。',a:'Sé un poco de japonés',dis:['No entiendo japonés','Estudio inglés']},
+   {j:'ごじに あいましょう。',a:'Veámonos a las cinco',dis:['Llegué a las cinco','Son las cinco']},
+   {j:'たかいですね。',a:'¡Qué caro!, ¿no?',dis:['¡Qué barato!, ¿no?','¡Qué rico!, ¿no?']},
+   {j:'もういちど おねがいします。',a:'Otra vez, por favor',dis:['Más despacio, por favor','Así está bien']},
+   {j:'でんしゃで きました。',a:'Vine en tren',dis:['El tren ya llegó','Voy a la estación']},
+  ],
+  read:[
+   {t:'たなかさんの いちにち',
+    body:'たなかさんは まいあさ しちじに おきます。あさごはんは パンと コーヒーです。くじから ごじまで ぎんこうで はたらきます。よるは うちで テレビを みます。じゅういちじに ねます。',
+    qs:[
+     {q:'たなかさんは なんじに おきますか。',a:'しちじ',dis:['くじ','ごじ','じゅういちじ'],x:'まいあさ しちじに おきます = se levanta a las 7 cada mañana.'},
+     {q:'たなかさんは どこで はたらきますか。',a:'ぎんこう',dis:['うち','がっこう','えき'],x:'ぎんこうで はたらきます = trabaja en el banco.'}]},
+   {t:'ホセさんの メール',
+    body:'マリアさん、あした こうえんで はなみを します。じゅうにじに えきの まえで あいましょう。おべんとうと のみものを もってきて ください。 ― ホセ',
+    qs:[
+     {q:'あした、なにを しますか。',a:'はなみ',dis:['かいもの','べんきょう','しごと'],x:'はなみをします = harán hanami (ver los cerezos).'},
+     {q:'どこで あいますか。',a:'えきの まえ',dis:['こうえんの なか','ホセさんの うち','レストラン'],x:'えきのまえで あいましょう = frente a la estación.'}]},
+   {t:'みせの おしらせ',
+    body:'この レストランは さかなの りょうりが ゆうめいです。すこし たかいですが、とても おいしいです。ひるは じゅういちじから にじまでです。にちようびは やすみです。',
+    qs:[
+     {q:'この みせは なにが ゆうめいですか。',a:'さかなの りょうり',dis:['にくの りょうり','ラーメン','カレー'],x:'さかなのりょうりが ゆうめい = famoso por sus platillos de pescado.'},
+     {q:'いつ やすみですか。',a:'にちようび',dis:['どようび','げつようび','まいにち'],x:'にちようびは やすみです = cierra los domingos.'}]},
+  ]},
+ n4:{
+  gram:[
+   {q:'すしを たべた＿が あります。',a:'こと',dis:['もの','とき','ほう'],x:'〜たことがあります = he tenido la experiencia de…'},
+   {q:'あめが ふっ＿います。',a:'て',dis:['た','で','に'],x:'ふる→ふって + います = está lloviendo.'},
+   {q:'まどを あけ＿も いいですか。',a:'て',dis:['た','る','ない'],x:'〜てもいいですか = pedir permiso.'},
+   {q:'でんきを けし＿ください。',a:'て',dis:['た','ます','ない'],x:'Forma て + ください.'},
+   {q:'にほんへ＿ことが あります。',a:'いった',dis:['いく','いって','いきます'],x:'Pasado casual た + ことがあります.'},
+   {q:'あした あめだ＿おもいます。',a:'と',dis:['を','が','は'],x:'〜とおもいます = creo que…'},
+   {q:'つかれた＿、やすみます。',a:'から',dis:['まで','でも','を'],x:'から después de la razón = porque.'},
+   {q:'きのう ラーメンを＿。(casual)',a:'たべた',dis:['たべる','たべない','たべます'],x:'Pasado casual: たべる → たべた.'},
+   {q:'いま なにも＿。(casual)',a:'たべない',dis:['たべる','たべた','たべて'],x:'なにも + negativo = no… nada.'},
+   {q:'これは きょうとで＿おかしです。',a:'かった',dis:['かう','かいます','かって'],x:'El pasado casual modifica al sustantivo: かったおかし = dulce que compré.'},
+   {q:'しゅくだいを し＿から、あそびます。',a:'て',dis:['た','ます','ない'],x:'〜てから = después de hacer…'},
+   {q:'その えいがを みた＿が ありますか。',a:'こと',dis:['もの','の','とき'],x:'Pregunta por experiencia: ¿has visto…?'},
+   {q:'パスポートを みせ＿ください。',a:'て',dis:['た','る','に'],x:'みせる→みせて + ください.'},
+   {q:'すしが たべ＿です。',a:'たい',dis:['ほしい','たく','たかった'],x:'Raíz ます + たいです = quiero comer. ほしい es para cosas.'},
+   {q:'きょうは いそがしい＿、あした あいましょう。',a:'から',dis:['まで','を','に'],x:'Razón + から.'},
+   {q:'でんしゃが き＿！(casual)',a:'た',dis:['ます','て','る'],x:'くる→きた = ¡ya vino!'},
+   {q:'ふじさん＿みたことが あります。',a:'を',dis:['が','に','で'],x:'を marca lo que viste.'},
+   {q:'くすりを のん＿ください。',a:'で',dis:['て','た','に'],x:'のむ→のんで: los verbos en む hacen んで.'},
+   {q:'ここで しゃしんを とっ＿も いいですか。',a:'て',dis:['た','で','る'],x:'とる→とって (っ+て).'},
+   {q:'あには コーヒーを＿。(casual)',a:'のまない',dis:['のみない','のむない','のみますん'],x:'Negativo casual: のむ→のまない.'},
+  ],
+  listen:[
+   {j:'おだいじに。',a:'Que te mejores',dis:['Buen provecho','Con permiso']},
+   {j:'みちに まよいました。',a:'Me perdí',dis:['Encontré el camino','Tengo prisa']},
+   {j:'よやくを キャンセルしたいんですが。',a:'Quiero cancelar la reservación',dis:['Quiero hacer una reservación','¿Tienen mesa libre?']},
+   {j:'エレベーターは つかえません。',a:'El elevador no se puede usar',dis:['El elevador está a la derecha','Use el elevador']},
+   {j:'うみへ いったことが ありますか。',a:'¿Has ido al mar?',dis:['¿Irás al mar?','¿Te gusta el mar?']},
+   {j:'あめが ふっていますから、かさを もっていって ください。',a:'Lleva paraguas porque está lloviendo',dis:['Ya dejó de llover','Olvidé mi paraguas']},
+   {j:'ここで しゃしんを とっても いいですか。',a:'¿Puedo tomar fotos aquí?',dis:['No tome fotos aquí','¿Me toma una foto?']},
+   {j:'にもつを あずけたいです。',a:'Quiero dejar mi equipaje',dis:['Perdí mi equipaje','Mi maleta pesa mucho']},
+   {j:'くすりを のんで、はやく ねて ください。',a:'Toma la medicina y duerme temprano',dis:['No tomes la medicina','Despiértate temprano']},
+   {j:'りょうしんに おみやげを かいました。',a:'Compré souvenirs para mis padres',dis:['Mis padres me visitaron','Vendí unos recuerdos']},
+   {j:'でんしゃが おくれています。',a:'El tren está retrasado',dis:['El tren llegó a tiempo','Perdí el tren']},
+   {j:'もう すこし やすく なりませんか。',a:'¿No me lo deja más barato?',dis:['Está muy barato','Subió de precio']},
+  ],
+  read:[
+   {t:'はじめての にほん',
+    body:'きょねん はじめて にほんへ いきました。きょうとで ふるい おてらを たくさん みました。にほんごは すこししか はなせませんでしたが、みんな とても しんせつでした。つぎは ほっかいどうへ いって、ゆきまつりが みたいです。',
+    qs:[
+     {q:'この ひとは いつ にほんへ いきましたか。',a:'きょねん',dis:['ことし','らいねん','せんしゅう'],x:'きょねん = el año pasado.'},
+     {q:'つぎは なにが したいですか。',a:'ゆきまつりを みること',dis:['おてらを みること','きょうとへ いくこと','にほんごの べんきょう'],x:'ゆきまつりが みたいです = quiere ver el festival de nieve.'}]},
+   {t:'るすばんでんわの メッセージ',
+    body:'もしもし、ガルシアです。あしたの しちじに ふたりで よやくを しましたが、つごうが わるく なりました。すみませんが、よやくを キャンセルして ください。また でんわします。',
+    qs:[
+     {q:'ガルシアさんは なにを したいですか。',a:'よやくの キャンセル',dis:['あたらしい よやく','じかんの へんこう','みせへの しつもん'],x:'キャンセルしてください = pide cancelar.'},
+     {q:'よやくは いつでしたか。',a:'あしたの しちじ',dis:['きょうの しちじ','あさっての しちじ','きのうの しちじ'],x:'あしたのしちじに…よやくをしました.'}]},
+   {t:'マンションの おしらせ',
+    body:'〈マンションの みなさまへ〉あした、ごぜんちゅうに ビルの そうじを します。エレベーターは ごぜん くじから じゅうにじまで つかえません。かいだんを つかって ください。ごごは だいじょうぶです。',
+    qs:[
+     {q:'なにが つかえませんか。',a:'エレベーター',dis:['かいだん','でんき','みず'],x:'エレベーターは…つかえません.'},
+     {q:'いつまで つかえませんか。',a:'じゅうにじまで',dis:['くじまで','ごごまで','あしたまで'],x:'くじから じゅうにじまで = de 9 a 12.'}]},
+  ]},
+};
+function jlptVocabQs(lv,n){
+  const want=lv==='n5'?'N5':'N4';
+  const kw=KANJI.filter(c=>lineLv(c)===want).flatMap(c=>c.words);
+  const vw=VOCAB.filter(c=>lineLv(c)===want).flatMap(c=>c.words);
+  const clean=s=>(s||'').replace(/[()（）]/g,'').split('·')[0].trim();
+  const qs=[];const used=new Set();let guard=0;
+  while(qs.length<n&&guard++<120){
+    if(qs.length%2===0&&kw.length>=6){
+      const w=kw[Math.floor(Math.random()*kw.length)];
+      if(used.has(w.j))continue;
+      const correct=clean(w.kun)||clean(w.on);
+      if(!correct)continue;
+      const seen=new Set([correct]);
+      const dis=[];
+      shuffle(kw.filter(x=>x!==w)).forEach(x=>{
+        const r=clean(x.kun)||clean(x.on);
+        if(r&&!seen.has(r)&&dis.length<3){seen.add(r);dis.push(r)}
+      });
+      if(dis.length<3)continue;
+      used.add(w.j);
+      qs.push({sec:'もじ・ごい',q:'「<b style="font-size:26px">'+w.j+'</b>」の よみかたは？',
+        opts:shuffle([{t:correct,ok:1},...dis.map(t=>({t}))]),
+        expl:w.j+' se lee '+correct+' = '+w.e+(w.ex?'. '+w.ex:'')});
+    }else if(vw.length>=6){
+      const w=vw[Math.floor(Math.random()*vw.length)];
+      if(used.has(w.j))continue;
+      const dis=shuffle(vw.filter(x=>x!==w&&x.e!==w.e)).slice(0,3);
+      if(dis.length<3)continue;
+      used.add(w.j);
+      qs.push({sec:'もじ・ごい',q:'「<b>'+w.j+'</b>」の いみは？',say:w.j,
+        opts:shuffle([{t:w.e,ok:1},...dis.map(x=>({t:x.e}))]),
+        expl:w.j+' ('+w.r+') = '+w.e});
+    }
+  }
+  return qs;
+}
+let EX=null,exInt=null;
+function buildExam(lv){
+  const B=JLPT[lv];
+  const mk=it=>shuffle([{t:it.a,ok:1},...it.dis.map(t=>({t}))]);
+  const qs=[...jlptVocabQs(lv,8)];
+  shuffle([...B.gram]).slice(0,8).forEach(g=>qs.push({sec:'ぶんぽう',
+    q:g.q.replace('＿','<b style="color:var(--teal-deep)">＿＿</b>'),opts:mk(g),expl:g.x}));
+  const pg=B.read[Math.floor(Math.random()*B.read.length)];
+  pg.qs.forEach(q2=>qs.push({sec:'どっかい',psg:pg,q:q2.q,opts:mk(q2),expl:q2.x}));
+  shuffle([...B.listen]).slice(0,5).forEach(l=>qs.push({sec:'ちょうかい',
+    q:'👂 Escucha (se lee una sola vez, como en el examen real) y elige el significado.',
+    say:l.j,opts:shuffle([{t:l.a,ok:1},...l.dis.map(t=>({t}))]),expl:'「'+l.j+'」= '+l.a}));
+  return qs;
+}
+function openExam(lv){
+  jgl('enter');
+  EX={lv,qs:buildExam(lv),i:0,score:0,secs:{},done:false,t:15*60};
+  document.getElementById('ex-title').textContent='🎓 Examen JLPT '+(lv==='n5'?'N5':'N4');
+  document.getElementById('ex-sub').textContent='23 preguntas · aprueba con 60% · cada intento es distinto';
+  clearInterval(exInt);
+  exInt=setInterval(()=>{
+    if(!EX)return;
+    EX.t--;
+    const el=document.getElementById('ex-timer');
+    if(el){el.textContent=exFmt(EX.t);el.classList.toggle('low',EX.t<=60)}
+    if(EX.t<=0)finishExam(true);
+  },1000);
+  go('scr-exam');renderExamQ();
+}
+function exFmt(t){t=Math.max(0,t);const m=Math.floor(t/60),s=t%60;return m+':'+String(s).padStart(2,'0')}
+function exitExam(){clearInterval(exInt);EX=null;go('scr-story');}
+function renderExamQ(){
+  const q=EX.qs[EX.i];
+  document.getElementById('ex-body').innerHTML=`
+    <div class="ex-top">
+      <span class="ex-sec">${q.sec}</span>
+      <span class="ex-prog">${EX.i+1}/${EX.qs.length}</span>
+      <span class="ex-timer ${EX.t<=60?'low':''}" id="ex-timer">${exFmt(EX.t)}</span>
+    </div>
+    ${q.psg?`<div class="ex-psg"><div class="ex-pt">よんでください · Lee el texto</div>${q.psg.t?'<b>「'+q.psg.t+'」</b><br>':''}${q.psg.body}</div>`:''}
+    <div class="q-prompt"><div style="font-size:17.5px;font-weight:800;line-height:1.7">${q.q}</div>
+      ${q.say?'<button class="btn ghost small" style="margin-top:10px;width:auto;padding:8px 16px" onclick="speak(EX.qs['+EX.i+'].say)">🔊 Escuchar</button>':''}
+    </div>
+    <div class="opts">${q.opts.map((o,i)=>
+      `<button class="opt" data-ok="${o.ok?1:0}" onclick="examAnswer(this)">${o.t}</button>`).join('')}</div>
+    <div class="feedback" id="ex-fb"></div>
+    <div id="ex-next" style="display:none;margin-top:12px">
+      <button class="btn small" onclick="examNext()">${EX.i+1>=EX.qs.length?'Ver resultado 🎌':'Siguiente →'}</button>
+    </div>`;
+  if(q.say&&q.sec==='ちょうかい')setTimeout(()=>speak(q.say),400);
+  EX.answered=false;
+}
+function examAnswer(btn){
+  if(EX.answered)return;EX.answered=true;
+  const q=EX.qs[EX.i];
+  const ok=btn.dataset.ok==='1';
+  document.querySelectorAll('#ex-body .opt').forEach(o=>{
+    if(o.dataset.ok==='1')o.classList.add('correct');
+    else o.classList.add(o===btn?'wrong':'dim');
+  });
+  EX.secs[q.sec]=EX.secs[q.sec]||{s:0,t:0};
+  EX.secs[q.sec].t++;
+  if(ok){EX.score++;EX.secs[q.sec].s++}
+  const fb=document.getElementById('ex-fb');
+  fb.className='feedback '+(ok?'ok':'no');
+  fb.innerHTML=(ok?'✅ ':'❌ ')+q.expl;
+  document.getElementById('ex-next').style.display='block';
+}
+function examNext(){
+  EX.i++;
+  if(EX.i>=EX.qs.length)finishExam(false);
+  else renderExamQ();
+}
+function finishExam(timeout){
+  clearInterval(exInt);
+  if(!EX)return;
+  const total=EX.qs.length;
+  const pct=Math.round(EX.score/total*100);
+  const pass=pct>=60;
+  const key='jlpt'+(EX.lv==='n5'?'5':'4');
+  const prev=S.best[key]||0;
+  if(pct>prev)S.best[key]=pct;
+  S.xp+=pass?50:15;
+  bumpMission('quiz');touchStreak();
+  jgl(pct>=90?'perfect':pass?'win':'sad');
+  saveState();checkAch();renderAll();
+  const rows=Object.entries(EX.secs).map(([k,v])=>
+    `<div class="ex-brk"><span>${k}</span><b>${v.s}/${v.t}</b></div>`).join('');
+  document.getElementById('ex-body').innerHTML=`
+    <div class="result" style="padding-top:6px">
+      <div class="medal">${pass?'📜':'💪'}</div>
+      <h2>${pass?'合格 · ¡Aprobado!':'不合格 · Aún no'}</h2>
+      <p>${timeout?'⏰ Se acabó el tiempo.<br>':''}${EX.score}/${total} correctas (${pct}%)${pass?' · すごい！':' · Necesitas 60%'}</p>
+      <div style="max-width:280px;margin:10px auto;text-align:left">${rows}</div>
+      <p><small>${pct>prev?'📈 Récord: '+prev+'% → '+pct+'%':'Tu récord: '+prev+'%'}</small></p>
+      <div class="r-xp">+${pass?50:15} XP</div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="exitExam();renderStory()">Al mapa</button>
+        <button class="btn" onclick="openExam('${EX.lv}')">Otro intento 🎲</button>
+      </div>
+      <p style="margin-top:10px"><small>Cada intento se arma con preguntas distintas del banco.</small></p>
+    </div>`;
+  EX.done=true;
 }
 
 /* =================== SIMULADOR DE ESCENARIOS =================== */
@@ -2569,9 +2884,23 @@ function renderStory(){
         <div class="st-status">${status}</div>
       </button>`);
   });
+  /* Estaciones finales: exámenes JLPT */
+  const b5=S.best['jlpt5']||0,b4=S.best['jlpt4']||0;
+  const n5ok=done>=STORY.length;
+  el.insertAdjacentHTML('beforeend',
+   `<button class="st-row ${n5ok?(b5>=60?'done':'cur'):'lock'}" ${n5ok?'onclick="openExam(\'n5\')"':''}>
+      <div class="st-dot2"></div>
+      <div><div class="st-name">🎓 Examen JLPT N5</div><div class="st-day">Estación final · 23 preguntas · 15 min${n5ok?(b5?' · mejor: '+b5+'%':' · ¡disponible!'):' · termina los 7 días'}</div></div>
+      <div class="st-status">${n5ok?(b5>=60?'📜':'▶'):'🔒'}</div>
+    </button>
+    <button class="st-row ${S.n4?(b4>=60?'done':'cur'):'lock'}" ${S.n4?'onclick="openExam(\'n4\')"':''}>
+      <div class="st-dot2"></div>
+      <div><div class="st-name">🎓 Examen JLPT N4</div><div class="st-day">Reto mayor · 23 preguntas · 15 min${S.n4?(b4?' · mejor: '+b4+'%':' · ¡disponible!'):' · desbloquea N4'}</div></div>
+      <div class="st-status">${S.n4?(b4>=60?'📜':'▶'):'🔒'}</div>
+    </button>`);
   if(done>=STORY.length){
     el.insertAdjacentHTML('beforeend',
-     `<div class="tip" style="margin-top:12px;text-align:center">🏆 ¡Completaste los 7 días! にほんのたつじんですね。<br>Puedes repetir cualquier escenario desde el carrusel.</div>`);
+     `<div class="tip" style="margin-top:12px;text-align:center">🏆 ¡Completaste los 7 días! にほんのたつじんですね。<br>Ahora demuestra tu nivel en el examen JLPT. 📜</div>`);
   }
 }
 
@@ -2589,10 +2918,12 @@ const ACH=[
  {id:'story',ico:'🇯🇵',n:'7 días en Japón',d:'Termina el modo historia',f:s=>(s.story||0)>=STORY.length},
  {id:'n4',ico:'🎓',n:'Ascenso a N4',d:'Desbloquea el nivel N4',f:s=>s.n4===true},
  {id:'care7',ico:'🐣',n:'Buen cuidador',d:'Cuida a Den-chan 7 días',f:s=>(s.care||0)>=7},
+ {id:'jlpt5',ico:'📜',n:'合格 N5',d:'Aprueba el examen JLPT N5 (60%+)',f:s=>(s.best['jlpt5']||0)>=60},
+ {id:'jlpt4',ico:'🎖️',n:'合格 N4',d:'Aprueba el examen JLPT N4 (60%+)',f:s=>(s.best['jlpt4']||0)>=60},
 ];
 function checkAch(){
   S.ach=S.ach||{};let neu=false;
-  ACH.forEach(a=>{try{if(!S.ach[a.id]&&a.f(S)){S.ach[a.id]=1;neu=true;toast('🏅 Logro: '+a.n)}}catch(e){}});
+  ACH.forEach(a=>{try{if(!S.ach[a.id]&&a.f(S)){S.ach[a.id]=1;neu=true;toast('🏅 Logro: '+a.n);jgl('ach')}}catch(e){}});
   if(neu)saveState();
 }
 function renderAch(){
@@ -2615,7 +2946,7 @@ function bumpMission(k,n){
   ensureMissions();S.m[k]=(S.m[k]||0)+(n||1);
   if(S.m.quiz>=1&&S.m.scene>=1&&S.m.clean>=1&&S.m.calm>=5&&!S.m.bonus){
     S.m.bonus=true;S.xp+=30;S.care=(S.care||0)+1;
-    toast('❤ ¡デンちゃん está feliz! +30 XP');
+    toast('❤ ¡デンちゃん está feliz! +30 XP');jgl('bonus');
   }
 }
 const NEEDS=[
@@ -2676,6 +3007,7 @@ function renderScenes(){
   });
 }
 function openScene(i,storyIdx){
+  jgl('enter');
   SC={sc:SCENES[i],i:0,right:0,xp:0,done:false,listen:false,storyIdx:(storyIdx===undefined?null:storyIdx)};
   document.getElementById('sc-title').textContent=SC.sc.name;
   document.getElementById('sc-sub').textContent='elige la respuesta correcta · escucha al staff';
@@ -2749,6 +3081,7 @@ function sceneEnd(){
   }else if(inStory&&!passed){
     storyMsg='<p style="font-weight:800;color:var(--bad)">Necesitas 60% para avanzar en la historia</p>';
   }
+  jgl(pct===100?'perfect':pct>=60?'win':'sad');
   touchStreak();saveState();renderAll();
   document.getElementById('sc-dots').innerHTML='';
   const btns=inStory
@@ -2813,6 +3146,7 @@ function randPrice(){
 let PR={score:0,total:0,done:false,n:0,dir:'j2e',correct:''};
 function openPrice(){PR={score:0,total:0,done:false};go('scr-price');newPrice();}
 function newPrice(){
+  if(PR.total>=DRILL_N){drillGrade(PR.score,PR.total,'dr-price','pr-body','openPrice');return}
   const n=randPrice();
   const dir=Math.random()<0.5?'read':'num';
   const set=new Set([n]);
@@ -2825,7 +3159,7 @@ function newPrice(){
   PR.n=n;PR.dir=dir;PR.done=false;
   PR.correct=dir==='read'?yen2kana(n):'¥'+n.toLocaleString();
   document.getElementById('pr-body').innerHTML=`
-    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${PR.score}/${PR.total}</div>
+    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${PR.score} · ronda ${Math.min(PR.total+1,DRILL_N)}/${DRILL_N}</div>
     <div class="q-prompt-label">${dir==='read'?'¿Cómo se lee?':'¿Qué precio escuchas/lees?'}</div>
     <div class="q-prompt" style="position:relative">
       ${dir==='read'
@@ -2866,6 +3200,7 @@ function dictPool(){
 let DT={score:0,total:0,done:false};
 function openDict(){DT={score:0,total:0,done:false};go('scr-dict');newDict();}
 function newDict(){
+  if(DT.total>=DRILL_N){drillGrade(DT.score,DT.total,'dr-dict','dt-body','openDict');return}
   const pool=dictPool();
   const w=pool[Math.floor(Math.random()*pool.length)];
   const chars=[...w.j];
@@ -2878,7 +3213,7 @@ function newDict(){
 }
 function renderDict(){
   document.getElementById('dt-body').innerHTML=`
-    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${DT.score}/${DT.total}</div>
+    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${DT.score} · ronda ${Math.min(DT.total+1,DRILL_N)}/${DRILL_N}</div>
     <div class="q-prompt-label">👂 Escucha y arma la palabra</div>
     <div class="q-prompt">
       <button class="spk" style="width:64px;height:64px;font-size:26px" onclick="speak(DT.w.j)">🔊</button>
@@ -2957,6 +3292,7 @@ function conjForm(v,k){
 let CJ={score:0,total:0,done:false};
 function openConj(){CJ={score:0,total:0,done:false};go('scr-conj');newConj();}
 function newConj(){
+  if(CJ.total>=DRILL_N){drillGrade(CJ.score,CJ.total,'dr-conj','cj-body','openConj');return}
   const forms=CFORMS.filter(f=>!f.n4||S.n4);
   const f=forms[Math.floor(Math.random()*forms.length)];
   const v=CONJ[Math.floor(Math.random()*CONJ.length)];
@@ -2967,11 +3303,11 @@ function newConj(){
   const opts=shuffle([correct,...shuffle(pool).slice(0,3)]);
   CJ.f=f;CJ.v=v;CJ.correct=correct;CJ.done=false;
   document.getElementById('cj-body').innerHTML=`
-    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${CJ.score}/${CJ.total}</div>
+    <div class="hud-chip" style="margin-bottom:12px;display:inline-flex"><span class="ico">🎯</span>${CJ.score} · ronda ${Math.min(CJ.total+1,DRILL_N)}/${DRILL_N}</div>
     <div class="q-prompt-label">Conjuga al ${f.n}</div>
     <div class="q-prompt" style="position:relative">
       <div class="big">${v.masu}</div>
-      <div class="ro">${v.e} · ${f.hint}</div>
+      <div class="ro">${v.e}</div>
       <button class="spk" style="position:absolute;top:10px;right:10px" onclick="speak(CJ.v.masu)">🔊</button>
     </div>
     <div class="opts">${opts.map(o=>
@@ -3103,6 +3439,26 @@ const PATTERNS=[
     {j:'これ',r:'kore',e:'esto'},{j:'それ',r:'sore',e:'eso'},{j:'きっぷ',r:'kippu',e:'el boleto'},{j:'おみやげ',r:'omiyage',e:'el souvenir'},{j:'チケット',r:'chiketto',e:'el boleto (evento)'}]},
    {t:'p',j:'は',r:'wa',dis:['を','が','で'],exp:'Tema de la pregunta.'},
    {t:'f',j:'いくらですか',r:'ikura desu ka',exp:'"¿Cuánto cuesta?". いくら = cuánto (precio).'}]},
+ {id:'inv',name:'Invitar a alguien',tag:'¿Vamos juntos?',color:'#E8618C',
+  anatomy:'El patrón social estrella de Marugoto L12: <b>〜ませんか</b> = invitación cortés ("¿no vamos?"). El negativo suena menos impositivo que "¿quieres ir?": dejas la puerta abierta. Se acepta con いきましょう ("¡vamos!").',
+  es:'¿vamos juntos a {A}?',
+  pieces:[
+   {t:'f',j:'いっしょに',r:'issho ni',exp:'"Juntos". Abre la invitación.'},
+   {t:'s',k:'A',label:'lugar',exp:'A dónde invitas.',opts:[
+    {j:'こうえん',r:'kōen',e:'el parque'},{j:'えいがかん',r:'eigakan',e:'el cine'},{j:'レストラン',r:'resutoran',e:'el restaurante'},{j:'カラオケ',r:'karaoke',e:'el karaoke'},{j:'うみ',r:'umi',e:'la playa'}]},
+   {t:'p',j:'に',r:'ni',dis:['で','を','は'],exp:'Marca el destino del movimiento.'},
+   {t:'f',j:'いきませんか',r:'ikimasen ka',exp:'"¿No vamos?" — la invitación cortés. Respuesta: いいですね、いきましょう。'}]},
+ {id:'exi',name:'Decir qué hay',tag:'Hay… en…',color:'#F09A2F',
+  anatomy:'El patrón de existencia de Marugoto L7: <b>[lugar]に [cosa]が あります</b>. Regla de oro: <b>あります</b> para cosas y plantas, <b>います</b> para personas y animales. El lugar lleva に y lo que existe lleva が.',
+  es:'en {L} hay {B}',
+  pieces:[
+   {t:'s',k:'L',label:'lugar',exp:'Dónde está la cosa.',opts:[
+    {j:'へや',r:'heya',e:'el cuarto'},{j:'いえ',r:'ie',e:'la casa'},{j:'こうえん',r:'kōen',e:'el parque'},{j:'えき',r:'eki',e:'la estación'}]},
+   {t:'p',j:'に',r:'ni',dis:['で','を','へ'],exp:'Marca el lugar de existencia (no de acción: eso es で).'},
+   {t:'s',k:'B',label:'cosa',exp:'Lo que hay ahí.',opts:[
+    {j:'テレビ',r:'terebi',e:'una tele'},{j:'ベッド',r:'beddo',e:'una cama'},{j:'ほん',r:'hon',e:'libros'},{j:'エアコン',r:'eakon',e:'aire acondicionado'}]},
+   {t:'p',j:'が',r:'ga',dis:['は','を','に'],exp:'Marca lo que existe. Con あります/います siempre va が.'},
+   {t:'f',j:'あります',r:'arimasu',exp:'"Hay" para cosas. Para seres vivos: います.'}]},
  {id:'exp',lv:'N4',name:'Contar experiencias',tag:'N4 · He hecho… alguna vez',color:'#8F76D6',
   anatomy:'El patrón N4 estrella para conversar: <b>〜たことがあります</b> = "he … alguna vez". Usa el pasado casual del verbo (forma た) + el bloque fijo ことがあります. Es oro para small talk: comparar experiencias.',
   es:'he {V} {A} alguna vez',
@@ -3134,7 +3490,7 @@ function renderPatterns(){
 }
 function openPattern(i){
   if(PATTERNS[i].lv==='N4'&&!S.n4){toast('🔒 N4: llega a 70% en N5 y termina la historia');return}
-  P=PATTERNS[i];PSel={};
+  P=PATTERNS[i];PSel={};GS={s:0,t:0};
   P.pieces.forEach(pc=>{if(pc.t==='s')PSel[pc.k]=pc.opts[0]});
   document.getElementById('pt-title').textContent=P.name;
   document.getElementById('pt-tag').textContent=P.tag;
@@ -3204,7 +3560,10 @@ function labPick(pi,oi){
 function labDice(){PSel=randomSel();renderFormulaMain();renderLab()}
 
 /* --- Modo HUECOS --- */
+let GS={s:0,t:0};
+function gapAgain(){GS={s:0,t:0};newGap();}
 function newGap(){
+  if(GS.t>=DRILL_N){drillGrade(GS.s,GS.t,'dr-gap','pt-area','gapAgain');return}
   const sel=randomSel();
   const idx=Math.floor(Math.random()*P.pieces.length);
   const pc=P.pieces[idx];
@@ -3233,14 +3592,14 @@ function newGap(){
     <div id="g-next" style="display:none;margin-top:12px"><button class="btn small" onclick="newGap()">Siguiente →</button></div>`;
 }
 function gapAnswer(btn){
-  if(GAP.done)return;GAP.done=true;
-  const ok=btn.textContent===GAP.correct;
+  if(GAP.done)return;GAP.done=true;GS.t++;
+  const ok=btn.dataset.say===GAP.correct;
   document.querySelectorAll('#pt-area .opt').forEach(o=>{
-    if(o.textContent===GAP.correct)o.classList.add('correct');
+    if(o.dataset.say===GAP.correct)o.classList.add('correct');
     else o.classList.add(o===btn?'wrong':'dim');
   });
   const fb=document.getElementById('g-fb');
-  if(ok){S.sentences=(S.sentences||0)+1;addXP(8);
+  if(ok){GS.s++;S.sentences=(S.sentences||0)+1;addXP(8);
     fb.className='feedback ok';fb.innerHTML='✅ +8 XP · '+jpOf(GAP.sel)+'<br><small>'+roOf(GAP.sel)+'</small>';
   }else{
     let why='';
@@ -3355,8 +3714,62 @@ function renderVocab(){
 }
 renderChips();renderVocab();
 
+/* =================== JINGLES 16-BIT (estilo eki-melo) =================== */
+let AC=null;
+function jgl(name){
+  if(S.mute)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    const seqs={
+      enter:[[659,0,.09],[880,.10,.14]],
+      win:[[523,0,.09],[659,.10,.09],[784,.20,.09],[1047,.30,.20]],
+      perfect:[[784,0,.08],[784,.09,.08],[784,.18,.08],[1047,.27,.28],[1319,.48,.34]],
+      ach:[[988,0,.10],[1319,.12,.24]],
+      bonus:[[659,0,.08],[784,.09,.08],[988,.18,.08],[1319,.27,.26]],
+      sad:[[392,0,.12],[311,.15,.22]],
+    };
+    const s=seqs[name]||[];const t=AC.currentTime;
+    s.forEach(([f,d,du])=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='square';o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t+d);
+      g.gain.exponentialRampToValueAtTime(0.14,t+d+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+d+du);
+      o.connect(g);g.connect(AC.destination);
+      o.start(t+d);o.stop(t+d+du+0.05);
+    });
+  }catch(e){}
+}
+function toggleSnd(){S.mute=!S.mute;saveState();renderAll();if(!S.mute)jgl('enter');}
+
+/* =================== CALIFICACIÓN DE DRILLS (30 rondas) =================== */
+const DRILL_N=30;
+function drillGrade(score,total,key,bodyId,againFn){
+  const pct=Math.round(score/total*100);
+  const g=pct>=90?['S','🏆','¡Nivel leyenda!']:pct>=75?['A','🎉','¡Excelente sesión!']:pct>=60?['B','👍','Bien, vas por buen camino']:['C','🚃','A seguir practicando'];
+  const prev=S.best[key]||0;
+  if(pct>prev)S.best[key]=pct;
+  const bonus=pct>=75?20:0;
+  if(bonus)S.xp+=bonus;
+  jgl(pct>=90?'perfect':(pct>=60?'win':'sad'));
+  saveState();renderAll();
+  document.getElementById(bodyId).innerHTML=`
+    <div class="result" style="padding-top:6px">
+      <div class="medal">${g[1]}</div>
+      <h2>Calificación: ${g[0]}</h2>
+      <p>${g[2]}<br>${score}/${total} aciertos (${pct}%)</p>
+      <p><small>${pct>prev?'📈 Récord: '+prev+'% → '+pct+'%':'Tu récord: '+prev+'%'}</small></p>
+      ${bonus?'<div class="r-xp">+'+bonus+' XP de bonus</div>':''}
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go('scr-home')">Al inicio</button>
+        <button class="btn" onclick="${againFn}()">Otra sesión</button>
+      </div>
+    </div>`;
+}
+
 /* =================== ACTUALIZADOR IN-APP =================== */
-const APP_VERSION='v13';
+const APP_VERSION='v15';
 let UPD=null;
 async function checkUpdate(manual){
   try{

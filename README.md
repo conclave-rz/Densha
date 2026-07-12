@@ -15,6 +15,9 @@ Hecha para una sola misión: pasar de cero a conversaciones reales en cafés, re
 | 🎭 **14 escenarios pixel-art** | Diálogos por turnos con el staff: aeropuerto, estación, taxi, hotel, konbini, café, restaurante, librería, ropa, farmacia, kōban, izakaya — y con candado N4: **banco** y **teléfono** (もしもし → しつれいします) |
 | 🇯🇵 **Modo historia** | "7 días en Japón": los 12 escenarios base encadenados como un viaje, estación por estación |
 | 組 **Constructor de oraciones** | 9 fórmulas con anatomía explicada pieza por pieza: laboratorio libre, huecos y fichas |
+| 🎓 **Exámenes JLPT N5/N4** | Las estaciones finales del modo historia. Formato del examen real: lectura de kanji y vocabulario, gramática de partículas y formas, un pasaje de lectura y listening que se reproduce una sola vez. 23 preguntas, 15 minutos con reloj, aprueba con 60%. Cada intento se ensambla al azar desde bancos grandes: nunca resuelves el mismo examen |
+| 🎵 **Jingles 16-bit** | Melodías de estación sintetizadas (como los eki-melo reales): al entrar a un escenario, al completar con distinta fanfarria según tu resultado, al desbloquear logros. Apagables en Perfil |
+| 📊 **Sesiones con calificación** | Precios, Conjugar, Dictado y Huecos terminan a las 30 rondas con calificación S/A/B/C, récord y bonus de XP — se acabaron los drills infinitos |
 | 活 **Conjugador** | 20 verbos × 7 formas (corteses en N5; diccionario, ない y た se suman en N4), irregulares incluidas |
 | 👂 **Listening evolutivo** | Preguntas de puro oído en los quizzes, **✍️ Dictado** (arma la palabra kana por kana) y modo oído en escenarios (se desbloquea con 100%) |
 | 🔊 **Audio nativo** | Pronunciación japonesa con la voz del sistema — sin servicios externos, funciona offline |
@@ -69,7 +72,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 ## 🔄 Actualizar la app
 
 1. Sube los archivos nuevos encima de los viejos: **GitHub** → repo → *Add file → Upload files* → arrastra → *Commit*. **Netlify** → tu sitio → pestaña *Deploys* → arrastra la carpeta.
-2. En `sw.js`, sube la versión de caché (`densha-v13` → `densha-v14`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
+2. En `sw.js`, sube la versión de caché (`densha-v15` → `densha-v16`) para que los teléfonos instalados tomen los cambios. *Si el zip vino de una versión nueva, esto ya viene hecho.*
 
 ## 💾 Tu progreso
 
@@ -93,6 +96,8 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 
 | v | Qué trajo |
 |---|---|
+| v15 | Exámenes JLPT N5 y N4 en el modo historia: formato oficial (文字・語彙 / 文法 / 読解 / 聴解), 15 min, aleatorizados en cada intento |
+| v14 | Jingles 16-bit de estación, sesiones de 30 rondas con calificación (S/A/B/C), fix del constructor, 2 líneas y 2 fórmulas nuevas del temario Marugoto A1 |
 | v13 | Den-chan (tamagotchi de misiones), Lecturas cortas, explicación de errores, audio en respuestas, actualizador in-app |
 | v12 | Layout responsive para tablet (rejillas 2-4 columnas, contenedor amplio) |
 | v11 | Header integrado (nivel + XP + racha + camino a N4) y diccionario con índice colapsable |
@@ -102,7 +107,7 @@ La PWA necesita una URL con HTTPS (requisito de los navegadores para instalarse 
 | v5–v6 | Modo historia, logros, misiones diarias, home compacto |
 | v1–v4 | Base: líneas, quizzes, constructor, escenarios pixel-art, precios, repaso, PWA |
 
-**Roadmap**: v12 → paquete N3 (vocabulario abstracto, ~370 kanji, formas potencial/pasiva, kanji con furigana).
+**Roadmap**: v15 → paquete N3 (~370 kanji, formas potencial/pasiva, kanji con furigana).
 
 ---
 
