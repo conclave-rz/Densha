@@ -1,56 +1,26 @@
-/* Densha service worker · offline-first */
-const CACHE = 'densha-v15';
-const FONT_CACHE = 'densha-fonts-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-512.png'
-];
-
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+/* Densha service worker · v16 */
+const CACHE='densha-v16';
+const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./icon-maskable.png'];
+self.addEventListener('install',e=>{
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS).catch(()=>{})));
 });
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE && k !== FONT_CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
-
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
-
-  // Fuentes de Google: stale-while-revalidate (quedan cacheadas tras la primera visita)
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    e.respondWith(
-      caches.open(FONT_CACHE).then(async (c) => {
-        const cached = await c.match(e.request);
-        const fresh = fetch(e.request).then((res) => {
-          if (res && res.status === 200) c.put(e.request, res.clone());
-          return res;
-        }).catch(() => cached);
-        return cached || fresh;
-      })
-    );
+self.addEventListener('fetch',e=>{
+  const req=e.request;
+  if(req.method!=='GET')return;
+  const url=new URL(req.url);
+  // version.json siempre desde la red (para detectar actualizaciones)
+  if(url.pathname.endsWith('version.json')){
+    e.respondWith(fetch(req).catch(()=>caches.match(req)));
     return;
   }
-
-  // App shell: cache-first, con index.html como fallback de navegación
-  if (url.origin === location.origin) {
-    e.respondWith(
-      caches.match(e.request).then((cached) =>
-        cached ||
-        fetch(e.request).catch(() =>
-          e.request.mode === 'navigate' ? caches.match('./index.html') : undefined
-        )
-      )
-    );
-  }
+  // cache-first para el resto
+  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(res=>{
+    const copy=res.clone();
+    caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});
+    return res;
+  }).catch(()=>caches.match('./index.html'))));
 });
